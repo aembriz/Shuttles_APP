@@ -3,6 +3,8 @@
 /* Services */
 
 var muukServices = angular.module('muukServices', ['ngResource']);
+//var servicesUrl = "http://localhost:8080";
+var servicesUrl = "http://54.201.26.22:8082";
 
 muukServices.factory('RoleService', ['$http', function ($http) {
   'use strict';
@@ -26,7 +28,7 @@ muukServices.factory('AuthenticationService', ['$http', '$location', 'SessionSer
       // this method could be used to call the API and set the user instead of taking it in the function params
         $.ajax({
           type: "POST",
-          url: "http://localhost:8080/users/login",
+          url: servicesUrl + "/users/login",
           data: {
             email: usr,
             password: pwd 
@@ -78,7 +80,7 @@ muukServices.factory('SessionService', ['$cookieStore', function ($cookieStore) 
 
 muukServices.factory('Empresa', ['$resource', 'SessionService', 
   function($resource, SessionService){
-    return $resource('http://localhost:8080/empresa/:exId', {}, {
+    return $resource(servicesUrl + '/empresa/:exId', {}, {
       query: {method:'GET', params:{}, isArray:true, headers: { 'Access': SessionService.currentUser.authtoken }},
       create: {method:'POST', params:{}, isArray:false, headers: { 'Access': SessionService.currentUser.authtoken }},
       remove: { method: 'DELETE', params: {exId: '@id'}, headers: { 'Access': SessionService.currentUser.authtoken } },
