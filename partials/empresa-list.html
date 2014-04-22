@@ -1,0 +1,42 @@
+<div class="container-fluid">
+	<h1 class="page-header">Empresas</h1>
+
+	<div class="btn-toolbar" role="toolbar">
+      <div class="btn-group" style="width:100%;">
+      	<a type="button" class="btn btn-default" href="#/empresasNew"><span class="glyphicon glyphicon-plus"></span></a>
+		<button>Buscar: <input ng-model="query"></button>
+
+		<img ng-show="empresas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+
+		<!--<button ng-click="testAlert('success')">Esxx</button>-->
+		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+			<p ng-bind-html="message"></p>
+		</div>		
+
+      </div>
+    </div>
+
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th><a href="" ng-click="orderProp='id'">ID</a></th>
+				<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
+				<th><a href="" ng-click="orderProp='razonsocial'">Razón Social</a></th>
+				<th><a href="" ng-click="orderProp='rfc'">RFC</a></th>
+				<th>-</th>
+			</tr>
+		</thead>
+		<tbody>			
+			<tr ng-repeat="emp in empresas | filter:query | orderBy:orderProp">
+				<td>{{emp.id}}</td>
+				<td><a href="#/empresasShow/{{emp.id}}">{{emp.nombre}}</a></td>
+				<td>{{emp.razonsocial}}</td>
+				<td>{{emp.rfc}}</td>
+				<td><a type="button" class="btn btn-default" ng-click="deleteEmpresa(emp.id)"><span class="glyphicon glyphicon-remove"></span></a></td>
+			</tr>
+		</tbody>
+	</table>		
+	
+</div>
+</div>
