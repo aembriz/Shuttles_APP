@@ -7,7 +7,6 @@ body {
   padding-top: 50px;
 }
 
-
 /*
  * Global add-ons
  */
@@ -55,6 +54,13 @@ body {
   background-color: #428bca;
 }
 
+/* Submenu navigation */
+.nav-submenu {
+  margin-left: 80px;
+  margin-right: -21px; /* 20px padding + 1px border */
+  margin-bottom: 20px;  
+}
+
 
 /*
  * Main content
@@ -91,3 +97,6 @@ body {
 .placeholder img {
   border-radius: 50%;
 }
+
+
+</style>

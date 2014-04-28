@@ -1,0 +1,9 @@
+<div ng-show="user.type == 0">
+  <div ng-controller="EmbarQEmpresaListCtrl" ng-include="'partials/embarq-empresaList.html'"> </div>
+</div>  
+<div ng-show="user.type == 1">
+  <div ng-include="'partials/empresa-perfil.html'"></div>
+</div>  
+<div ng-show="user.type == 2">
+  <div ng-include="'partials/usuario-perfil.html'"></div>
+</div>  
