@@ -5,3 +5,8 @@ exports.create = function(req, res) {
     res.redirect('/')
   })
 }
+
+
+exports.login = function(req, res) {
+	res.send({ error: '', name: 'Usuario prueba', email: 'mail@prueba.com', apiKey: 'RFTJHDL77766KJSD', createdAt: '' })
+}
