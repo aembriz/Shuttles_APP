@@ -72,9 +72,9 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-estadisticas.html',
         controller: 'EmbarQEstadisticasCtrl'
       }).      
-      when('/embarqAltaEmpresa', {
-        templateUrl: 'partials/embarq-altaEmpresa.html',
-        controller: 'EmbarQAltaEmpresaCtrl'
+      when('/embarqSolicitudEmpresaList', {
+        templateUrl: 'partials/embarq-solicitudEmpresaList.html',
+        controller: 'EmbarQSolicitudEmpresaListCtrl'
       }).      
       when('/embarqSolicitudEmpresaShow/:id', {
         templateUrl: 'partials/embarq-solicitudEmpresaShow.html',
@@ -92,9 +92,9 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-solicitudRutaForm.html',
         controller: 'EmbarqSolicitudRutaUpdateCtrl'
       }).   
-      when('/embarqAltaRuta', {
-        templateUrl: 'partials/embarq-altaRuta.html',
-        controller: 'EmbarQAltaRutaCtrl'
+      when('/embarqSolicitudRutaList', {
+        templateUrl: 'partials/embarq-solicitudRutaList.html',
+        controller: 'EmbarQSolicitudRutaListCtrl'
       }).      
       when('/embarqAdminEmpresas', {
         templateUrl: 'partials/embarq-adminEmpresas.html',

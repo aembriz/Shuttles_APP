@@ -88,3 +88,14 @@ muukServices.factory('Empresa', ['$resource', 'SessionService',
       show: { method: 'GET' }
     });
   }]);
+
+muukServices.factory('Ruta', ['$resource', 'SessionService', 
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/ruta/:exId', {}, {
+      query: {method:'GET', params:{}, isArray:true, headers: { 'Access': SessionService.currentUser.authtoken }},
+      create: {method:'POST', params:{}, isArray:false, headers: { 'Access': SessionService.currentUser.authtoken }},
+      remove: { method: 'DELETE', params: {exId: '@id'}, headers: { 'Access': SessionService.currentUser.authtoken } },
+      update: { method: 'PUT', params: {exId: '@id'}, headers: { 'Access': SessionService.currentUser.authtoken } },
+      show: { method: 'GET' }
+    });
+  }]);

@@ -142,9 +142,17 @@ muukControllers.controller("DashboardCtrl", ['$scope', '$routeParams', '$window'
 
 }]);
 
+// *****************************************************
+/* Login - Registro de nueva empresa */
+// *****************************************************
+muukControllers.controller('LoginRegisterUserCtrl', ['$scope', '$location', 'AuthenticationService',
+  function($scope, $location, AuthenticationService) {  
 
-// ***************** EMPRESA ************************************
+  }]);
 
+// *****************************************************
+/* EmbarQ - Empresa */
+// *****************************************************
 muukControllers.controller('EmbarQEmpresaListCtrl', ['$scope', '$window', 'Empresa',
   function($scope, $window, Empresa) {
     $scope.empresas = Empresa.query();
@@ -218,7 +226,9 @@ muukControllers.controller('EmpresaUpdateCtrl', ['$scope', '$routeParams', 'Empr
     };
   }]);
 
-// EmbarQ
+// *****************************************************
+/* EmbarQ - Solicitud de Empresa */
+// *****************************************************
 muukControllers.controller('EmbarqSolicitudEmpresaShowCtrl', ['$scope', '$routeParams', 'Empresa', '$location',
   function($scope, $routeParams, Empresa, $location) {    
     $scope.empresa = Empresa.show({exId: $routeParams.id});
@@ -245,104 +255,7 @@ muukControllers.controller('EmbarqSolicitudEmpresaUpdateCtrl', ['$scope', '$rout
     };
   }]);
 
-muukControllers.controller('EmbarqSolicitudRutaShowCtrl', ['$scope', '$routeParams', 'Empresa', '$location',
-  function($scope, $routeParams, Empresa, $location) {    
-    $scope.ruta = Empresa.show({exId: $routeParams.id});
-    
-    $scope.cancel = function(){
-      $location.path('embarqAltaRuta');
-    };    
-  }]); 
-
-muukControllers.controller('EmbarqSolicitudRutaUpdateCtrl', ['$scope', '$routeParams', 'Empresa', '$location',
-  function($scope, $routeParams, Empresa, $location) {
-  
-    $scope.ruta = Empresa.show({exId: $routeParams.id});
-
-    $scope.save = function(empresa) {
-      var ex = new Empresa(empresa);   
-      console.log(ex);    
-      //ex.$save();
-      ex.$update({ exId: empresa.id }, function(){$location.path('embarqAltaRuta');});       
-    };
-    
-    $scope.cancel = function(){
-      $location.path('embarqAltaRuta');
-    };
-  }]);
-
-muukControllers.controller('EmbarQRutalistCtrl', ['$scope', '$window', 'Empresa',
-  function($scope, $window, Empresa) {
-    $scope.rutas = Empresa.query();
-    $scope.orderProp = 'nombre';
-
-    $scope.deleteRuta = function (exId) {   
-      if( $window.confirm("Se eliminará la ruta con id [" + exId + "], ¿Desea continuar?")) {      
-       
-      }
-    };  
-
-  }]);
-
-muukControllers.controller('EmbarqRutaFormCtrl', ['$scope', 'Empresa', '$location',
-  function($scope, Empresa, $location) {
-  $scope.master = {};
-
-  $scope.update = function(ruta) {
-    $scope.master = angular.copy(ruta);
-  };
-
-  $scope.reset = function() {
-    $scope.ruta = angular.copy($scope.master);
-  };
-
-  $scope.save = function(ruta) {
-    var ex = new Empresa(ruta);   
-    console.log(ex);    
-    //ex.$save();
-    ex.$create({}, function(){$location.path('embarqRutas');});       
-  };
-  
-  $scope.cancel = function(){
-    $location.path('embarqRutas');
-  };
-  
-  $scope.reset();
-  
-  }]);
-
-muukControllers.controller('EmbarqRutaDetailCtrl', ['$scope', '$routeParams', 'Empresa', '$location',
-  function($scope, $routeParams, Empresa, $location) {    
-    $scope.ruta = Empresa.show({exId: $routeParams.id});
-    
-    $scope.cancel = function(){
-      $location.path('embarqRutas');
-    };    
-  }]); 
-
-muukControllers.controller('EmbarqRutaUpdateCtrl', ['$scope', '$routeParams', 'Empresa', '$location',
-  function($scope, $routeParams, Empresa, $location) {
-  
-    $scope.ruta = Empresa.show({exId: $routeParams.id});
-
-    $scope.save = function(ruta) {
-      var ex = new Empresa(ruta);   
-      console.log(ex);    
-      //ex.$save();
-      ex.$update({ exId: ruta.id }, function(){$location.path('embarqRutas');});       
-    };
-    
-    $scope.cancel = function(){
-      $location.path('embarqRutas');
-    };
-  }]);
-
-muukControllers.controller('EmbarQEstadisticasCtrl', ['$scope', '$location', 'AuthenticationService',
-  function($scope, $location, AuthenticationService) {  
-
-  }]);
-
-muukControllers.controller('EmbarQAltaEmpresaCtrl', ['$scope', '$window', 'Empresa',
+muukControllers.controller('EmbarQSolicitudEmpresaListCtrl', ['$scope', '$window', 'Empresa',
   function($scope, $window, Empresa) {
     $scope.empresas = Empresa.query();
     $scope.orderProp = 'nombre';
@@ -390,18 +303,116 @@ muukControllers.controller('EmbarQAltaEmpresaCtrl', ['$scope', '$window', 'Empre
 
   }]);
 
-muukControllers.controller('EmbarQAltaRutaCtrl', ['$scope', '$window', 'Empresa',
-  function($scope, $window, Empresa) {
-    $scope.rutas = Empresa.query();
+// *****************************************************
+/* EmbarQ - Ruta */
+// *****************************************************
+muukControllers.controller('EmbarQRutalistCtrl', ['$scope', '$window', 'Ruta',
+  function($scope, $window, Ruta) {
+    $scope.rutas = Ruta.query();
+    $scope.orderProp = 'nombre';
+
+    $scope.deleteRuta = function (exId) {   
+      if( $window.confirm("Se eliminará la ruta con id [" + exId + "], ¿Desea continuar?")) {      
+       
+      }
+    };  
+
+  }]);
+
+muukControllers.controller('EmbarqRutaFormCtrl', ['$scope', 'Ruta', '$location',
+  function($scope, Ruta, $location) {
+  $scope.master = {};
+
+  $scope.update = function(ruta) {
+    $scope.master = angular.copy(ruta);
+  };
+
+  $scope.reset = function() {
+    $scope.ruta = angular.copy($scope.master);
+  };
+
+  $scope.save = function(ruta) {
+    var ex = new Ruta(ruta);   
+    console.log(ex);    
+    //ex.$save();
+    ex.$create({}, function(){$location.path('embarqRutas');});       
+  };
+  
+  $scope.cancel = function(){
+    $location.path('embarqRutas');
+  };
+  
+  $scope.reset();
+  
+  }]);
+
+muukControllers.controller('EmbarqRutaDetailCtrl', ['$scope', '$routeParams', 'Ruta', '$location',
+  function($scope, $routeParams, Ruta, $location) {    
+    $scope.ruta = Ruta.show({exId: $routeParams.id});
+    
+    $scope.cancel = function(){
+      $location.path('embarqRutas');
+    };    
+  }]); 
+
+muukControllers.controller('EmbarqRutaUpdateCtrl', ['$scope', '$routeParams', 'Ruta', '$location',
+  function($scope, $routeParams, Ruta, $location) {
+  
+    $scope.ruta = Ruta.show({exId: $routeParams.id});
+
+    $scope.save = function(ruta) {
+      var ex = new Ruta(ruta);   
+      console.log(ex);    
+      //ex.$save();
+      ex.$update({ exId: ruta.id }, function(){$location.path('embarqRutas');});       
+    };
+    
+    $scope.cancel = function(){
+      $location.path('embarqRutas');
+    };
+  }]);
+
+// *****************************************************
+/* EmbarQ - Solicitud de Ruta */
+// *****************************************************
+muukControllers.controller('EmbarqSolicitudRutaShowCtrl', ['$scope', '$routeParams', 'Ruta', '$location',
+  function($scope, $routeParams, Ruta, $location) {    
+    $scope.ruta = Ruta.show({exId: $routeParams.id});
+    
+    $scope.cancel = function(){
+      $location.path('embarqAltaRuta');
+    };    
+  }]); 
+
+muukControllers.controller('EmbarqSolicitudRutaUpdateCtrl', ['$scope', '$routeParams', 'Ruta', '$location',
+  function($scope, $routeParams, Ruta, $location) {
+  
+    $scope.ruta = Ruta.show({exId: $routeParams.id});
+
+    $scope.save = function(ruta) {
+      var ex = new Ruta(ruta);   
+      console.log(ex);    
+      //ex.$save();
+      ex.$update({ exId: ruta.id }, function(){$location.path('embarqAltaRuta');});       
+    };
+    
+    $scope.cancel = function(){
+      $location.path('embarqAltaRuta');
+    };
+  }]);
+
+muukControllers.controller('EmbarQSolicitudRutaListCtrl', ['$scope', '$window', 'Ruta',
+  function($scope, $window, Ruta) {
+    $scope.rutas = Ruta.query();
     $scope.orderProp = 'nombre';
 
   $scope.rechazarRuta = function (exId) {   
     if( $window.confirm("Se rechazará la ruta con id [" + exId + "], ¿Desea continuar?")) {      
-/*      Empresa.remove({ exId: exId },
+      Ruta.remove({ exId: exId },
         function(data){       
-          $scope.empresas = Empresa.query();
+          $scope.rutas = Ruta.query();
         }     
-      );        */
+      );        
     }
   };  
   $scope.autorizarRuta = function (exId) {   
@@ -437,23 +448,33 @@ muukControllers.controller('EmbarQAltaRutaCtrl', ['$scope', '$window', 'Empresa'
   };
   }]);
 
+// *****************************************************
+/* EmbarQ - Estadisticas */
+// *****************************************************
+muukControllers.controller('EmbarQEstadisticasCtrl', ['$scope', '$location', 'AuthenticationService',
+  function($scope, $location, AuthenticationService) {  
+
+  }]);
+
+
+
 muukControllers.controller('EmbarQAdminEmpresasCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
   }]);
 
-// Empresa
+// *****************************************************
+/* Empresa - Perfil */
+// *****************************************************
 muukControllers.controller('EmpresaPerfilCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
   }]);
 
+// *****************************************************
+/* Empresa - Usuarios */
+// *****************************************************
 muukControllers.controller('EmpresaListaUsuariosCtrl', ['$scope', '$location', 'AuthenticationService',
-  function($scope, $location, AuthenticationService) {  
-
-  }]);
-
-muukControllers.controller('EmpresaComentariosCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
   }]);
@@ -463,6 +484,9 @@ muukControllers.controller('EmpresaAltaUsuariosCtrl', ['$scope', '$location', 'A
 
   }]);
 
+// *****************************************************
+/* Empresa - Rutas */
+// *****************************************************
 muukControllers.controller('EmpresaRutasCompartidasCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
@@ -473,12 +497,25 @@ muukControllers.controller('EmpresaAltaRutaCtrl', ['$scope', '$location', 'Authe
 
   }]);
 
-// Usuario
+// *****************************************************
+/* Empresa - Comentarios */
+// *****************************************************
+muukControllers.controller('EmpresaComentariosCtrl', ['$scope', '$location', 'AuthenticationService',
+  function($scope, $location, AuthenticationService) {  
+
+  }]);
+
+// *****************************************************
+/* Usuario - Perfil */
+// *****************************************************
 muukControllers.controller('UsuarioPerfilCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
   }]);
 
+// *****************************************************
+/* Usuario - Consultas */
+// *****************************************************
 muukControllers.controller('UsuarioResumenCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
@@ -509,22 +546,23 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'Auth
 
   }]);
 
+// *****************************************************
+/* Usuario - Rutas */
+// *****************************************************
 muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
   }]);
 
+// *****************************************************
+/* Usuario - Estadisticas */
+// *****************************************************
 muukControllers.controller('UsuarioEstadisticasCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
   }]);
 
 muukControllers.controller('LoginForgotPassCtrl', ['$scope', '$location', 'AuthenticationService',
-  function($scope, $location, AuthenticationService) {  
-
-  }]);
-
-muukControllers.controller('LoginRegisterUserCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {  
 
   }]);
