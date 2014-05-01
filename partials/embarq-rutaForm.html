@@ -11,14 +11,14 @@
 			<p ng-show="exForm.exName.$error.minlength" class="help-block">Nombre demasiado corto.</p>
 			<p ng-show="exForm.exName.$error.maxlength" class="help-block">Nombre demasiado largo.</p>   			
 		</div>
-		<div class="form-group" ng-class="{ 'has-error' : exForm.distancia.$invalid && !exForm.distancia.$pristine }">
-			<label for="distancia">Distancia</label><br/>
-			<input type="text" class="form-control" placeholder="Distancia del recorrido" id="distancia" name="distancia" ng-model="ruta.distancia"/>
+		<div class="form-group" ng-class="{ 'has-error' : exForm.origentxt.$invalid && !exForm.origentxt.$pristine }">
+			<label for="origentxt">Origen</label><br/>
+			<input type="text" class="form-control" placeholder="Origen de la ruta" id="origentxt" name="origentxt" ng-model="ruta.origentxt"/>
 		</div>
-		<div class="form-group" ng-class="{ 'has-error' : exForm.lugares.$invalid && !exForm.lugares.$pristine }">
-			<label for="lugares">Lugares</label><br/>
-			<input type="text" class="form-control" placeholder="Cantidad de lugares disponibles" id="lugares" name="lugares" ng-model="ruta.lugares"/>
-		</div>		
+		<div class="form-group" ng-class="{ 'has-error' : exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine }">
+			<label for="destinotxt">Destino</label><br/>
+			<input type="text" class="form-control" placeholder="Destino de la ruta" id="destinotxt" name="destinotxt" ng-model="ruta.destinotxt"/>
+		</div>			
 		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Guardar</button>
 		<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
       </form>

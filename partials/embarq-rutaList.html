@@ -21,8 +21,8 @@
 				<tr>
 					<th><a href="" ng-click="orderProp='id'">ID</a></th>
 					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
-					<th><a href="" ng-click="orderProp='razonsocial'">Distancia</a></th>
-					<th><a href="" ng-click="orderProp='rfc'">Lugares</a></th>
+					<th><a href="" ng-click="orderProp='origentxt'">Origen</a></th>
+					<th><a href="" ng-click="orderProp='destinotxt'">Destino</a></th>
 					<th>-</th>
 				</tr>
 			</thead>
@@ -30,8 +30,8 @@
 				<tr ng-repeat="ruta in rutas | filter:query | orderBy:orderProp">
 					<td>{{ruta.id}}</td>
 					<td><a href="#/embarqRutaShow/{{ruta.id}}">{{ruta.nombre}}</a></td>
-					<td>{{ruta.razonsocial}}</td>
-					<td>{{ruta.rfc}}</td>
+					<td>{{ruta.origentxt}}</td>
+					<td>{{ruta.destinotxt}}</td>
 					<td>
 						<a type="button" class="btn btn-info" href="#/embarqRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>						
 						<a type="button" class="btn btn-danger" ng-click="deleteRuta(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>

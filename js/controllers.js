@@ -234,7 +234,7 @@ muukControllers.controller('EmbarqSolicitudEmpresaShowCtrl', ['$scope', '$routeP
     $scope.empresa = Empresa.show({exId: $routeParams.id});
     
     $scope.cancel = function(){
-      $location.path('embarqAltaEmpresa');
+      $location.path('embarqSolicitudEmpresaList');
     };    
   }]); 
 
@@ -247,11 +247,11 @@ muukControllers.controller('EmbarqSolicitudEmpresaUpdateCtrl', ['$scope', '$rout
       var ex = new Empresa(empresa);   
       console.log(ex);    
       //ex.$save();
-      ex.$update({ exId: empresa.id }, function(){$location.path('embarqAltaEmpresa');});       
+      ex.$update({ exId: empresa.id }, function(){$location.path('embarqSolicitudEmpresaList');});       
     };
     
     $scope.cancel = function(){
-      $location.path('embarqAltaEmpresa');
+      $location.path('embarqSolicitudEmpresaList');
     };
   }]);
 
@@ -380,7 +380,7 @@ muukControllers.controller('EmbarqSolicitudRutaShowCtrl', ['$scope', '$routePara
     $scope.ruta = Ruta.show({exId: $routeParams.id});
     
     $scope.cancel = function(){
-      $location.path('embarqAltaRuta');
+      $location.path('embarqSolicitudRutaList');
     };    
   }]); 
 
@@ -393,11 +393,11 @@ muukControllers.controller('EmbarqSolicitudRutaUpdateCtrl', ['$scope', '$routePa
       var ex = new Ruta(ruta);   
       console.log(ex);    
       //ex.$save();
-      ex.$update({ exId: ruta.id }, function(){$location.path('embarqAltaRuta');});       
+      ex.$update({ exId: ruta.id }, function(){$location.path('embarqSolicitudRutaList');});       
     };
     
     $scope.cancel = function(){
-      $location.path('embarqAltaRuta');
+      $location.path('embarqSolicitudRutaList');
     };
   }]);
 
