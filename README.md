@@ -12,11 +12,16 @@ Servicio "(ABC) Empresas"
 [URL...]/empresa
 
 Comandos RESTFul:   
-GET /empresa = (Consulta todos)  
-GET /empresa/{id} = (Consulta empresa con el id especificado)  
-POST /empresa = (Creación de registro nuevo)  
-PUT /empresa/{id} = (Update al registro con el id especificado)  
-DELETE /empresa/{id} = (Elimina registro marcado con el id)  
+1. GET /empresa = (Consulta todos, sin importar estatus de aprobación)  
+  * Los filtros de empresas de acuerdo a su estatus de aprobación son:
+    * /empresa?estatus=authorized
+    * /empresa?estatus=new
+1. GET /empresa/{id} = (Consulta empresa con el id especificado)  
+1. POST /empresa = (Creación de registro nuevo)  
+1. PUT /empresa/{id} = (Update al registro con el id especificado)  
+1. PUT /empresa/authorize/{id} = (Marca la empresa designada por el id como autorizada)
+1. DELETE /empresa/{id} = (Elimina registro marcado con el id)  
+
 
 ---------
 
@@ -25,11 +30,11 @@ Servicio "Rutas"
 [URL...]/ruta
 
 Comandos RESTFul:   
-GET /ruta = (Consulta todos)  
-GET /ruta/{id} = (Consulta ruta con el id especificado, incluye empresa a la que pertence y puntos localizados de la ruta)  
-POST /ruta = (Creación de registro nuevo)  
-PUT /ruta/{id} = (Update al registro con el id especificado)  
-DELETE /ruta/{id} = (Elimina registro marcado con el id)  
+1. GET /ruta = (Consulta todos)  
+1. GET /ruta/{id} = (Consulta ruta con el id especificado, incluye empresa a la que pertence y puntos localizados de la ruta)  
+1. POST /ruta = (Creación de registro nuevo)  
+1. PUT /ruta/{id} = (Update al registro con el id especificado)  
+1. DELETE /ruta/{id} = (Elimina registro marcado con el id)  
 
 Ejemplo de post de creación:
 
@@ -46,12 +51,12 @@ Ejemplo de post de creación:
 [URL...]/rutapunto
 
 Comandos RESTFul:   
-GET /rutapunto = (Consulta todos los puntos dados de alta)  
-GET /rutapunto/{id} = (Consulta los puntos de la ruta con el id especificado)  
-POST /rutapunto = (Creación de registro nuevo)  
-POST /rutapunto?type=bulk = (Creación de todos los registros especificados en una sola operación. PREFERIDA por performance)  
-PUT /rutapunto/{id} = (Update al registro con el id especificado)  
-DELETE /rutapunto/{id} = (Elimina registro marcado con el id) 
+1. GET /rutapunto = (Consulta todos los puntos dados de alta)  
+1. GET /rutapunto/{id} = (Consulta los puntos de la ruta con el id especificado)  
+1. POST /rutapunto = (Creación de registro nuevo)  
+1. POST /rutapunto?type=bulk = (Creación de todos los registros especificados en una sola operación. PREFERIDA por performance)  
+1. PUT /rutapunto/{id} = (Update al registro con el id especificado)  
+1. DELETE /rutapunto/{id} = (Elimina registro marcado con el id) 
 
 Ejemplo de post de creación tipo bulk (se espera un arreglo con los objetos a crear):
 

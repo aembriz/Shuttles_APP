@@ -96,6 +96,7 @@ app.get('/empresa', empresa.list());
 app.get('/empresa/:id', empresa.listOne());
 app.post('/empresa', empresa.add());
 app.put('/empresa/:id', empresa.update());
+app.put('/empresa/authorize/:id', empresa.authorize());
 app.delete('/empresa/:id', empresa.delete());
 
 // --------------- Ruta ----------------

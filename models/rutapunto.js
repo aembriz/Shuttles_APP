@@ -3,8 +3,8 @@ module.exports = function(sequelize, DataTypes) {
   var RutaPunto = sequelize.define('RutaPunto', {
     indice: DataTypes.INTEGER,
     descripcion: DataTypes.STRING,
-    latitud: DataTypes.FLOAT,
-    longitud: DataTypes.FLOAT,
+    latitud: {type: DataTypes.FLOAT, allowNull: false, validate: { min: -90, max: 90 } },
+    longitud: {type: DataTypes.FLOAT, allowNull: false, validate: { min: -180, max: 180 } },
     tipo: DataTypes.INTEGER
   }, {
     timestamps: false,

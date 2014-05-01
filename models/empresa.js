@@ -4,7 +4,10 @@ module.exports = function(sequelize, DataTypes) {
     razonsocial: DataTypes.STRING,
     rfc: DataTypes.STRING
   }, {
-	timestamps: false
+	timestamps: false,
+    associate: function(models) {
+      Empresa.belongsTo(models.Estatus, {as: 'Estatus', foreignKey: 'EstatusId'})
+    }		
   })
 
   return Empresa
