@@ -89,14 +89,23 @@ app.post('/users/:user_id/tasks/create', task.create)
 app.get('/users/:user_id/tasks/:task_id/destroy', task.destroy)
 app.post('/users/login', user.login)
 
+// --------------- Estatus ----------------
+var estatus = require('./routes/estatus');
+app.get('/estatus', estatus.list());
+app.get('/estatus/:id', estatus.listOne());
+app.post('/estatus', estatus.add());
+app.put('/estatus/:id', estatus.update());
+app.delete('/estatus/:id', estatus.delete());
 
 // --------------- Empresa ----------------
 var empresa = require('./routes/empresa');
 app.get('/empresa', empresa.list());
+app.get('/empresa/existe', empresa.alreadyExist());
 app.get('/empresa/:id', empresa.listOne());
 app.post('/empresa', empresa.add());
 app.put('/empresa/:id', empresa.update());
 app.put('/empresa/authorize/:id', empresa.authorize());
+app.put('/empresa/reject/:id', empresa.reject());
 app.delete('/empresa/:id', empresa.delete());
 
 // --------------- Ruta ----------------
@@ -105,6 +114,8 @@ app.get('/ruta', ruta.list());
 app.get('/ruta/:id', ruta.listOne());
 app.post('/ruta', ruta.add());
 app.put('/ruta/:id', ruta.update());
+app.put('/ruta/authorize/:id', ruta.authorize());
+app.put('/ruta/reject/:id', ruta.reject());
 app.delete('/ruta/:id', ruta.delete());
 
 // --------------- RutaPunto ----------------
@@ -114,6 +125,14 @@ app.get('/rutapunto/:id', rutapunto.listOne());
 app.post('/rutapunto', rutapunto.add());
 app.put('/rutapunto/:id', rutapunto.update());
 app.delete('/rutapunto/:id', rutapunto.delete());
+
+// --------------- RutaCorrida ----------------
+var rutacorrida = require('./routes/rutacorrida');
+app.get('/rutacorrida', rutacorrida.list());
+app.get('/rutacorrida/:id', rutacorrida.listOne());
+app.post('/rutacorrida', rutacorrida.add());
+app.put('/rutacorrida/:id', rutacorrida.update());
+app.delete('/rutacorrida/:id', rutacorrida.delete());
 
 // -------------------------------------------
 /*

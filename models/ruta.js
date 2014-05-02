@@ -10,7 +10,9 @@ module.exports = function(sequelize, DataTypes) {
 	timestamps: false,
     associate: function(models) {
       Ruta.belongsTo(models.Empresa, {as: 'companyowner', foreignKey: 'CompanyownerID'}),
-      Ruta.hasMany(models.RutaPunto, {as: 'RutaPuntos', foreignKey: 'RutaId'})
+      Ruta.hasMany(models.RutaPunto, {as: 'RutaPuntos', foreignKey: 'RutaId'}),
+      Ruta.belongsTo(models.Estatus, {as: 'Estatus', foreignKey: 'EstatusId'}),
+      Ruta.hasMany(models.RutaCorrida, {as: 'Corridas', foreignKey: 'RutaId'})
     }	
   })
 
