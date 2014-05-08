@@ -53,7 +53,7 @@ addOne = function(req, res) {
 };
 
 addBulk = function(req, res) {
-    db.RutaPunto.bulkCreate(req.body).success(function(created) {
+    db.RutaPunto.bulkCreate(req.body.puntos).success(function(created) {
       res.send({ msg: created.length  + ' created'})
     });    
 };
@@ -63,14 +63,17 @@ addBulk = function(req, res) {
  */
 exports.update = function() {
   return function(req, res) {
-    var idToUpdate = req.params.id;
-    db.RutaPunto.find(idToUpdate).success(function(rutapunto) {
-      rutapunto.updateAttributes(req.body).success(function(rutapunto) {
-        res.send(
-          { rutapunto: rutapunto}
-        );      
+    if(!(req.body == null || req.body == undefined) ){
+      var idToUpdate = req.params.id;
+      db.RutaPunto.find(idToUpdate).success(function(rutapunto) {
+        rutapunto.updateAttributes(req.body).success(function(rutapunto) {
+          res.send(
+            { rutapunto: rutapunto}
+          );      
+        });
       });
-    });
+    }
+    
   }
 };
 

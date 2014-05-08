@@ -12,6 +12,11 @@
     "mongoskin": "*",
     "sequelize": "^1.7.2",
     "mysql": "^2.1.1",
-    "lodash": "~2.4.1"
+    "lodash": "~2.4.1",
+    "jwt-simple": "^0.2.0",
+    "passport": "^0.2.0",
+    "passport-local": "^1.0.0",
+    "passport-http-bearer": "^1.0.1",
+    "nodemailer": "^0.6.3"
   }
 }

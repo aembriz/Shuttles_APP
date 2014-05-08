@@ -74,15 +74,18 @@ exports.add = function() {
  */
 exports.update = function() {
   return function(req, res) {
-    var idToUpdate = req.params.id;
-    db.Empresa.find(idToUpdate).success(function(empresa) { 
-    delete req.body.EstatusId // elimina el atributo estatus porque este solo se maneja internamente
-		empresa.updateAttributes(req.body).success(function(empresa) {
-			res.send(
-				{ empresa: empresa}
-			);      
-		});
-    });
+    if(!(req.body == null || req.body == undefined) ){
+      var idToUpdate = req.params.id;
+      db.Empresa.find(idToUpdate).success(function(empresa) { 
+      delete req.body.EstatusId // elimina el atributo estatus porque este solo se maneja internamente
+  		empresa.updateAttributes(req.body).success(function(empresa) {
+  			res.send(
+  				{ empresa: empresa}
+  			);      
+  		});
+      });
+    }
+
   }
 };
 

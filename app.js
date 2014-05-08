@@ -27,6 +27,15 @@ db.once('open', function callback () {
 
 var app = express();
 
+
+// *************** Authentication ***********************
+app.set('jwtTokenSecret', 'turk3tshut1a'); //secret for encoding/decoding JWT tokens
+var passport = require('passport');
+require('./config/passport')(app, passport); // configure strategies for passport
+
+// ******************************************************
+
+
 // all environments
 app.set('port', process.env.PORT || 8082);
 app.set('views', path.join(__dirname, 'views'));
@@ -36,6 +45,7 @@ app.use(express.logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.methodOverride());
+app.use(passport.initialize()); // initialize passport for authentication
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -43,6 +53,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
+
+
 
 
 // global controller
@@ -87,7 +99,25 @@ app.get('/', routes.index)
 app.post('/users/create', user.create)
 app.post('/users/:user_id/tasks/create', task.create)
 app.get('/users/:user_id/tasks/:task_id/destroy', task.destroy)
-app.post('/users/login', user.login)
+//app.post('/users/login', user.login)
+
+// --------------- Usuario ----------------
+var usuario = require('./routes/usuario');
+usuario.set(app, passport);
+app.post('/login', usuario.login);
+
+app.get('/usuario', usuario.list());
+app.get('/usuario/:id', usuario.listOne());
+app.post('/usuario', usuario.add());
+app.put('/usuario/:id', usuario.update());
+app.put('/usuario/authorize/:id', usuario.authorize());
+app.put('/usuario/reject/:id', usuario.reject());
+app.delete('/usuario/:id', usuario.delete());
+
+app.post('/preregister/usuario', usuario.addPre());
+app.post('/preregister/usuariobulk', usuario.addPreBulk());
+app.get('/roles', usuario.listRoles());
+
 
 // --------------- Estatus ----------------
 var estatus = require('./routes/estatus');
@@ -100,6 +130,8 @@ app.delete('/estatus/:id', estatus.delete());
 // --------------- Empresa ----------------
 var empresa = require('./routes/empresa');
 app.get('/empresa', empresa.list());
+//app.get('/empresa', usuario.authenticate, usuario.needsRole('ROLE_ADMIN'), empresa.list());
+
 app.get('/empresa/existe', empresa.alreadyExist());
 app.get('/empresa/:id', empresa.listOne());
 app.post('/empresa', empresa.add());
@@ -133,6 +165,9 @@ app.get('/rutacorrida/:id', rutacorrida.listOne());
 app.post('/rutacorrida', rutacorrida.add());
 app.put('/rutacorrida/:id', rutacorrida.update());
 app.delete('/rutacorrida/:id', rutacorrida.delete());
+
+
+
 
 // -------------------------------------------
 /*

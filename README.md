@@ -34,10 +34,11 @@ Servicio "Rutas"
 
 Comandos RESTFul:   
 * GET /ruta = (Consulta todos)  
-  * Los filtros de rutas de acuerdo a su estatus de aprobación son:
+  * Los filtros de rutas son (los filtros se pueden combinar entre si):
     * /ruta?estatus=authorized
     * /ruta?estatus=new
     * /ruta?estatus=rejected
+    * /ruta?empresa=1      (para obtener las rutas ligadas a la empresa con id 1)
 * GET /ruta/{id} = (Consulta ruta con el id especificado, incluye empresa a la que pertence y puntos localizados de la ruta)  
 * POST /ruta = (Creación de registro nuevo)  
 * PUT /ruta/{id} = (Update al registro con el id especificado)  
@@ -143,3 +144,53 @@ Comandos RESTFul:
 
 
 ---------
+
+Servicio "Usuarios"
+-------------------------
+[URL...]/usuario
+
+Comandos RESTFul:   
+* GET /usuario = (Consulta todos, sin importar estatus de aprobación)  
+  * Los filtros de acuerdo a su estatus de aprobación son:
+    * /usuario?estatus=authorized
+    * /usuario?estatus=new
+    * /usuario?estatus=rejected
+* GET /usuario/{id} = (Consulta usuario con el id especificado)  
+* GET /roles = (Lista de roles que se pueden asignar a un usuario)  
+* POST /usuario = (Creación de registro nuevo)  
+* POST /preregister/usuariobulk = (creación masiva de invitaciones para usuarios de una empresa, al hacer el preregistro se envían notificaciones a los correos de los usuarios)
+* PUT /usuario/{id} = (Update al registro con el id especificado)  
+* PUT /usuario/authorize/{id} = (Marca la empresa designada por el id como autorizada)
+* PUT /usuario/reject/{id} = (Marca la empresa designada por el id como rechazada)
+* DELETE /usuario/{id} = (Elimina registro marcado con el id)  
+
+Ejemplo de post para creación de usuario:
+
+    {
+      "nombre": "Humberto andrade",
+      "email": "hab@mail.com",
+      "password": "xxx",
+      "EmpresaId": 1
+    }
+
+Ejemplo de post para pre-registro bulk de usuarios (invitaciones):
+
+    {
+     "empresa": 1,
+     "invitaciones": "oscar william, owl@mmail.com | humberto andrade, hab@mmail.com | adolfo embriz, fito@mmail.com"
+    }
+
+
+---------
+
+Servicio de "Seguridad"
+-------------------------
+Se basa en una primera autenticación con Usuario/Password y en caso de ser exitosa se genera un token de autenticación que deberá ser enviado en cada request de un API asegurado, en alguna de las siguientes formas:
+- como parámetro de url, ejemplo:  /empresa?access_token=[token]
+- en el header usando: "Authorization: Bearer [token]"
+
+[URL...]/login
+
+Comandos RESTFul:   
+* POST /login = (Recibe credenciales del usuario y en caso de éxito genera un token de autenticación)
+ 

@@ -46,14 +46,17 @@ exports.add = function() {
  */
 exports.update = function() {
   return function(req, res) {
-    var idToUpdate = req.params.id;
-    db.RutaCorrida.find(idToUpdate).success(function(rutacorrida) {
-      rutacorrida.updateAttributes(req.body).success(function(rutacorrida) {
-        res.send(
-          { rutacorrida: rutacorrida}
-        );      
+    if(!(req.body == null || req.body == undefined) ){
+      var idToUpdate = req.params.id;
+      db.RutaCorrida.find(idToUpdate).success(function(rutacorrida) {
+        rutacorrida.updateAttributes(req.body).success(function(rutacorrida) {
+          res.send(
+            { rutacorrida: rutacorrida}
+          );      
+        });
       });
-    });
+    }
+    
   }
 };
 

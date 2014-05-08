@@ -5,20 +5,29 @@ var constEstatus = {'new': 1, 'authorized': 3, 'rejected': 4}
 exports.list = function() { 
   return function(req, res){
     var sts = 0;
+    var params = {};
+
     if('estatus' in req.query){
       sts = constEstatus[req.query.estatus];
+      if(!params.where) params.where = {};
+      params.where.EstatusId = sts;      
     }
-
-    var params = {};
+    if('empresa' in req.query){
+      if(!params.where) params.where = {};
+      params.where.CompanyownerID = req.query.empresa;
+    }    
 
     params.include = [
         {model: db.Empresa, as: 'companyowner'},
         {model: db.Estatus, as: 'Estatus', attributes: ['id', 'stsNombre']}
       ];
 
+    /*
     if(sts > 0) {
       params.where = {EstatusId: sts};
     }
+    */
+
 
     db.Ruta.findAll(params).success(function(rutas) {
       res.send(rutas);
@@ -77,15 +86,17 @@ exports.add = function() {
  */
 exports.update = function() {
   return function(req, res) {
-    var idToUpdate = req.params.id;
-    db.Ruta.find(idToUpdate).success(function(ruta) {
-      delete req.body.EstatusId // elimina el atributo estatus porque este solo se maneja internamente
-      ruta.updateAttributes(req.body).success(function(ruta) {
-        res.send(
-          { ruta: ruta}
-        );      
+    if(!(req.body == null || req.body == undefined) ){
+      var idToUpdate = req.params.id;
+      db.Ruta.find(idToUpdate).success(function(ruta) {
+        delete req.body.EstatusId // elimina el atributo estatus porque este solo se maneja internamente
+        ruta.updateAttributes(req.body).success(function(ruta) {
+          res.send(
+            { ruta: ruta}
+          );      
+        });
       });
-    });
+    }
   }
 };
 
