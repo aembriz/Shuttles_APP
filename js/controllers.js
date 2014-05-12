@@ -310,7 +310,18 @@ muukControllers.controller('EmbarqRutaFormCtrl', ['$scope', 'Ruta', '$location',
     var ex = new Ruta(ruta);   
     console.log(ex);    
     //ex.$save();
-    ex.$create({}, function(){$location.path('embarqRutaList');});       
+    ex.$create({}, function(){
+      var lista = Ruta.query();
+      lista.$promise.then(function(result){
+      for (var i = 0; i < result.length; i++) {
+        if(result[i].nombre == ruta.nombre ){
+          console.log("ya cargo ---< " + result[i].id);
+          $location.path('mapaview/'+result[i].id);
+        }
+      }
+    });
+      //$location.path('embarqRutaList');
+    });       
   };
   
   $scope.cancel = function(){
@@ -610,14 +621,14 @@ muukControllers.controller('EmpresaRutaFormCtrl', ['$scope', 'Ruta', '$location'
     console.log(ex);    
     //ex.$save();
     ex.$create({}, function(){
-var lista = Ruta.query();
-lista.$promise.then(function(result){
-     for (var i = 0; i < result.length; i++) {
+      var lista = Ruta.query();
+      lista.$promise.then(function(result){
+      for (var i = 0; i < result.length; i++) {
         if(result[i].nombre == ruta.nombre ){
           console.log("ya cargo ---< " + result[i].id);
           $location.path('mapaview/'+result[i].id);
         }
-     }
+      }
     });
 //      $location.path('empresaRutaList');
     }); 
@@ -757,7 +768,11 @@ muukControllers.controller('MapaFormCtrl', ['$scope', '$routeParams', 'Mapa', '$
     console.log("Parceo de mapa -----> ");
     console.log(ex);    
     ex.$createBulk({}, function(){
-      $location.path('empresaRutaList');
+      if($scope.user.role == 'EMPRESA'){
+        $location.path('empresaRutaList');
+      }else if($scope.user.role == 'ADMIN'){
+        $location.path('embarqRutaList');
+      }
     });       
   }; 
   }]);
