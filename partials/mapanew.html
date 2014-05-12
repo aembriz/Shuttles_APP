@@ -1,0 +1,38 @@
+<link href="css/mapa.css" rel="stylesheet">
+<script src="js/mapa.js"></script>
+<div class="container-fluid">
+  <h1 class="page-header">MAPA</h1>
+  <div  onload ="mapa();" aling="center" class="btn-group" style="width:100%;" ng-show="pMapa == null">
+
+    <button class="btn btn-primary" type="button" id="Botpuntos" disabled>Carga Puntos</button>
+    <button class="btn btn-danger" type="button" id="limpia" disabled>Limpiar</button>
+    <button class="btn btn-success" type="button" id="carga" disabled>Guarda</button>
+
+  </div>
+  <div  class="box efecto3" id="map_canvas"></div>
+  <div id="puntos">
+  </div>
+
+  <div id="consulta" ng-show="pMapa != null">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Descripci&oacuten</th>
+          <th>Latitud</th>
+          <th>Longitud</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+    <tbody>
+      <tr ng-repeat="emp in pMapa | filter:query | orderBy:orderProp ">
+        <td>{{emp.id}}</td>
+        <td>{{emp.descripcion}}</td>
+        <td>{{emp.latitud}}</td>
+        <td>{{emp.longitud}}</td>
+        <td>{{emp.tipo}}</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>

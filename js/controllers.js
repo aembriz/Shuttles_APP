@@ -609,7 +609,18 @@ muukControllers.controller('EmpresaRutaFormCtrl', ['$scope', 'Ruta', '$location'
     var ex = new Ruta(ruta);   
     console.log(ex);    
     //ex.$save();
-    ex.$create({}, function(){$location.path('empresaRutaList');});       
+    ex.$create({}, function(){
+var lista = Ruta.query();
+lista.$promise.then(function(result){
+     for (var i = 0; i < result.length; i++) {
+        if(result[i].nombre == ruta.nombre ){
+          console.log("ya cargo ---< " + result[i].id);
+          $location.path('mapaview/'+result[i].id);
+        }
+     }
+    });
+//      $location.path('empresaRutaList');
+    }); 
   };
   
   $scope.cancel = function(){
@@ -711,8 +722,45 @@ muukControllers.controller('LoginForgotPassCtrl', ['$scope', '$location', 'Authe
   function($scope, $location, AuthenticationService) {  
 
   }]);
+// -----------------------------------------------------
+/* MAPA */
+var idm;
+muukControllers.controller('MapaFormCtrl', ['$scope', '$routeParams', 'Mapa', '$location',
+  function($scope, $routeParams, Mapa, $location) {
+  var consulta= Mapa.query({exId: $routeParams.id});
+  idm = $routeParams.id;
+  //initialize();
+  //carga();
+  consulta.$promise.then(function(result){
+    console.log("ya cargo ---< " + result.length);
+    if(result.length > 0){
+      $scope.pMapa = result;
+      $scope.orderProp = 'id';
+      console.log( $scope.pMapa);
+      consultapuntos();
+    }else{
+      creapuntos();
+    }
+    
+    console.log( $scope.pMapa);
+    //checkInfoMap();
+    
+  },function(error){
+    console.log(error);
+  })
 
-
+  
+  $scope.save = function(mapa) {
+    console.log("Objeto de cordenadas---> ");
+    console.log(mapa);
+    var ex = new Mapa(mapa);   
+    console.log("Parceo de mapa -----> ");
+    console.log(ex);    
+    ex.$createBulk({}, function(){
+      $location.path('empresaRutaList');
+    });       
+  }; 
+  }]);
 
 
 

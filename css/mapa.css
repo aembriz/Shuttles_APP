@@ -1,0 +1,72 @@
+ #map_canvas {
+  float: left;
+  height: 200px;
+  margin: 40px;
+  padding: 250px;
+  width: 62%;
+}
+
+#puntos{
+  float: right; 
+  margin: 40px;
+  width: 20%;
+}
+
+label, input { 
+  font-size: 80%; 
+}
+
+.box {
+  width:500px;
+  height:200px;
+  background:#FFF;
+  margin:40px auto;
+}
+
+/* efecto 3 */
+.efecto3
+{
+  position:relative;       
+  -webkit-box-shadow:0 0px 4px #777, 0 0 20px #CCC inset;
+  -moz-box-shadow:0 0px 4px #777, 0 0 20px #CCC inset;
+  box-shadow:0 0px 4px #777, 0 0 20px #CCC inset;
+}
+.efecto3:before, .efecto3:after
+{
+  /* no aplica contenidos */
+  content:"";
+  position:absolute; 
+  /* posiciona la sombra por detras de la caja */
+  z-index:-1;
+  /* aplica una sombra centrada con un gris oscuro y 20px de difuminado */
+  -webkit-box-shadow:0 0 20px #777;
+  -moz-box-shadow:0 0 20px #777;
+  box-shadow:0 0 20px #777;
+  /* centra verticalmente y separa la sombra de los bordes izquierdo y derecho */
+  top:0;
+  bottom:0;
+  left:10px;
+  right:10px;
+  /* redondea las esquinas de la sombra */
+  -moz-border-radius:100px / 10px;
+  border-radius:100px / 10px;
+} 
+
+.boton1 {
+  box-shadow: inset 3px 3px 3px rgba(255,255,255,.7), inset -2px -2px 3px rgba(0,0,0,.1), 2px 2px 10px rgba(0,0,0,.1);
+  width: 90px;  /* Ancho del botón */
+  border: 1px solid #9b9bff; /* Borde */
+  background: #7777ff;  /* Fondo */
+  text-align: center;  /* Alineación del texto */
+  text-shadow: -1px -1px rgba(0,0,0,.2);  /* Sombra del texto */
+  border-radius: 5px;  /* Bordes redondos */
+  color: white;  /* Color del texto */
+}
+.boton1:active /* Al presionarse el botón */ {
+  text-shadow: 1px 1px rgba(0,0,0,.3);  /* Sombra del texto */
+  background:#3d3dff;  /* Fondo más oscuro que el original */
+  box-shadow:inset 4px 4px 4px rgba(0,0,0,.3), inset -3px -3px 3px rgba(255,255,255,.2);
+}
+.boton1:disabled{
+  background:#dddddd;
+}

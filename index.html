@@ -13,6 +13,8 @@
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
     <link href="css/animations.css" rel="stylesheet">
 
+    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
 
   </head>
 
@@ -73,8 +75,9 @@
 
               <!-- menu principal -->
               <div class="navbar-collapse collapse">
-                <!-- EmbarQ -->              
-                <div ng-show="user.role == 'EMBARQ'">
+                <!-- EmbarQ -->            
+                <div ng-show="user.role == 'ADMIN'">
+                <!-- <div ng-show="user.role == 'USUARIO'"> -->
                     <ul class="nav navbar-nav navbar-left">
                       <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/embarqEmpresaList" ng-click="menuSelect(0)"><b>Empresas</b></a></li>
                       <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/embarqRutaList" ng-click="menuSelect(1)"><b>Rutas / Horarios</b></a></li>
@@ -83,6 +86,7 @@
                 </div>
                 <!-- Empresa -->
                 <div ng-show="user.role == 'EMPRESA'">
+                <!-- <div ng-show="user.role == 'USUARIO'"> -->
                     <ul class="nav navbar-nav navbar-left">
                       <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/empresaPerfil" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
                       <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/empresaUsuarioList" ng-click="menuSelect(1)"><b>Usuarios</b></a></li>
@@ -117,7 +121,7 @@
           <div class="container-fluid">
             <div class="row">
               <!-- EmbarQ --> 
-              <div ng-show="user.role == 'EMBARQ'">
+              <div ng-show="user.role == 'ADMIN'">
                 <!-- menu empresas -->
                 <div ng-show="menuActive[0] == 'active'">
                   <ul class="nav nav-pills nav-submenu">                    

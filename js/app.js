@@ -244,6 +244,12 @@ muukApp.config(['$routeProvider', '$httpProvider',
       otherwise({
         //redirectTo: '/main'
         redirectTo: '/redirect'
+      }).
+  // -----------------------------------------------------
+      // MAPA
+      when('/mapaview/:id', {
+        templateUrl: 'partials/mapanew.html',
+        controller: 'MapaFormCtrl'
       });
   }
 ]);
