@@ -1,4 +1,5 @@
 var db = require('../models')
+var mail = require('./mailing');
 
 var constEstatus = {'new': 1, 'authorized': 3, 'rejected': 4}
 
@@ -45,23 +46,64 @@ exports.listOne = function() {
 
 
 /*
- * POST create New
+ * POST preregistro de empresa (acepta datos del usuario administrador para darlo de alta)
+ * en caso de ser preregistro debe venir la bandera preregister=true
  */
-exports.add = function() {
+exports.add = function(preregister) {
   return function(req, res) {    
-    req.body.EstatusId = 1; // inicia con estatus nueva y despues se autoriza
-    var empresa = db.Empresa.build(req.body);
+    // alta del usuario administrador de la empresa
+    if(!(req.body.usuarionombre && req.body.usuarioemail && req.body.usuariopassword) ){
+      res.send({msg: 'No se han especificado los datos del usuario.'});
+      return;
+    }
 
+    // asignación de estatus de instancias
+    var sts = constEstatus.new;
+    if(!preregister) {      
+      sts = constEstatus.authorized;
+    }
+
+    // validate Usuario
+    var usrData = {nombre: req.body.usuarionombre, email: req.body.usuarioemail, password: req.body.usuariopassword, 
+      EstatusId: sts, EmpresaId: 0}
+    var usuario = db.Usuario.build(usrData);   
+    var valerr = usuario.validate();
+    if(valerr){
+      console.log(valerr);  
+      res.send({msg: 'Errores al validar al usuario administrador.', err: valerr});
+      return;
+    }
+    
+    // validate Empresa
+    req.body.EstatusId = sts;
+    var empresa = db.Empresa.build(req.body);  
+    var valerr = empresa.validate();
+    if(valerr){
+      console.log(valerr);  
+      res.send({msg: 'Errores al validar la empresa.', err: valerr});
+      return;
+    }    
+
+    // persisting data
     db.Empresa.find({ where: db.Sequelize.or( {nombre: empresa.nombre}, {rfc: empresa.rfc} ) }).success(function(empresaTmp) {
       if(empresaTmp != null){
         res.send( {msg: 'Ya existe una empresa registrada con el mismo Nombre o RFC.'} )
       }
       else {
-        empresa.save().complete(function (err, empresa) {
-          res.send(
-            (err === null) ? { msg: '' } : { msg: err }
-          );          
-        });        
+        empresa.save().success(function(emp){
+          emp = emp.dataValues;
+          usuario.setDataValue('EmpresaId', emp.id); // se asigna id de la empresa al usuario
+          usuario.save().success(function(usr){            
+            res.send({msg: ''});
+            mail.notifyCompanyAuthorization(usr, emp, true);  // notificación
+          }).error(function(err){
+            emp.destroy(); // se elimina la empresa que había sido regstrada
+            res.send({msg: 'Errores al registrar al usuario administrador.', err: err});
+          });
+        }).error(function(err){
+          res.send({msg: 'Errores al registrar la empresa.', err: err});
+        });
+
       }
     });
 
@@ -111,11 +153,17 @@ exports.delete = function() {
 exports.authorize = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
-    db.Empresa.find(idToUpdate).success(function(empresa) {      
+    db.Empresa.find(idToUpdate).success(function(empresa) {
     empresa.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
-      res.send(
-        { empresa: empresa}
-      );      
+      // autorizar al usuario administrador (el único regiostrado al momento)
+      db.Usuario.find({where: {EmpresaId: empresa.id} }).success(function(usr){
+        usr.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
+          res.send({ empresa: empresa} );
+        });
+        mail.notifyCompanyAuthorization(usr, empresa, true);  // notificación
+      }).error(function(err){
+        res.send({ empresa: empresa, msg: 'No se pudo autorizar al usuario administrador de la empresa.', err: err} );      
+      });
     });
     });
   }
@@ -128,11 +176,20 @@ exports.reject = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
     db.Empresa.find(idToUpdate).success(function(empresa) {      
-    empresa.updateAttributes({ EstatusId: constEstatus.rejected }).success(function(empresa) {
-      res.send(
-        { empresa: empresa}
-      );      
-    });
+      empresa.updateAttributes({ EstatusId: constEstatus.rejected }).success(function(empresa) {
+        // notifica el rechazo
+        db.Usuario.find({where: {EmpresaId: empresa.id} }).success(function(usr){
+          mail.notifyCompanyAuthorization(usr, empresa, false);  // notificación  
+        });        
+
+        // eliminar a los usuarios relacionados
+        db.Usuario.destroy({EmpresaId: empresa.id}).success(function(affectedRows){
+          res.send({ empresa: empresa});
+        }).error(function(err){
+          res.send({ empresa: empresa, msg: 'No se pudieron eliminar a los usuarios relacionados', err: err});
+        });
+
+      });
     });
   }
 };

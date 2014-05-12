@@ -15,7 +15,8 @@ module.exports = function(app, passport) {
 				if (!user.validPassword(password)) {
 					return done(null, false, { message: 'Incorrect password.' });
 				}
-				return done(null, user);
+				var usr = user.dataValues; // because of the format sent back by sequelizee
+				return done(null, usr);
 		    });
 		}
 	));

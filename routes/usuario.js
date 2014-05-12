@@ -23,13 +23,11 @@ exports.login = function(req, res, next){
 				return res.json(401, { error: 'User or password are incorrect' });
 			}
 
-			//user has authenticated correctly thus we create a JWT token
-			//var token = jwt.encode({ username: user.username}, app.get('jwtTokenSecret'));
-			var usr = user.dataValues; // because of the format sent back by sequelizee
+			//user has authenticated correctly thus we create a JWT token			
 			var expires = Date.now() + ( 1 * 3600 * 1000 );
-			var pretoken = 	{iss: usr.email, exp: expires};
+			var pretoken = 	{iss: user.email, exp: expires};
 			var token = jwt.encode(pretoken , app.get('jwtTokenSecret'));
-			res.json({ token : token });
+			res.json({ token : token, role: user.role, empresa: user.EmpresaId, nombre: user.nombre });
 		})(req, res, next);
 	
 };
@@ -84,20 +82,22 @@ exports.needsRole = function(role) {
 exports.list = function() { 
   return function(req, res){
     var sts = 0;
+    var params = {};
+
     if('estatus' in req.query){
       sts = constEstatus[req.query.estatus];
+      if(!params.where) params.where = {};
+      params.where.EstatusId = sts;      
     }
-
-    var params = {};
+    if('empresa' in req.query){
+      if(!params.where) params.where = {};
+      params.where.EmpresaId = req.query.empresa;
+    }        
 
     params.include = [
         {model: db.Empresa, as: 'Empresa'},
         {model: db.Estatus, as: 'Estatus', attributes: ['id', 'stsNombre']}
       ];
-
-    if(sts > 0) {
-      params.where = {EstatusId: sts};
-    }
 
     db.Usuario.findAll(params).success(function(usuario) {
       res.send(usuario);

@@ -134,7 +134,8 @@ app.get('/empresa', empresa.list());
 
 app.get('/empresa/existe', empresa.alreadyExist());
 app.get('/empresa/:id', empresa.listOne());
-app.post('/empresa', empresa.add());
+app.post('/empresa', empresa.add(false));
+app.post('/preregister/empresa', empresa.add(true));
 app.put('/empresa/:id', empresa.update());
 app.put('/empresa/authorize/:id', empresa.authorize());
 app.put('/empresa/reject/:id', empresa.reject());

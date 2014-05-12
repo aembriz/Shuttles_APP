@@ -20,11 +20,23 @@ Comandos RESTFul:
 * GET /empresa/existe?nombre=[nombre empresa]&rfc=[rfc] = (Verifica si ya existe una empresa registrada con el mismo nombre O rfc)
 * GET /empresa/{id} = (Consulta empresa con el id especificado)  
 * POST /empresa = (Creación de registro nuevo)  
+* POST /preregister/empresa = (Preregistro de una empresa **API no asegurado)
 * PUT /empresa/{id} = (Update al registro con el id especificado)  
 * PUT /empresa/authorize/{id} = (Marca la empresa designada por el id como autorizada)
 * PUT /empresa/reject/{id} = (Marca la empresa designada por el id como rechazada)
 * DELETE /empresa/{id} = (Elimina registro marcado con el id)  
 
+
+Ejemplo post de empresa para registro y pre-registro (incluye usuario administrador):
+
+    {
+        "nombre": "Mico",
+        "razonsocial": "Mico Corp",
+        "rfc": "JUC93994BA", 
+        "usuarionombre": "Arcon",
+        "usuarioemail": "arcon@mail.com",
+        "usuariopassword": "mammsdh"
+    }
 
 ---------
 
