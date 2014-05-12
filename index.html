@@ -18,9 +18,14 @@
 
   <body >  
   <div class="animate-switch-container" ng-switch on="user.authenticated">
-      <div class="animate-switch" ng-switch-when="false">
-                <!-- Custom styles for this view -->
-                <link href="css/login.css" rel="stylesheet">
+    <div class="animate-switch" ng-switch-when="false">
+      <!-- MAIN SECTION -->
+      <div class="animate-switch-container" ng-switch on="mainSection">
+
+        <!-- LOGIN -->
+        <div class="animate-switch" ng-switch-when="login">
+        
+          <link href="css/login.css" rel="stylesheet">
           <div class="container" ng-controller="LoginController">            
             <div align="center"> <img src="imgs/logo_preliminar.png" width="180px"></div>
             <form class="form-signin">              
@@ -28,183 +33,180 @@
                 <!-- <h2 class="form-signin-heading">Iniciar sesión</h2> -->  
                 <input id="usr" type="text" class="input-block-level" placeholder="Usuario" ng-model="usr">
                 <input id="pwd" type="password" class="input-block-level" placeholder="Contraseña" ng-model="pwd">
-                <!--
-                <label>
-                <span>
-                  <input type="checkbox" value="remember-me"> Recordar tus datos </input>
-                </span>
-                </label>
-                -->
-
                 <br/>
                 <a href="#/loginForgotPass">¿Olvidaste tu contraseña?</a> 
                 <br/>
-                <a href="#/loginRegisterUser">Registrar nuevo usuario</a> 
-                
+                <a href="#/loginRegisterUser" ng-click="gotoRegister()">Registrar nuevo usuario</a> 
                 <br/>
                 <button class="btn btn-large btn-primary" type="submit" ng-click="loginUser(usr, pwd, logincallbackSuccess, logincallbackError)">Entrar</button>       
               </div>
               <div id="rs-message" style="color:red"><strong>{{message}}</strong></div>
             </form>
-          </div> <!-- /container -->
-      </div>
+          </div>
+        </div> <!-- when LOGIN -->
 
-      <div class="animate-switch" ng-switch-when="true">
-          <div ng-controller="MainCtrl">
-                <!-- Custom styles for this view -->
-                <link href="css/dashboard.css" rel="stylesheet">
+        <!-- REGISTER -->
+        <div class="animate-switch" ng-switch-when="register">
+          <div class="view-container">
+            <div ng-view class="view-frame"></div>
+          </div>    
+        </div> <!-- when REGISTER -->
 
-<!--            <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background-color:#FAB555"> -->
-            <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background-color:#5BC0DE">
-              <div class="container-fluid">
-                <div class="navbar-header">
-                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                  </button>
-                  <a class="navbar-brand" href="#" style="padding:0px 5px;"><img src="imgs/logo_preliminar.png" height="70px"/></a>
-                </div>
+      </div>  
+    </div> <!-- when user.authenticated = FALSE -->
 
-                <!-- menu principal -->
-                <div class="navbar-collapse collapse">
-                  <!-- EmbarQ -->
-                  <div ng-show="user.type == 0">
-                      <ul class="nav navbar-nav navbar-left">
-                        <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/empresas" ng-click="menuSelect(0)"><b>Empresas</b></a></li>
-                        <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/embarqRutas" ng-click="menuSelect(1)"><b>Rutas / Horarios</b></a></li>
-                        <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/embarqEstadisticas" ng-click="menuSelect(2)"><b>Estadísticas</b></a></li>
-                      </ul>
-                  </div>
-                  <!-- Empresa -->
-                  <div ng-show="user.type == 1">
-                      <ul class="nav navbar-nav navbar-left">
-                        <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/empresaPerfil" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
-                        <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/empresaListaUsuarios" ng-click="menuSelect(1)"><b>Usuarios</b></a></li>
-                        <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/empresaMisRutas" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
-                        <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/empresaComentarios" ng-click="menuSelect(3)"><b>Comentarios</b></a></li>
-                        <li ng-class="menuActive[4]"><a style="color:#FFFFFF" href="#/empresaEstadisticas" ng-click="menuSelect(4)"><b>Estadísticas</b></a></li>
-                      </ul>
-                  </div>
-                  <!-- Usuario -->
-                  <div ng-show="user.type == 2">                    
-                      <ul class="nav navbar-nav navbar-left">
-                        <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/usuarioPerfil" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
-                        <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/usuarioResumen" ng-click="menuSelect(1)"><b>Consultas</b></a></li>
-                        <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/usuarioFavoritos" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
-                        <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/usuarioEstadisticas" ng-click="menuSelect(3)"><b>Estadísticas</b></a></li>
-                      </ul>
-                  </div>
-
-                  <ul class="nav navbar-nav navbar-right">
-                    <li><a style="color:#FFFFFF" href="#" ng-click="logout()">Salir [{{user.name}}]</a></li>
-                    <li><a style="color:#FFFFFF" href="#">Ayuda</a></li>
-                  </ul>
-                  <!--
-                  <form class="navbar-form navbar-right">
-                    <input type="text" class="form-control" placeholder="Search...">
-                  </form>
-                  -->
-                </div>
-              </div>
-            </div>
-
-            <!-- menu secundario -->
+    <div class="animate-switch" ng-switch-when="true">
+        <div ng-controller="MainCtrl">
+          <!-- Custom styles for this view -->
+          <link href="css/dashboard.css" rel="stylesheet">
+          <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background-color:#5BC0DE">
             <div class="container-fluid">
-              <div class="row">
-                <!-- EmbarQ -->
-                <div ng-show="user.type == 0">
-                  <!-- menu empresas -->
-                  <div ng-show="menuActive[0] == 'active'">
-                    <ul class="nav nav-pills nav-submenu">                    
-                      <li ng-class="submenuActive[0]"><a href="#/embarqEmpresas" ng-click="submenuSelect(0)">Lista de Empresas</a></li>
-                      <li ng-class="submenuActive[1]"><a href="#/embarqSolicitudEmpresaList" ng-click="submenuSelect(1)">Solicitudes de nuevas empresas</a></li>
-                    </ul>
-                  </div>  
-                  <!-- menu Rutas / Horarios -->
-                  <div ng-show="menuActive[1] == 'active'">
-                    <ul class="nav nav-pills nav-submenu">                    
-                      <li ng-class="submenuActive[0]"><a href="#/embarqRutas" ng-click="submenuSelect(0)">Lista de Rutas</a></li>
-                      <li ng-class="submenuActive[1]"><a href="#/embarqSolicitudRutaList" ng-click="submenuSelect(1)">Solicitudes de nuevas rutas</a></li>
-                    </ul>
-                  </div>  
-                  <!-- menu Estadísticas -->
-                  <div ng-show="menuActive[2] == 'active'">
+              <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#" style="padding:0px 5px;"><img src="imgs/logo_preliminar.png" height="70px"/></a>
+              </div>
 
-                  </div>  
+              <!-- menu principal -->
+              <div class="navbar-collapse collapse">
+                <!-- EmbarQ -->              
+                <div ng-show="user.role == 'EMBARQ'">
+                    <ul class="nav navbar-nav navbar-left">
+                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/embarqEmpresaList" ng-click="menuSelect(0)"><b>Empresas</b></a></li>
+                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/embarqRutaList" ng-click="menuSelect(1)"><b>Rutas / Horarios</b></a></li>
+                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/embarqEstadisticas" ng-click="menuSelect(2)"><b>Estadísticas</b></a></li>
+                    </ul>
                 </div>
-
-                <!-- Empresa -->  
-                <div ng-show="user.type == 1">
-                  <!-- menu perfil -->
-                  <div ng-show="menuActive[0] == 'active'">
-                    
-                  </div>  
-                  <!-- menu Usuarios -->
-                  <div ng-show="menuActive[1] == 'active'">
-                    <ul class="nav nav-pills nav-submenu">
-                      <li ng-class="submenuActive[0]"><a href="#/empresaListaUsuarios" ng-click="submenuSelect(0)">Lista de usuarios</a></li>
-                      <li ng-class="submenuActive[1]"><a href="#/empresaAltaUsuarios" ng-click="submenuSelect(1)">Nuevos usuarios</a></li>
+                <!-- Empresa -->
+                <div ng-show="user.role == 'EMPRESA'">
+                    <ul class="nav navbar-nav navbar-left">
+                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/empresaPerfil" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
+                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/empresaUsuarioList" ng-click="menuSelect(1)"><b>Usuarios</b></a></li>
+                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/empresaRutaList" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
+                      <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/empresaComentarios" ng-click="menuSelect(3)"><b>Comentarios</b></a></li>
+                      <li ng-class="menuActive[4]"><a style="color:#FFFFFF" href="#/empresaEstadisticas" ng-click="menuSelect(4)"><b>Estadísticas</b></a></li>
                     </ul>
-                  </div>  
-                  <!-- menu Rutas / Horarios -->
-                  <div ng-show="menuActive[2] == 'active'">
-                    <ul class="nav nav-pills nav-submenu">
-                      <li ng-class="submenuActive[0]"><a href="#/empresaMisRutas" ng-click="submenuSelect(0)">Mis Rutas</a></li>
-                      <li ng-class="submenuActive[1]"><a href="#/empresaRutasCompartidas" ng-click="submenuSelect(1)">Rutas compartidas</a></li>
-                      <li ng-class="submenuActive[2]"><a href="#/empresaAltaRuta" ng-click="submenuSelect(2)">Nueva Ruta</a></li>
-                    </ul>
-                  </div>  
-                  <!-- menu Comentarios -->
-                  <div ng-show="menuActive[3] == 'active'">
-
-                  </div>  
-                  <!-- menu Estadísticas -->
-                  <div ng-show="menuActive[4] == 'active'">
-
-                  </div>  
-
                 </div>
-
                 <!-- Usuario -->
-                <div ng-show="user.type == 2">
-                  <!-- menu perfil -->
-                  <div ng-show="menuActive[0] == 'active'">
-                    
-                  </div>  
-                  <!-- menu Consultas -->
-                  <div ng-show="menuActive[1] == 'active'">
-                    <ul class="nav nav-pills nav-submenu">
-                      <li ng-class="submenuActive[0]"><a href="#/usuarioResumen" ng-click="submenuSelect(0)">Resumen</a></li>
-                      <li ng-class="submenuActive[1]"><a href="#/usuarioViajes" ng-click="submenuSelect(1)">Viajes</a></li>
-                      <li ng-class="submenuActive[2]"><a href="#/usuarioRutas" ng-click="submenuSelect(2)">Rutas</a></li>
-                      <li ng-class="submenuActive[3]"><a href="#/usuarioReservaciones" ng-click="submenuSelect(3)">Reservaciones</a></li>
-                      <li ng-class="submenuActive[4]"><a href="#/usuarioCancelaciones" ng-click="submenuSelect(4)">Cancelaciones</a></li>
+                <div ng-show="user.role == 'USUARIO'">                    
+                    <ul class="nav navbar-nav navbar-left">
+                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/usuarioPerfil" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
+                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/usuarioResumen" ng-click="menuSelect(1)"><b>Consultas</b></a></li>
+                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/usuarioFavoritos" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
+                      <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/usuarioEstadisticas" ng-click="menuSelect(3)"><b>Estadísticas</b></a></li>
                     </ul>
-                  </div> 
-                  <!-- menu Rutas / Horarios -->
-                  <div ng-show="menuActive[2] == 'active'">
-                    <ul class="nav nav-pills nav-submenu">
-                      <li ng-class="submenuActive[0]"><a href="#/usuarioFavoritos" ng-click="submenuSelect(0)">Favoritos</a></li>
-                      <li ng-class="submenuActive[1]"><a href="#/usuarioBuscarRutas" ng-click="submenuSelect(1)">Buscar Rutas</a></li>
-                    </ul>
-                  </div> 
-                  <!-- menu Estadísticas -->
-                  <div ng-show="menuActive[3] == 'active'">
-
-                  </div> 
                 </div>
 
-                <div class="view-container">
-                  <div ng-view class="view-frame"></div>
-                </div>                        
+                <ul class="nav navbar-nav navbar-right">
+                  <li><a style="color:#FFFFFF" href="#" ng-click="logout()">Salir [{{user.name}}]({{user.empresa}})</a></li>
+                </ul>
+                <!--
+                <form class="navbar-form navbar-right">
+                  <input type="text" class="form-control" placeholder="Search...">
+                </form>
+                -->
               </div>
             </div>
-          </div>        
-      </div>
+          </div>
 
-      <div class="animate-switch" ng-switch-default>default</div>
+          <!-- menu secundario -->
+          <div class="container-fluid">
+            <div class="row">
+              <!-- EmbarQ --> 
+              <div ng-show="user.role == 'EMBARQ'">
+                <!-- menu empresas -->
+                <div ng-show="menuActive[0] == 'active'">
+                  <ul class="nav nav-pills nav-submenu">                    
+                    <li ng-class="submenuActive[0]"><a href="#/embarqEmpresaList" ng-click="submenuSelect(0)">Lista de Empresas</a></li>
+                    <li ng-class="submenuActive[1]"><a href="#/embarqSolicitudEmpresaList" ng-click="submenuSelect(1)">Solicitudes de nuevas empresas</a></li>
+                  </ul>
+                </div>  
+                <!-- menu Rutas / Horarios -->
+                <div ng-show="menuActive[1] == 'active'">
+                  <ul class="nav nav-pills nav-submenu">                    
+                    <li ng-class="submenuActive[0]"><a href="#/embarqRutaList" ng-click="submenuSelect(0)">Lista de Rutas</a></li>
+                    <li ng-class="submenuActive[1]"><a href="#/embarqSolicitudRutaList" ng-click="submenuSelect(1)">Solicitudes de nuevas rutas</a></li>
+                  </ul>
+                </div>  
+                <!-- menu Estadísticas -->
+                <div ng-show="menuActive[2] == 'active'">
+
+                </div>  
+              </div>
+
+              <!-- Empresa -->  
+              <div ng-show="user.role == 'EMPRESA'">
+                <!-- menu perfil -->
+                <div ng-show="menuActive[0] == 'active'">
+                  
+                </div>  
+                <!-- menu Usuarios -->
+                <div ng-show="menuActive[1] == 'active'">
+                  <ul class="nav nav-pills nav-submenu">
+                    <li ng-class="submenuActive[0]"><a href="#/empresaUsuarioList" ng-click="submenuSelect(0)">Lista de usuarios</a></li>
+                    <li ng-class="submenuActive[1]"><a href="#/empresaSolicitudUsuarioList" ng-click="submenuSelect(1)">Solicitud de nuevos usuarios</a></li>
+                  </ul>
+                </div>  
+                <!-- menu Rutas / Horarios -->
+                <div ng-show="menuActive[2] == 'active'">
+                  <ul class="nav nav-pills nav-submenu">
+                    <li ng-class="submenuActive[0]"><a href="#/empresaRutaList" ng-click="submenuSelect(0)">Mis Rutas</a></li>
+                    <li ng-class="submenuActive[1]"><a href="#/empresaRutasCompartidas" ng-click="submenuSelect(1)">Rutas compartidas</a></li>
+                  </ul>
+                </div>  
+                <!-- menu Comentarios -->
+                <div ng-show="menuActive[3] == 'active'">
+
+                </div>  
+                <!-- menu Estadísticas -->
+                <div ng-show="menuActive[4] == 'active'">
+
+                </div>  
+
+              </div>
+
+              <!-- Usuario -->
+              <div ng-show="user.role == 'USUARIO'">
+                <!-- menu perfil -->
+                <div ng-show="menuActive[0] == 'active'">
+                  
+                </div>  
+                <!-- menu Consultas -->
+                <div ng-show="menuActive[1] == 'active'">
+                  <ul class="nav nav-pills nav-submenu">
+                    <li ng-class="submenuActive[0]"><a href="#/usuarioResumen" ng-click="submenuSelect(0)">Resumen</a></li>
+                    <li ng-class="submenuActive[1]"><a href="#/usuarioViajes" ng-click="submenuSelect(1)">Viajes</a></li>
+                    <li ng-class="submenuActive[2]"><a href="#/usuarioRutas" ng-click="submenuSelect(2)">Rutas</a></li>
+                    <li ng-class="submenuActive[3]"><a href="#/usuarioReservaciones" ng-click="submenuSelect(3)">Reservaciones</a></li>
+                    <li ng-class="submenuActive[4]"><a href="#/usuarioCancelaciones" ng-click="submenuSelect(4)">Cancelaciones</a></li>
+                  </ul>
+                </div> 
+                <!-- menu Rutas / Horarios -->
+                <div ng-show="menuActive[2] == 'active'">
+                  <ul class="nav nav-pills nav-submenu">
+                    <li ng-class="submenuActive[0]"><a href="#/usuarioFavoritos" ng-click="submenuSelect(0)">Favoritos</a></li>
+                    <li ng-class="submenuActive[1]"><a href="#/usuarioBuscarRutas" ng-click="submenuSelect(1)">Buscar Rutas</a></li>
+                  </ul>
+                </div> 
+                <!-- menu Estadísticas -->
+                <div ng-show="menuActive[3] == 'active'">
+
+                </div> 
+              </div>
+
+              <div class="view-container">
+                <div ng-view class="view-frame"></div>
+              </div>                        
+            </div>
+          </div>
+        </div>        
+    </div>
+
+    <div class="animate-switch" ng-switch-default>default</div>
   </div>    
 
     <!-- Le javascript

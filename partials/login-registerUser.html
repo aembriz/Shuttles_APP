@@ -1,6 +1,33 @@
 <div class="container-fluid">
-	<script src="js/holder/holder.js"></script>
-			
-    <h1 class="page-header">Nuevo usuario</h1>
+  <div align="center"> 
+  	<a href="#/login" ng-click="gotoLogin()">
+  		<img src="imgs/logo_preliminar.png" href="" width="180px">
+  	</a>
+  </div>
+  <h1 align="center" class="page-header">Registro de nueva Empresa</h1>
 
-</div>
+  <form name="exForm" novalidate class="css-form">
+ 	<input type="hidden" id="id" name="id" ng-model="empresa.id"/>
+	<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
+		<label for="exName">Nombre</label><br/>
+		<input type="text" class="form-control" placeholder="Nombre corto de la empresa" id="exName" name="exName" ng-model="empresa.nombre" ng-minlength="3" ng-maxlength="60" required/>
+		<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Se requiere el nombre de la empresa.</p>
+		<p ng-show="exForm.exName.$error.minlength" class="help-block">Nombre demasiado corto.</p>
+		<p ng-show="exForm.exName.$error.maxlength" class="help-block">Nombre demasiado largo.</p>   			
+	</div>
+	<div class="form-group" ng-class="{ 'has-error' : exForm.razonsocial.$invalid && !exForm.razonsocial.$pristine }">
+		<label for="razonsocial">C&oacute;mo hacerlo</label><br/>
+		<input type="text" class="form-control" placeholder="Empresa S.A. de C.V." id="razonsocial" name="razonsocial" ng-model="empresa.razonsocial"/>
+	</div>
+	<div class="form-group" ng-class="{ 'has-error' : exForm.rfc.$invalid && !exForm.rfc.$pristine }">
+		<label for="rfc">RFC</label><br/>
+		<input type="text" class="form-control" placeholder="EMP120325TR6" id="rfc" name="rfc" ng-model="empresa.rfc"/>
+	</div>		
+	<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(empresa)">Guardar</button>
+	<button class="btn btn-link" href="#/login" ng-click="gotoLogin()">Cancelar</button>
+  </form>
+
+</div>  
+
+
+

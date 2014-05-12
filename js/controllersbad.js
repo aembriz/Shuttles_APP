@@ -423,16 +423,16 @@ muukControllers.controller('EmpresaPerfilCtrl', ['$scope', '$location', 'Authent
 // -----------------------------------------------------
 /* Empresa - Usuarios */
 muukControllers.controller('EmpresaUsuarioListCtrl', 
-  ['$scope', '$window', 'Usuario', 'UsuariosAutorizados',
-  function($scope, $window, Usuario, UsuariosAutorizados) {
-    $scope.usuarios = UsuariosAutorizados.query();
+  ['$scope', '$window', 'Usuario', 'UsuariosAutorizadosXEmpresa',
+  function($scope, $window, Usuario, UsuariosAutorizadosXEmpresa) {
+    $scope.usuarios = UsuariosAutorizadosXEmpresa.query();
     $scope.orderProp = 'nombre';
 
     $scope.deleteUsuario = function (exId) {   
       if( $window.confirm("Se eliminará el usuario con id [" + exId + "] ¿Continuar?")) {      
         Usuario.remove({ exId: exId },
           function(data){       
-            $scope.usuarios = UsuariosAutorizados.query();
+            $scope.usuarios = UsuariosAutorizadosXEmpresa.query();
           }     
         );        
       }
@@ -488,7 +488,6 @@ muukControllers.controller('EmpresaUsuarioEditCtrl', ['$scope', '$routeParams', 
       $location.path('empresaUsuarioList');
     };
   }]);
-/*
 muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$scope', '$window', 'Usuario', '$location',
   function($scope, $window, Usuario, $location) {
     $scope.master = {};
@@ -502,6 +501,8 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$scope', '$window', '
     };
 
     $scope.save = function(usuarios) {
+//      var userList = test.split(" ");
+/*
       var userList = usuarios.split(/\r\n|\r|\n/g);
       for (var index in userList) {
         var UserObj = userList[index].split(",");
@@ -511,13 +512,13 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$scope', '$window', '
           // get mail removing empty spaces
           var mail = UserObj[1].replace(/ +/g, "");; 
         }
-
+*/
         if( $window.confirm("Input: [" + userList[index] + "] ¿Continuar?")) {      
-  
+  /*
           var ex = new Usuario(usuario);   
           console.log(ex);    
           ex.$create({}, function(){$location.path('empresaUsuarioList');});       
-          
+          */
         }
       }
     };
@@ -527,27 +528,27 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$scope', '$window', '
     };
     
     $scope.reset();
-    
+    /*
     function validateEmail(email) { 
       var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     } 
-
-  }]);
 */
+  }]);
+
 // -----------------------------------------------------
 /* Empresa - Solicitud de usuarios */
 muukControllers.controller('EmpresaSolicitudUsuarioListCtrl', 
-  ['$scope', '$window', 'Usuario', 'UsuariosNuevos',
-  function($scope, $window, Usuario, UsuariosNuevos) {
-    $scope.usuarios = UsuariosNuevos.query();
+  ['$scope', '$window', 'Usuario', 'UsuariosNuevosXEmpresa',
+  function($scope, $window, Usuario, UsuariosNuevosXEmpresa) {
+    $scope.usuarios = UsuariosNuevosXEmpresa.query();
     $scope.orderProp = 'nombre';
 
     $scope.deleteUsuario = function (exId) {   
       if( $window.confirm("Se eliminará el usuario con id [" + exId + "] ¿Continuar?")) {      
         Usuario.remove({ exId: exId },
           function(data){       
-            $scope.usuarios = UsuariosNuevos.query();
+            $scope.usuarios = UsuariosNuevosXEmpresa.query();
           }     
         );        
       }

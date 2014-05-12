@@ -28,8 +28,9 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/redirect-main.html',
         controller: 'LoginController'
       }).
-
+      // *****************************************************
       // Login
+      // *****************************************************
       when('/loginForgotPass', {
         templateUrl: 'partials/login-forgotPass.html',
         controller: 'LoginForgotPassCtrl'
@@ -38,24 +39,28 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/login-registerUser.html',
         controller: 'LoginRegisterUserCtrl'
       }).  
-
-      // EmbarQ
-      when('/embarqEmpresas', {
+      // *****************************************************
+      /* EmbarQ */
+      // *****************************************************
+      // EmbarQ - Empresa
+      when('/embarqEmpresaList', {
         templateUrl: 'partials/embarq-empresaList.html',
-        controller: 'EmbarQEmpresaListCtrl'
+        controller: 'EmbarqEmpresaListCtrl'
       }).
-      when('/empresasNew', {
-        templateUrl: 'partials/empresa-form.html',
-        controller: 'EmpresaFormCtrl'
+      when('/embarqEmpresaNew', {
+        templateUrl: 'partials/embarq-empresaForm.html',
+        controller: 'EmbarqEmpresaFormCtrl'
       }).
-      when('/empresasEdit/:id', {
-        templateUrl: 'partials/empresa-form.html',
-        controller: 'EmpresaUpdateCtrl'
+      when('/embarqEmpresaEdit/:id', {
+        templateUrl: 'partials/embarq-empresaForm.html',
+        controller: 'EmbarqEmpresaUpdateCtrl'
       }).            
-      when('/empresasShow/:id', {
-        templateUrl: 'partials/empresa-show.html',
-        controller: 'EmpresaDetailCtrl'
+      when('/embarqEmpresaShow/:id', {
+        templateUrl: 'partials/embarq-empresaShow.html',
+        controller: 'EmbarqEmpresaDetailCtrl'
       }).   
+      // -----------------------------------------------------
+      // EmbarQ - Ruta
       when('/embarqRutaEdit/:id', {
         templateUrl: 'partials/embarq-rutaForm.html',
         controller: 'EmbarqRutaUpdateCtrl'
@@ -64,17 +69,25 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-rutaShow.html',
         controller: 'EmbarqRutaDetailCtrl'
       }).   
-      when('/embarqRutas', {
-        templateUrl: 'partials/embarq-rutaList.html',
-        controller: 'EmbarQRutalistCtrl'
+      when('/embarqRutaNew', {
+        templateUrl: 'partials/embarq-rutaForm.html',
+        controller: 'EmbarqRutaFormCtrl'
       }).      
+      when('/embarqRutaList', {
+        templateUrl: 'partials/embarq-rutaList.html',
+        controller: 'EmbarqRutalistCtrl'
+      }).      
+      // -----------------------------------------------------
+      // EmbarQ - Estadisticas
       when('/embarqEstadisticas', {
         templateUrl: 'partials/embarq-estadisticas.html',
-        controller: 'EmbarQEstadisticasCtrl'
+        controller: 'EmbarqEstadisticasCtrl'
       }).      
+      // -----------------------------------------------------
+      // EmbarQ - Solicitud de empresa
       when('/embarqSolicitudEmpresaList', {
         templateUrl: 'partials/embarq-solicitudEmpresaList.html',
-        controller: 'EmbarQSolicitudEmpresaListCtrl'
+        controller: 'EmbarqSolicitudEmpresaListCtrl'
       }).      
       when('/embarqSolicitudEmpresaShow/:id', {
         templateUrl: 'partials/embarq-solicitudEmpresaShow.html',
@@ -84,6 +97,12 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-solicitudEmpresaForm.html',
         controller: 'EmbarqSolicitudEmpresaUpdateCtrl'
       }).   
+      // -----------------------------------------------------
+      // EmbarQ - Solicitud de Ruta
+      when('/embarqSolicitudRutaList', {
+        templateUrl: 'partials/embarq-solicitudRutaList.html',
+        controller: 'EmbarqSolicitudRutaListCtrl'
+      }).      
       when('/embarqSolicitudRutaShow/:id', {
         templateUrl: 'partials/embarq-solicitudRutaShow.html',
         controller: 'EmbarqSolicitudRutaShowCtrl'
@@ -92,58 +111,100 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-solicitudRutaForm.html',
         controller: 'EmbarqSolicitudRutaUpdateCtrl'
       }).   
-      when('/embarqSolicitudRutaList', {
-        templateUrl: 'partials/embarq-solicitudRutaList.html',
-        controller: 'EmbarQSolicitudRutaListCtrl'
-      }).      
       when('/embarqAdminEmpresas', {
         templateUrl: 'partials/embarq-adminEmpresas.html',
-        controller: 'EmbarQAdminEmpresasCtrl'
+        controller: 'EmbarqAdminEmpresasCtrl'
       }).      
-
-      // Empresa
+      // *****************************************************
+      /* Empresa */
+      // *****************************************************
+      // Empresa - Perfil
       when('/empresaPerfil', {
         templateUrl: 'partials/empresa-perfil.html',
         controller: 'EmpresaPerfilCtrl'
       }).      
-      when('/empresaListaUsuarios', {
-        templateUrl: 'partials/empresa-listaUsuarios.html',
-        controller: 'EmpresaListaUsuariosCtrl'
+      // -----------------------------------------------------
+      // Empresa - Usuarios
+      when('/empresaUsuarioList', {
+        templateUrl: 'partials/empresa-usuarioList.html',
+        controller: 'EmpresaUsuarioListCtrl'
       }).      
-      when('/empresaMisRutas', {
-        templateUrl: 'partials/empresa-misRutas.html',
-        controller: 'EmpresaMisRutasCtrl'
+      when('/empresaUsuarioNew', {
+        templateUrl: 'partials/empresa-usuarioForm.html',
+        controller: 'EmpresaUsuarioFormCtrl'
       }).      
+      when('/empresaUsuarioShow/:id', {
+        templateUrl: 'partials/empresa-usuarioShow.html',
+        controller: 'EmpresaUsuarioShowCtrl'
+      }).      
+      when('/empresaUsuarioEdit/:id', {
+        templateUrl: 'partials/empresa-usuarioForm.html',
+        controller: 'EmpresaUsuarioEditCtrl'
+      }).   
+      when('/empresaMultiUsuarioNew', {
+        templateUrl: 'partials/empresa-multiUsuarioForm.html',
+        controller: 'EmpresaMultiUsuarioNewCtrl'
+      }).          
+      // -----------------------------------------------------
+      // Empresa - Solicitud de Usuarios
+      when('/empresaSolicitudUsuarioList', {
+        templateUrl: 'partials/empresa-solicitudUsuarioList.html',
+        controller: 'EmpresaSolicitudUsuarioListCtrl'
+      }).      
+      when('/empresaSolicitudUsuarioShow/:id', {
+        templateUrl: 'partials/empresa-solicitudUsuarioShow.html',
+        controller: 'EmpresaSolicitudUsuarioShowCtrl'
+      }).      
+      when('/empresaSolicitudUsuarioEdit/:id', {
+        templateUrl: 'partials/empresa-solicitudUsuarioForm.html',
+        controller: 'EmpresaSolicitudUsuarioEditCtrl'
+      }).      
+      // -----------------------------------------------------
+      // Empresa - Rutas
+      when('/empresaRutaList', {
+        templateUrl: 'partials/empresa-rutaList.html',
+        controller: 'EmpresaRutaListCtrl'
+      }).      
+      when('/empresaRutaNew', {
+        templateUrl: 'partials/empresa-rutaForm.html',
+        controller: 'EmpresaRutaFormCtrl'
+      }).      
+      when('/empresaRutaShow/:id', {
+        templateUrl: 'partials/empresa-rutaShow.html',
+        controller: 'EmpresaRutaShowCtrl'
+      }).      
+      when('/empresaRutaEdit/:id', {
+        templateUrl: 'partials/empresa-rutaForm.html',
+        controller: 'EmpresaRutaEditCtrl'
+      }).      
+      // -----------------------------------------------------
+      // Empresa - Comentarios
       when('/empresaComentarios', {
         templateUrl: 'partials/empresa-comentarios.html',
         controller: 'EmpresaComentariosCtrl'
       }).      
+      // -----------------------------------------------------
+      // Empresa - Estadisticas
       when('/empresaEstadisticas', {
         templateUrl: 'partials/empresa-estadisticas.html',
         controller: 'EmpresaEstadisticasCtrl'
       }).      
-      when('/empresaAltaUsuarios', {
-        templateUrl: 'partials/empresa-altaUsuarios.html',
-        controller: 'EmpresaAltaUsuariosCtrl'
-      }).      
+      // -----------------------------------------------------
+      // Empresa - Rutas compartidas
       when('/empresaRutasCompartidas', {
         templateUrl: 'partials/empresa-rutasCompartidas.html',
         controller: 'EmpresaRutasCompartidasCtrl'
       }).      
-      when('/empresaAltaRuta', {
-        templateUrl: 'partials/empresa-altaRuta.html',
-        controller: 'EmpresaAltaRutaCtrl'
-      }).      
-      when('/empresaEstadisticas', {
-        templateUrl: 'partials/empresa-estadisticas.html',
-        controller: 'EmpresaEstadisticasCtrl'
-      }).      
-
-      // Usuario
+      // *****************************************************
+      /* Usuario */
+      // *****************************************************
+      // Usuario - Perfil
       when('/usuarioPerfil', {
         templateUrl: 'partials/usuario-perfil.html',
         controller: 'UsuarioPerfilCtrl'
       }).      
+      // -----------------------------------------------------
+      // Usuario - Consulta
       when('/usuarioResumen', {
         templateUrl: 'partials/usuario-resumen.html',
         controller: 'UsuarioResumenCtrl'
@@ -168,15 +229,18 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/usuario-favoritos.html',
         controller: 'UsuarioFavoritosCtrl'
       }).      
+      // -----------------------------------------------------
+      // Usuario - Rutas
       when('/usuarioBuscarRutas', {
         templateUrl: 'partials/usuario-buscarRutas.html',
         controller: 'UsuarioBuscarRutasCtrl'
       }).      
+      // -----------------------------------------------------
+      // Usuario - Estadisticas
       when('/usuarioEstadisticas', {
         templateUrl: 'partials/usuario-estadisticas.html',
         controller: 'UsuarioEstadisticasCtrl'
       }). 
-
       otherwise({
         //redirectTo: '/main'
         redirectTo: '/redirect'
@@ -184,7 +248,8 @@ muukApp.config(['$routeProvider', '$httpProvider',
   }
 ]);
 
-muukApp.run(['$rootScope', '$location', 'AuthenticationService', 'RoleService', 'SessionService', function ($rootScope, $location, AuthenticationService, RoleService, SessionService) {
+muukApp.run(['$rootScope', '$location', 'AuthenticationService', 'RoleService', 'SessionService', 
+  function ($rootScope, $location, AuthenticationService, RoleService, SessionService) {
 
   'use strict';
 

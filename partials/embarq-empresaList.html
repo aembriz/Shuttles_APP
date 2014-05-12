@@ -5,14 +5,14 @@
       <div class="btn-group" style="width:100%;">
       	
       	<div class="input-group">			
-			<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/empresasNew"><span class="glyphicon glyphicon-plus"></span></a></span>
+			<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/embarqEmpresaNew"><span class="glyphicon glyphicon-plus"></span></a></span>
 			<span class="input-group-addon">Buscar: </span>
 		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de empresas"/>
 		</div>
 <!--
 		<input ng-model="query" type="text"/>					
 	-->	
-		<img ng-show="empresas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+		<img ng-show="empresas==null" alt="Loading Content" src="imgs/loading.gif" height="25px" />		
 
 		<!--<button ng-click="testAlert('success')">Esxx</button>-->
 		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
@@ -36,11 +36,11 @@
 			<tbody>			
 				<tr ng-repeat="emp in empresas | filter:query | orderBy:orderProp">
 					<td>{{emp.id}}</td>
-					<td><a href="#/empresasShow/{{emp.id}}">{{emp.nombre}}</a></td>
+					<td><a href="#/embarqEmpresaShow/{{emp.id}}">{{emp.nombre}}</a></td>
 					<td>{{emp.razonsocial}}</td>
 					<td>{{emp.rfc}}</td>
 					<td>
-						<a type="button" class="btn btn-info" href="#/empresasShow/{{emp.id}}"><span class="glyphicon glyphicon-pencil"></span></a>						
+						<a type="button" class="btn btn-info" href="#/embarqEmpresaShow/{{emp.id}}"><span class="glyphicon glyphicon-pencil"></span></a>						
 						<a type="button" class="btn btn-info" ng-click="adminEmpresa(emp.id)"><span class="glyphicon glyphicon-list"></span></a>
 						<a type="button" class="btn btn-danger" ng-click="deleteEmpresa(emp.id)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>

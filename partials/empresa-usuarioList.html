@@ -1,0 +1,49 @@
+<div class="container-fluid">
+    <h1 class="page-header">Lista de usuarios</h1>
+
+	<div class="btn-toolbar" role="toolbar">
+      <div class="btn-group" style="width:100%;">
+      	
+      	<div class="input-group">			
+			<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/empresaMultiUsuarioNew"><span class="glyphicon glyphicon-plus"></span></a></span>
+			<span class="input-group-addon">Buscar: </span>
+		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de usuarios"/>
+		</div>
+
+		<img ng-show="usuarios==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+			<p ng-bind-html="message"></p>
+		</div>		
+
+      </div>
+    </div>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th><a href="" ng-click="orderProp='id'">ID</a></th>
+					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
+					<th><a href="" ng-click="orderProp='email'">E-mail</a></th>
+					<th>-</th>
+				</tr>
+			</thead>
+			<tbody>		
+				<!--
+			    <p> {{usuarios}}</p>	
+			-->
+				<tr ng-repeat="usr in usuarios | filter:query | orderBy:orderProp">
+					<td>{{usr.id}}</td>
+					<td><a href="#/empresaUsuarioShow/{{usr.id}}">{{usr.nombre}}</a></td>
+					<td>{{usr.email}}</td>
+					<td>
+						<a type="button" class="btn btn-info" href="#/empresaUsuarioShow/{{usr.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
+						<a type="button" class="btn btn-danger" ng-click="deleteUsuario(usr.id)"><span class="glyphicon glyphicon-remove"></span></a>
+					</td>
+
+				</tr>
+			</tbody>
+		</table>		
+		
+	</div>	
+</div>

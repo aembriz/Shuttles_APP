@@ -1,0 +1,38 @@
+<div class="container-fluid">
+	<script src="js/holder/holder.js"></script>	
+	<h1 class="page-header">Usuario</h1>
+
+      <form name="exForm" novalidate class="css-form">
+     	<input type="hidden" id="id" name="id" ng-model="usuario.id"/>
+		<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
+			<label for="exName">Nombre</label><br/>
+			<input type="text" class="form-control" placeholder="Nombre corto del usuario" id="exName" name="exName" ng-model="usuario.nombre" ng-minlength="3" ng-maxlength="60" required/>
+			<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Se requiere el nombre del usuario.</p>
+			<p ng-show="exForm.exName.$error.minlength" class="help-block">Nombre demasiado corto.</p>
+			<p ng-show="exForm.exName.$error.maxlength" class="help-block">Nombre demasiado largo.</p>   			
+		</div>
+		<div class="form-group" ng-class="{ 'has-error' : exForm.email.$invalid && !exForm.email.$pristine }">
+			<label for="email">Correo electr&oacute;nico</label><br/>
+			<input type="email" class="form-control" placeholder="Correo electrónico" id="email" name="email" ng-model="usuario.email" required/>
+			<p ng-show="exForm.email.$invalid && !exForm.email.$pristine" class="help-block">Se requiere un correo v&aacute;lido.</p>		
+		</div>
+		<div class="form-group" ng-class="{ 'has-error' : exForm.password.$invalid && !exForm.password.$pristine }">
+			<label for="password">Clave</label><br/>
+			<input type="text" class="form-control" placeholder="Clave" id="password" name="password" ng-model="usuario.password" required/>
+		</div>		
+		<div class="form-group">
+			<input type="hidden" class="form-control" id="EmpresaId" name="EmpresaId" ng-model="usuario.EmpresaId" value="{{usuario.EmpresaId}}"/>
+		</div>			
+		<!--
+		<div class="form-group" ng-class="{ 'has-error' : !exForm.repassword.$valid }">
+			<label for="repassword">Confirmar clave</label><br/>
+			<input type="password" class="form-control" placeholder="Confirmar clave" id="repassword" name="repassword" ng-model="usuario.repassword" data-match="usuario.password"/>
+			<p ng-show="exForm.repassword.$error.match">Claves deben de coincidir!</p>
+		</div>		
+	-->
+		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuario)">Guardar</button>
+		<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+      </form>
+	  <br/>
+	  				  		
+</div>

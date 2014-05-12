@@ -1,20 +1,14 @@
 <div class="container-fluid">
-	<h1 class="page-header">Solicitudes de nuevas rutas</h1>
-
+    <h1 class="page-header">Mis Rutas</h1>
 	<div class="btn-toolbar" role="toolbar">
       <div class="btn-group" style="width:100%;">
       	
-      	<div class="input-group">	
-      	<!--		
-			<span class="input-group-addon" style="background-color:lightgreen"><a type="button" class="btn btn-success btn-xs" ng-click="autorizarTodo()"><span class="glyphicon glyphicon-ok"></span>Autorizar todo</a></span>
-			<span class="input-group-addon" style="background-color:red"><a type="button" class="btn btn-danger btn-xs" ng-click="rechazarTodo()"><span class="glyphicon glyphicon-remove"></span>Rechazar todo</a></span>
-		-->
+      	<div class="input-group">			
+			<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/empresaRutaNew"><span class="glyphicon glyphicon-plus"></span></a></span>
 			<span class="input-group-addon">Buscar: </span>
 		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de rutas"/>
 		</div>
-
 		<img ng-show="rutas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
-
 		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
 			<p ng-bind-html="message"></p>
 		</div>		
@@ -34,22 +28,22 @@
 				</tr>
 			</thead>
 			<tbody>			
+				<!--
+				<p> {{rutas}}</p>
+			-->
 				<tr ng-repeat="ruta in rutas | filter:query | orderBy:orderProp">
 					<td>{{ruta.id}}</td>
-					<td><a href="#/embarqSolicitudRutaShow/{{ruta.id}}">{{ruta.nombre}}</a></td>
+					<td><a href="#/empresaRutaShow/{{ruta.id}}">{{ruta.nombre}}</a></td>
 					<td>{{ruta.origentxt}}</td>
 					<td>{{ruta.destinotxt}}</td>
 					<td>
-						<a type="button" class="btn btn-info" href="#/embarqSolicitudRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
-						<a type="button" class="btn btn-success" ng-click="autorizarRuta(ruta.id)"><span class="glyphicon glyphicon-ok"></span></a>
-						<a type="button" class="btn btn-danger" ng-click="rechazarRuta(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>
+						<a type="button" class="btn btn-info" href="#/empresaRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>						
+						<a type="button" class="btn btn-danger" ng-click="deleteRuta(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
 
 				</tr>
 			</tbody>
 		</table>		
 		
-	</div>	
-    
-
-</div>	
+	</div>
+</div>

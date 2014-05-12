@@ -1,0 +1,104 @@
+              <div class="animate-switch-container" ng-switch on="user.role">
+                <!-- EmbarQ ___________________________________________________________________-->
+                <div class="animate-switch" ng-switch-when="ADMIN">
+                  <!-- menu empresas -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[0]">
+                    <div class="animate-switch" ng-switch-when="active">
+                      <ul class="nav nav-pills nav-submenu">                    
+                        <li ng-class="submenuActive[0]"><a href="#/embarqEmpresaList" ng-click="submenuSelect(0)">Lista de Empresas</a></li>
+                        <li ng-class="submenuActive[1]"><a href="#/embarqSolicitudEmpresaList" ng-click="submenuSelect(1)">Solicitudes de nuevas empresas</a></li>
+                      </ul>
+                    </div>  
+                  </div>
+                  <!-- menu Rutas / Horarios -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[1]">
+                    <div class="animate-switch" ng-switch-when="active">
+                      <ul class="nav nav-pills nav-submenu">                    
+                        <li ng-class="submenuActive[0]"><a href="#/embarqListaRutas" ng-click="submenuSelect(0)">Lista de Rutas</a></li>
+                        <li ng-class="submenuActive[1]"><a href="#/embarqSolicitudRutaList" ng-click="submenuSelect(1)">Solicitudes de nuevas rutas</a></li>
+                      </ul>
+                    </div>  
+                  </div>
+                  <!-- menu Estadísticas -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[2]">
+                    <div class="animate-switch" ng-switch-when="active">
+
+                    </div>  
+                  </div>
+                </div>  
+                <!-- Empresa ___________________________________________________________________-->  
+                <div class="animate-switch" ng-switch-when="EMPRESA">
+                  <!-- menu perfil -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[0]">
+                    <div class="animate-switch" ng-switch-when="active">
+
+                    </div>  
+                  </div>
+                  <!-- menu Usuarios -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[1]">
+                    <div class="animate-switch" ng-switch-when="active">
+                      <ul class="nav nav-pills nav-submenu">
+                        <li ng-class="submenuActive[0]"><a href="#/empresaUsuarioList" ng-click="submenuSelect(0)">Lista de usuarios</a></li>
+                        <li ng-class="submenuActive[1]"><a href="#/empresaSolicitudUsuarioList" ng-click="submenuSelect(1)">Solicitud de nuevos usuarios</a></li>
+                      </ul>
+                    </div>  
+                  </div> 
+                  <!-- menu Rutas / Horarios -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[2]">
+                    <div class="animate-switch" ng-switch-when="active">
+                      <ul class="nav nav-pills nav-submenu">
+                        <li ng-class="submenuActive[0]"><a href="#/empresaRutaList" ng-click="submenuSelect(0)">Mis Rutas</a></li>
+                        <li ng-class="submenuActive[1]"><a href="#/empresaRutasCompartidas" ng-click="submenuSelect(1)">Rutas compartidas</a></li>
+                      </ul>
+                    </div>  
+                  </div>
+                  <!-- menu Comentarios -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[3]">
+                    <div class="animate-switch" ng-switch-when="active">
+
+                    </div>  
+                  </div> 
+                  <!-- menu Estadísticas -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[4]">
+                    <div class="animate-switch" ng-switch-when="active">
+
+                    </div>  
+                  </div> 
+                </div>  
+                <!-- Usuario ___________________________________________________________________-->  
+                <div class="animate-switch" ng-switch-when="USUARIO">
+                  <!-- menu perfil -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[0]">
+                    <div class="animate-switch" ng-switch-when="active">
+
+                    </div>  
+                  </div>
+                  <!-- menu Consultas -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[1]">
+                    <div class="animate-switch" ng-switch-when="active">
+                      <ul class="nav nav-pills nav-submenu">
+                        <li ng-class="submenuActive[0]"><a href="#/usuarioResumen" ng-click="submenuSelect(0)">Resumen</a></li>
+                        <li ng-class="submenuActive[1]"><a href="#/usuarioViajes" ng-click="submenuSelect(1)">Viajes</a></li>
+                        <li ng-class="submenuActive[2]"><a href="#/usuarioRutas" ng-click="submenuSelect(2)">Rutas</a></li>
+                        <li ng-class="submenuActive[3]"><a href="#/usuarioReservaciones" ng-click="submenuSelect(3)">Reservaciones</a></li>
+                        <li ng-class="submenuActive[4]"><a href="#/usuarioCancelaciones" ng-click="submenuSelect(4)">Cancelaciones</a></li>
+                      </ul>
+                    </div>  
+                  </div> 
+                  <!-- menu Rutas / Horarios -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[2]">
+                    <div class="animate-switch" ng-switch-when="active">
+                      <ul class="nav nav-pills nav-submenu">
+                        <li ng-class="submenuActive[0]"><a href="#/usuarioFavoritos" ng-click="submenuSelect(0)">Favoritos</a></li>
+                        <li ng-class="submenuActive[1]"><a href="#/usuarioBuscarRutas" ng-click="submenuSelect(1)">Buscar Rutas</a></li>
+                      </ul>
+                    </div>  
+                  </div>
+                  <!-- menu Estadísticas -->
+                  <div class="animate-switch-container" ng-switch on="menuActive[3]">
+                    <div class="animate-switch" ng-switch-when="active">
+
+                    </div>  
+                  </div> 
+                </div>  
+              </div>
