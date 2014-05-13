@@ -12,8 +12,6 @@
     <link href="css/bootstrap.css" rel="stylesheet">
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
     <link href="css/animations.css" rel="stylesheet">
-
-
   </head>
 
   <body >  
@@ -26,12 +24,12 @@
         <div class="animate-switch" ng-switch-when="login">
         
           <link href="css/login.css" rel="stylesheet">
-          <div class="container" ng-controller="LoginController">            
+          <div class="container-fluid" ng-controller="LoginController">            
             <div align="center"> <img src="imgs/logo_preliminar.png" width="180px"></div>
             <form class="form-signin">              
               <div align="center">
                 <!-- <h2 class="form-signin-heading">Iniciar sesión</h2> -->  
-                <input id="usr" type="text" class="input-block-level" placeholder="Usuario" ng-model="usr">
+                <input id="usr" type="text" class="input-block-level" placeholder="Correo electr&oacute;nico" ng-model="usr">
                 <input id="pwd" type="password" class="input-block-level" placeholder="Contraseña" ng-model="pwd">
                 <br/>
                 <a href="#/loginForgotPass">¿Olvidaste tu contraseña?</a> 
@@ -46,11 +44,14 @@
         </div> <!-- when LOGIN -->
 
         <!-- REGISTER -->
+        <!--
         <div class="animate-switch" ng-switch-when="register">
+        -->
           <div class="view-container">
             <div ng-view class="view-frame"></div>
           </div>    
-        </div> <!-- when REGISTER -->
+         <!-- 
+        </div>  --> <!-- when REGISTER -->
 
       </div>  
     </div> <!-- when user.authenticated = FALSE -->
@@ -74,7 +75,7 @@
               <!-- menu principal -->
               <div class="navbar-collapse collapse">
                 <!-- EmbarQ -->              
-                <div ng-show="user.role == 'EMBARQ'">
+                <div ng-show="user.role == 'ADMIN'">
                     <ul class="nav navbar-nav navbar-left">
                       <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/embarqEmpresaList" ng-click="menuSelect(0)"><b>Empresas</b></a></li>
                       <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/embarqRutaList" ng-click="menuSelect(1)"><b>Rutas / Horarios</b></a></li>
@@ -117,7 +118,7 @@
           <div class="container-fluid">
             <div class="row">
               <!-- EmbarQ --> 
-              <div ng-show="user.role == 'EMBARQ'">
+              <div ng-show="user.role == 'ADMIN'">
                 <!-- menu empresas -->
                 <div ng-show="menuActive[0] == 'active'">
                   <ul class="nav nav-pills nav-submenu">                    

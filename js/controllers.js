@@ -14,18 +14,33 @@ muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'Sessio
       $scope.user = {authenticated: true, name: SessionService.currentUser.name};    
     } 
     else{
-      $scope.user = {authenticated: false, name: ''};    
-      $scope.mainSection = 'login'; 
+      $scope.user = {authenticated: false, name: ''};   
+      $scope.mainSection = 'login';
+/*
+      if ($routeParams.id == null) {
+        $scope.mainSection = 'login';
+      } else {
+        $scope.mainSection = 'register';
+      }
+ */      
     }   
 
     $scope.gotoRegister = function() {
       // this should replace login with register form
       $scope.mainSection = 'register';
+      $location.path('register');
+    };    
+
+    $scope.gotoRegistro = function(exId) {
+      // this should replace login with register form
+      $scope.mainSection = 'register';
+//      $location.path('registro/' + exId);
     };    
 
     $scope.gotoLogin = function() {
       // this should replace login with register form
       $scope.mainSection = 'login';
+      $location.path('login');
     };   
   }]);
 muukControllers.controller('LoginController', ['$scope', '$location', 'AuthenticationService', 'SessionService',
@@ -142,10 +157,66 @@ muukControllers.controller("DashboardCtrl", ['$scope', '$routeParams', '$window'
 // *****************************************************
 /* Login - Registro de nueva empresa */
 // *****************************************************
-muukControllers.controller('LoginRegisterUserCtrl', ['$scope', '$location',
-  function($scope, $location) {  
+muukControllers.controller('LoginRegisterUserCtrl', ['$scope', 'EmpresaPreregister', '$location',
+  function($scope, EmpresaPreregister, $location) {
+    $scope.master = {};
     $scope.mainSection = 'register'; 
-     
+
+    $scope.update = function(empresa) {
+      $scope.master = angular.copy(empresa);
+    };
+
+    $scope.reset = function() {
+      $scope.empresa = angular.copy($scope.master);
+    };
+
+    $scope.save = function(empresa) {
+      var ex = new EmpresaPreregister(empresa);   
+      console.log(ex);    
+
+
+      ex.$create({}, $scope.gotoLogin);       
+    };
+    
+    $scope.cancel = function(){
+      $scope.mainSection = 'login';
+      $location.path('login');
+    };
+    
+    $scope.reset();
+  
+  }]);
+muukControllers.controller('LoginConfirmarRegistroCtrl', 
+  ['$scope', '$routeParams', '$location', 'UsuarioRegistro', 'UsuarioAutorizar', 
+  function($scope, $routeParams, $location, UsuarioRegistro, UsuarioAutorizar) {
+    $scope.gotoRegistro($routeParams.id);
+    $scope.usuario = UsuarioRegistro.show({exId: $routeParams.id}, 
+      function(){
+        console.log($scope.usuario);
+        console.log($scope.usuario.EstatusId);
+        if ($scope.usuario.EstatusId != 1) {
+          $scope.gotoLogin();
+        }
+      }); 
+
+    $scope.cancel = function(){
+      $scope.gotoLogin();
+    };
+
+    $scope.save = function(usuario) {
+      var ex = new UsuarioRegistro(usuario);   
+      console.log(ex);    
+      ex.$update({ exId: usuario.id }, 
+        function() { 
+          UsuarioAutorizar.auth({ exId: usuario.id },
+            function(data){       
+              $scope.gotoLogin();
+            }     
+          ); 
+        }
+      );       
+    };
+    
   }]);
 
 // *****************************************************
@@ -172,8 +243,8 @@ muukControllers.controller('EmbarqEmpresaListCtrl',
     }; 
 
   }]); 
-muukControllers.controller('EmbarqEmpresaFormCtrl', ['$scope', 'Empresa', '$location',
-  function($scope, Empresa, $location) {
+muukControllers.controller('EmbarqEmpresaFormCtrl', ['$scope', 'EmpresaPreregister', '$location',
+  function($scope, EmpresaPreregister, $location) {
     $scope.master = {};
 
     $scope.update = function(empresa) {
@@ -185,7 +256,7 @@ muukControllers.controller('EmbarqEmpresaFormCtrl', ['$scope', 'Empresa', '$loca
     };
 
     $scope.save = function(empresa) {
-      var ex = new Empresa(empresa);   
+      var ex = new EmpresaPreregister(empresa);   
       console.log(ex);    
       //ex.$save();
       ex.$create({}, function(){$location.path('embarqEmpresaList');});       
@@ -214,7 +285,6 @@ muukControllers.controller('EmbarqEmpresaUpdateCtrl', ['$scope', '$routeParams',
     $scope.save = function(empresa) {
       var ex = new Empresa(empresa);   
       console.log(ex);    
-      //ex.$save();
       ex.$update({ exId: empresa.id }, function(){$location.path('embarqEmpresaList');});       
     };
     
@@ -595,28 +665,28 @@ muukControllers.controller('EmpresaRutaListCtrl', ['$scope', '$window', 'RutaXEm
   }]);
 muukControllers.controller('EmpresaRutaFormCtrl', ['$scope', 'Ruta', '$location',
   function($scope, Ruta, $location) {
-  $scope.master = {};
+    $scope.master = {};
 
-  $scope.update = function(ruta) {
-    $scope.master = angular.copy(ruta);
-  };
+    $scope.update = function(ruta) {
+      $scope.master = angular.copy(ruta);
+    };
 
-  $scope.reset = function() {
-    $scope.ruta = angular.copy($scope.master);
-  };
+    $scope.reset = function() {
+      $scope.ruta = angular.copy($scope.master);
+    };
 
-  $scope.save = function(ruta) {
-    var ex = new Ruta(ruta);   
-    console.log(ex);    
-    //ex.$save();
-    ex.$create({}, function(){$location.path('empresaRutaList');});       
-  };
-  
-  $scope.cancel = function(){
-    $location.path('empresaRutaList');
-  };
-  
-  $scope.reset();
+    $scope.save = function(ruta) {
+      var ex = new Ruta(ruta);   
+      console.log(ex);    
+      //ex.$save();
+      ex.$create({}, function(){$location.path('empresaRutaList');});       
+    };
+    
+    $scope.cancel = function(){
+      $location.path('empresaRutaList');
+    };
+    
+    $scope.reset();
   
   }]);
 muukControllers.controller('EmpresaRutaShowCtrl', ['$scope', '$routeParams', 'Ruta', '$location',

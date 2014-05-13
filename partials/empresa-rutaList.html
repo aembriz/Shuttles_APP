@@ -24,6 +24,7 @@
 					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
 					<th><a href="" ng-click="orderProp='origentxt'">Origen</a></th>
 					<th><a href="" ng-click="orderProp='destinotxt'">Destino</a></th>
+					<th>Estatus</th>
 					<th>-</th>
 				</tr>
 			</thead>
@@ -36,6 +37,7 @@
 					<td><a href="#/empresaRutaShow/{{ruta.id}}">{{ruta.nombre}}</a></td>
 					<td>{{ruta.origentxt}}</td>
 					<td>{{ruta.destinotxt}}</td>
+					<td>{{ruta.estatu.stsNombre}}</td>
 					<td>
 						<a type="button" class="btn btn-info" href="#/empresaRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>						
 						<a type="button" class="btn btn-danger" ng-click="deleteRuta(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>

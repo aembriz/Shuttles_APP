@@ -39,6 +39,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/login-registerUser.html',
         controller: 'LoginRegisterUserCtrl'
       }).  
+      when('/registro/:id', {
+        templateUrl: 'partials/login-registro.html',
+        controller: 'LoginConfirmarRegistroCtrl'
+      }).
       // *****************************************************
       /* EmbarQ */
       // *****************************************************
@@ -254,9 +258,8 @@ muukApp.run(['$rootScope', '$location', 'AuthenticationService', 'RoleService', 
   'use strict';
 
   // enumerate routes that don't need authentication
-  var routesThatDontRequireAuth = ['/login'];
+  var routesThatDontRequireAuth = ['/login', '/loginForgotPass', '/loginRegisterUser', '/registro'];
   var routesForAdmin = ['/admin'];
-
 
   // check if current location matches route  
   var routeClean = function (route) {

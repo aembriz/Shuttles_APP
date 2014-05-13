@@ -80,6 +80,17 @@ muukServices.factory('SessionService', ['$cookieStore',
   }]);
 
 // *****************************************************
+/* Login */
+// *****************************************************
+/* EmbarQ - Pre-registro empresa */
+muukServices.factory('EmpresaPreregister', ['$resource', 
+  function($resource){
+    return $resource(servicesUrl + '/preregister/empresa/', {}, {
+      create: { method:'POST', params:{}, isArray:false, headers: { }},
+    });
+  }]);
+
+// *****************************************************
 /* EmbarQ */
 // *****************************************************
 /* EmbarQ - Empresa */
@@ -197,28 +208,37 @@ muukServices.factory('UsuariosNuevos', ['$resource', 'SessionService',
       query: { method:'GET', params:{}, isArray:true, headers: { 'Access': 'Bearer ' + SessionService.currentUser.authtoken }},
     });
   }]);
+
 muukServices.factory('UsuarioAutorizar', ['$resource', 'SessionService', 
   function($resource, SessionService){
     return $resource(servicesUrl + '/usuario/authorize/:exId', {}, {
-      auth: { method:'PUT', params:{exId: '@exId'}, headers: { 'Access': 'Bearer ' + SessionService.currentUser.authtoken }},
+      auth: { method:'PUT', params:{exId: '@exId'}, headers: { }},
     });
   }]);
 muukServices.factory('UsuarioRechazar', ['$resource', 'SessionService', 
   function($resource, SessionService){
     return $resource(servicesUrl + '/usuario/reject/:exId', {}, {
-      reject: { method:'PUT', params:{exId: '@exId'}, headers: { 'Access': 'Bearer ' + SessionService.currentUser.authtoken }},
+      reject: { method:'PUT', params:{exId: '@exId'}, headers: { }},
     });
   }]);
-
+muukServices.factory('UsuarioRegistro', ['$resource', 'SessionService', 
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/usuario/:exId', {}, {
+      query: { method:'GET', params:{}, isArray:true, headers: { }},
+      create: { method:'POST', params:{}, isArray:false, headers: { }},
+      remove: { method: 'DELETE', params: {exId: '@exId'}, headers: { }},
+      update: { method: 'PUT', params: {exId: '@exId'}, headers: { }},
+      show: { method: 'GET' }
+    });
+  }]);
 // *****************************************************
 /* Empresa */
 // *****************************************************
 /* Empresa - Ruta */
 muukServices.factory('RutaXEmpresa', ['$resource', 'SessionService', 
   function($resource, SessionService){
-    //+ SessionService.currentUser.empresa.toString()
     return $resource(servicesUrl + '/ruta?empresa=' + SessionService.currentUser.empresa.toString(), {}, {
-      query: { method:'GET', params:{}, isArray:true, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }},
+      query: { method:'GET', params:{}, isArray:true, headers: { 'Access': 'Bearer ' + SessionService.currentUser.authtoken }},
     });
   }]);
 
