@@ -19,7 +19,20 @@
 			<label for="destinotxt">Destino</label><br/>
 			<input type="text" class="form-control" placeholder="Destino de la ruta" id="destinotxt" name="destinotxt" ng-model="ruta.destinotxt"/>
 		</div>		
-		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Guardar</button>
+		<div class="form-group" ng-class="{ 'has-error' : exForm.descripcion.$invalid && !exForm.descripcion.$pristine }">
+			<label for="descripcion">Descripci&oacute;n</label><br/>
+			<input type="text" class="form-control" placeholder=">Descripci&oacute;n de la ruta" id="descripcion" name="descripcion" ng-model="ruta.descripcion"/>
+		</div>		
+		<div class="form-group" ng-class="{ 'has-error' : exForm.distanciaaprox.$invalid && !exForm.distanciaaprox.$pristine }">
+			<label for="distanciaaprox">Distancia aprox. (Km)</label><br/>
+			<input type="number" class="form-control" placeholder="Destino de la ruta" id="distanciaaprox" name="distanciaaprox" ng-model="ruta.distanciaaprox"/>
+		</div>		
+		<div class="form-group" ng-class="{ 'has-error' : exForm.tiempoaprox.$invalid && !exForm.tiempoaprox.$pristine }">
+			<label for="tiempoaprox">Tiempo aprox. (min)</label><br/>
+			<input type="number" class="form-control" placeholder="Destino de la ruta" id="tiempoaprox" name="tiempoaprox" ng-model="ruta.tiempoaprox"/>
+		</div>		
+
+		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Continuar</button>
 		<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
       </form>
 	  <br/>

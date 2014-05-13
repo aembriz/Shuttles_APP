@@ -417,8 +417,18 @@ muukControllers.controller('EmbarqRutaUpdateCtrl', ['$scope', '$routeParams', 'R
     $scope.save = function(ruta) {
       var ex = new Ruta(ruta);   
       console.log(ex);    
-      //ex.$save();
-      ex.$update({ exId: ruta.id }, function(){$location.path('embarqRutaList');});       
+      ex.$update({ exId: ruta.id }, function(){
+        var lista = Ruta.query();
+        lista.$promise.then(function(result){
+          for (var i = 0; i < result.length; i++) {
+            if(result[i].nombre == ruta.nombre ){
+              console.log("ya cargo ---< " + result[i].id);
+              $location.path('mapaview/'+result[i].id);
+            }
+          }
+        });
+        // $location.path('embarqRutaList');
+      });       
     };
     
     $scope.cancel = function(){
@@ -686,45 +696,29 @@ muukControllers.controller('EmpresaRutaFormCtrl', ['$scope', 'Ruta', '$location'
       $scope.ruta = angular.copy($scope.master);
     };
 
-<<<<<<< HEAD
     $scope.save = function(ruta) {
       var ex = new Ruta(ruta);   
       console.log(ex);    
       //ex.$save();
-      ex.$create({}, function(){$location.path('empresaRutaList');});       
+      ex.$create({}, function(){
+        var lista = Ruta.query();
+        lista.$promise.then(function(result){
+        for (var i = 0; i < result.length; i++) {
+          if(result[i].nombre == ruta.nombre ){
+            console.log("ya cargo ---< " + result[i].id);
+            $location.path('mapaview/'+result[i].id);
+          }
+        }
+      });
+  //      $location.path('empresaRutaList');
+      }); 
     };
-    
+  
     $scope.cancel = function(){
       $location.path('empresaRutaList');
     };
-    
-    $scope.reset();
-=======
-  $scope.save = function(ruta) {
-    var ex = new Ruta(ruta);   
-    console.log(ex);    
-    //ex.$save();
-    ex.$create({}, function(){
-      var lista = Ruta.query();
-      lista.$promise.then(function(result){
-      for (var i = 0; i < result.length; i++) {
-        if(result[i].nombre == ruta.nombre ){
-          console.log("ya cargo ---< " + result[i].id);
-          $location.path('mapaview/'+result[i].id);
-        }
-      }
-    });
-//      $location.path('empresaRutaList');
-    }); 
-  };
   
-  $scope.cancel = function(){
-    $location.path('empresaRutaList');
-  };
-  
-  $scope.reset();
->>>>>>> dd31d751ef5ca01d80cc20fab8aafa6337544dde
-  
+    $scope.reset(); 
   }]);
 muukControllers.controller('EmpresaRutaShowCtrl', ['$scope', '$routeParams', 'Ruta', '$location',
   function($scope, $routeParams, Ruta, $location) {    
