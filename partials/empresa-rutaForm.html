@@ -22,6 +22,7 @@
 			<input type="text" class="form-control" placeholder="Destino de la ruta" id="destinotxt" name="destinotxt" ng-model="ruta.destinotxt"/>
 			<p ng-show="exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine" class="help-block">Se requiere el destino de la ruta.</p>
 		</div>			
+<<<<<<< HEAD
 		<div class="form-group" ng-class="{ 'has-error' : exForm.descripcion.$invalid && !exForm.descripcion.$pristine }">
 			<label for="descripcion">Descripci&oacute;n</label><br/>
 			<input type="text" class="form-control" placeholder="Breve descripci&oacute;n de la ruta" id="descripcion" name="descripcion" ng-model="ruta.descripcion"/>
@@ -39,6 +40,9 @@
 		</div>			
 
 		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Guardar</button>
+=======
+		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Siguiente</button>
+>>>>>>> dd31d751ef5ca01d80cc20fab8aafa6337544dde
 		<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
       </form>
 	  <br/>

@@ -256,4 +256,14 @@ muukServices.factory('UsuariosNuevosXEmpresa', ['$resource', 'SessionService',
       query: { method:'GET', params:{}, isArray:true, headers: { 'Access': 'Bearer ' + SessionService.currentUser.authtoken }},
     });
   }]);
+// -----------------------------------------------------
+/* MAPA */
+muukServices.factory('Mapa',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/rutapunto/\:exId', {},{
+      query: {method: 'GET', params:{}, isArray:true, headers: { 'Access': SessionService.currentUser.authtoken }},
+      createBulk: {method: 'POST', params:{exId:'', type:'bulk'}, isArray:false, headers:{ 'Access': SessionService.currentUser.authtoken}},
+      show: { method: 'GET' }
+    });
+}]);
 
