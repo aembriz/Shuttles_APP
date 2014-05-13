@@ -7,22 +7,12 @@ var muukControllers = angular.module('muukControllers', []);
 
 muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'SessionService',
   function($scope, $location, $window, SessionService) { 
-
-    //$scope.user = {authenticated:false};
-    //$scope.user = {authenticated: (SessionService.currentUser != null), name: ''};    
     if(SessionService.currentUser != null){
       $scope.user = {authenticated: true, name: SessionService.currentUser.name};    
     } 
     else{
       $scope.user = {authenticated: false, name: ''};   
       $scope.mainSection = 'login';
-/*
-      if ($routeParams.id == null) {
-        $scope.mainSection = 'login';
-      } else {
-        $scope.mainSection = 'register';
-      }
- */      
     }   
 
     $scope.gotoRegister = function() {
@@ -34,7 +24,6 @@ muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'Sessio
     $scope.gotoRegistro = function(exId) {
       // this should replace login with register form
       $scope.mainSection = 'register';
-//      $location.path('registro/' + exId);
     };    
 
     $scope.gotoLogin = function() {
@@ -243,6 +232,32 @@ muukControllers.controller('EmbarqEmpresaListCtrl',
     }; 
 
   }]); 
+muukControllers.controller('EmbarqEmpresaPreregisterFormCtrl', ['$scope', 'EmpresaPreregister', '$location',
+  function($scope, EmpresaPreregister, $location) {
+    $scope.master = {};
+
+    $scope.update = function(empresa) {
+      $scope.master = angular.copy(empresa);
+    };
+
+    $scope.reset = function() {
+      $scope.empresa = angular.copy($scope.master);
+    };
+
+    $scope.save = function(empresa) {
+      var ex = new EmpresaPreregister(empresa);   
+      console.log(ex);    
+      //ex.$save();
+      ex.$create({}, function(){$location.path('embarqEmpresaList');});       
+    };
+    
+    $scope.cancel = function(){
+      $location.path('embarqEmpresaList');
+    };
+    
+    $scope.reset();
+  
+  }]);
 muukControllers.controller('EmbarqEmpresaFormCtrl', ['$scope', 'EmpresaPreregister', '$location',
   function($scope, EmpresaPreregister, $location) {
     $scope.master = {};
@@ -579,21 +594,68 @@ muukControllers.controller('EmpresaUsuarioEditCtrl', ['$scope', '$routeParams', 
       $location.path('empresaUsuarioList');
     };
   }]);
-/*
+
 muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$scope', '$window', 'Usuario', '$location',
   function($scope, $window, Usuario, $location) {
-    $scope.master = {};
 
-    $scope.update = function(usuario) {
-      $scope.master = angular.copy(usuario);
+    $scope.master = "";
+
+    $scope.update = function(usuarios) {
+      $scope.master = angular.copy(usuarios);
     };
 
     $scope.reset = function() {
-      $scope.usuario = angular.copy($scope.master);
+      $scope.usuarios = angular.copy($scope.master);
     };
 
     $scope.save = function(usuarios) {
-      var userList = usuarios.split(/\r\n|\r|\n/g);
+      var message = "";
+      var created = 0;
+      var userList = usuarios.split("\n");
+      for (var index in userList) {
+        var UserObj = userList[index].split(",");
+        if (UserObj.length >= 2) {
+          // get name
+          var name = UserObj[0]; 
+          // get mail removing empty spaces
+          var mail = UserObj[1].replace(" ", ""); 
+          // validate mail
+          if (validateEmail(mail) == false) {
+//          if (false) {
+            // add wrong call to the message response
+            message = name + ", " + mail + "\n";
+          } else {
+            // add user
+            var usuario = {nombre: name, email: mail};
+            var ex = new Usuario(usuario);   
+            console.log(ex);    
+            ex.$create({}, function(){ }); 
+            created = created + 1;
+          }
+    /*
+          if( $window.confirm("Input: [" + nombre + "](" + mail + ") ¿Continuar?")) {      
+            var ex = new Usuario(usuario);   
+            console.log(ex);    
+            ex.$create({}, function(){$location.path('empresaUsuarioList');});       
+          }
+          */
+        }
+      }  // end for
+      
+      if (message == "") {
+        $window.alert("Se invitaron a " + created.toString() + " usuarios." );
+        $location.path('empresaUsuarioList');
+      } else {
+        $scope.usuarios = message;
+        $window.alert("Se invitaron a " + created.toString() + " usuarios. Favor de verificar los datos de usuarios sobrantes." );
+        $location.path('empresaMultiUsuarioNew');
+      }
+
+
+/*
+//      var userList = usuarios.split(/\r\n|\r|\n/g);
+      var userList = usuarios.split("\n");
+      
       for (var index in userList) {
         var UserObj = userList[index].split(",");
         if userlist.length >= 2 {
@@ -603,14 +665,17 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$scope', '$window', '
           var mail = UserObj[1].replace(/ +/g, "");; 
         }
 
+        var userList = usuarios.split("\n");
         if( $window.confirm("Input: [" + userList[index] + "] ¿Continuar?")) {      
   
           var ex = new Usuario(usuario);   
           console.log(ex);    
           ex.$create({}, function(){$location.path('empresaUsuarioList');});       
-          
+        
         }
       }
+*/
+
     };
     
     $scope.cancel = function(){
@@ -625,7 +690,7 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$scope', '$window', '
     } 
 
   }]);
-*/
+
 // -----------------------------------------------------
 /* Empresa - Solicitud de usuarios */
 muukControllers.controller('EmpresaSolicitudUsuarioListCtrl', 

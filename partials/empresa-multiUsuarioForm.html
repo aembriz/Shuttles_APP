@@ -5,15 +5,13 @@
       <form name="exForm" novalidate class="css-form">
 		<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
 			<label for="exName">Lista de nuevos usuarios</label><br/>
-			<textarea name="exName" class="form-control" placeholder="Nombre, correo@ejemplo.com" ng-model="usuarios" required>
-			
-			</textarea>
+			<textarea name="exName" class="form-control" placeholder="Nombre, correo@ejemplo.com" ng-model="usuarios" required></textarea>
 
 			<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Se requiere el nombre del usuario.</p>
 			
 		</div>
 
-		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuarios)">Guardar</button>
+		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuarios)">Invitar usuarios</button>
 		<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
       </form>
 	  <br/>

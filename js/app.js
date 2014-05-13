@@ -51,6 +51,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-empresaList.html',
         controller: 'EmbarqEmpresaListCtrl'
       }).
+      when('/embarqEmpresaPreregisterNew', {
+        templateUrl: 'partials/embarq-empresaPreregisterForm.html',
+        controller: 'EmbarqEmpresaPreregisterFormCtrl'
+      }).
       when('/embarqEmpresaNew', {
         templateUrl: 'partials/embarq-empresaForm.html',
         controller: 'EmbarqEmpresaFormCtrl'
