@@ -83,114 +83,147 @@ muukApp.config(['$routeProvider', '$httpProvider',
       }).      
       when('/embarqRutaList', {
         templateUrl: 'partials/embarq-rutaList.html',
-        controller: 'EmbarqRutalistCtrl'
+        controller: 'EmbarqRutaListCtrl'
       }).      
+      // -----------------------------------------------------
+      // EmbarQ - Corrida de Ruta
+
+      when('/embarqCorridaShow/:id', {
+        templateUrl: 'partials/embarq-corridaShow.html',
+        controller: 'EmbarqCorridaDetailCtrl'
+      }).
+      when('/embarqCorridaList/:id', {
+        templateUrl: 'partials/embarq-corridaList.html',
+        controller: 'EmbarqCorridaListCtrl'
+      }).
       // -----------------------------------------------------
       // EmbarQ - Estadisticas
       when('/embarqEstadisticas', {
         templateUrl: 'partials/embarq-estadisticas.html',
         controller: 'EmbarqEstadisticasCtrl'
-      }).      
+      }).
       // -----------------------------------------------------
       // EmbarQ - Solicitud de empresa
       when('/embarqSolicitudEmpresaList', {
         templateUrl: 'partials/embarq-solicitudEmpresaList.html',
         controller: 'EmbarqSolicitudEmpresaListCtrl'
-      }).      
+      }).
       when('/embarqSolicitudEmpresaShow/:id', {
         templateUrl: 'partials/embarq-solicitudEmpresaShow.html',
         controller: 'EmbarqSolicitudEmpresaShowCtrl'
-      }).   
+      }).
       when('/embarqSolicitudEmpresaEdit/:id', {
         templateUrl: 'partials/embarq-solicitudEmpresaForm.html',
         controller: 'EmbarqSolicitudEmpresaUpdateCtrl'
-      }).   
+      }).
       // -----------------------------------------------------
       // EmbarQ - Solicitud de Ruta
       when('/embarqSolicitudRutaList', {
         templateUrl: 'partials/embarq-solicitudRutaList.html',
         controller: 'EmbarqSolicitudRutaListCtrl'
-      }).      
+      }).
       when('/embarqSolicitudRutaShow/:id', {
         templateUrl: 'partials/embarq-solicitudRutaShow.html',
         controller: 'EmbarqSolicitudRutaShowCtrl'
-      }).   
+      }).
       when('/embarqSolicitudRutaEdit/:id', {
         templateUrl: 'partials/embarq-solicitudRutaForm.html',
         controller: 'EmbarqSolicitudRutaUpdateCtrl'
-      }).   
+      }).
       when('/embarqAdminEmpresas', {
         templateUrl: 'partials/embarq-adminEmpresas.html',
         controller: 'EmbarqAdminEmpresasCtrl'
-      }).      
+      }).
       // *****************************************************
       /* Empresa */
       // *****************************************************
       // Empresa - Perfil
-      when('/empresaPerfil', {
-        templateUrl: 'partials/empresa-perfil.html',
-        controller: 'EmpresaPerfilCtrl'
-      }).      
+      when('/empresaPerfilShow', {
+        templateUrl: 'partials/empresa-perfilShow.html',
+        controller: 'EmpresaPerfilShowCtrl'
+      }).
+      when('/empresaPerfilEdit', {
+        templateUrl: 'partials/empresa-perfilForm.html',
+        controller: 'EmpresaPerfilEditCtrl'
+      }).
       // -----------------------------------------------------
       // Empresa - Usuarios
       when('/empresaUsuarioList', {
         templateUrl: 'partials/empresa-usuarioList.html',
         controller: 'EmpresaUsuarioListCtrl'
-      }).      
+      }).
       when('/empresaUsuarioNew', {
         templateUrl: 'partials/empresa-usuarioForm.html',
         controller: 'EmpresaUsuarioFormCtrl'
-      }).      
+      }).
       when('/empresaUsuarioShow/:id', {
         templateUrl: 'partials/empresa-usuarioShow.html',
         controller: 'EmpresaUsuarioShowCtrl'
-      }).      
+      }).
       when('/empresaUsuarioEdit/:id', {
         templateUrl: 'partials/empresa-usuarioForm.html',
         controller: 'EmpresaUsuarioEditCtrl'
-      }).   
+      }).
       when('/empresaMultiUsuarioNew', {
         templateUrl: 'partials/empresa-multiUsuarioForm.html',
         controller: 'EmpresaMultiUsuarioNewCtrl'
-      }).          
+      }).
       // -----------------------------------------------------
       // Empresa - Solicitud de Usuarios
       when('/empresaSolicitudUsuarioList', {
         templateUrl: 'partials/empresa-solicitudUsuarioList.html',
         controller: 'EmpresaSolicitudUsuarioListCtrl'
-      }).      
+      }).
       when('/empresaSolicitudUsuarioShow/:id', {
         templateUrl: 'partials/empresa-solicitudUsuarioShow.html',
         controller: 'EmpresaSolicitudUsuarioShowCtrl'
-      }).      
+      }).
       when('/empresaSolicitudUsuarioEdit/:id', {
         templateUrl: 'partials/empresa-solicitudUsuarioForm.html',
         controller: 'EmpresaSolicitudUsuarioEditCtrl'
-      }).      
+      }).
       // -----------------------------------------------------
       // Empresa - Rutas
       when('/empresaRutaList', {
         templateUrl: 'partials/empresa-rutaList.html',
         controller: 'EmpresaRutaListCtrl'
-      }).      
+      }).
       when('/empresaRutaNew', {
         templateUrl: 'partials/empresa-rutaForm.html',
         controller: 'EmpresaRutaFormCtrl'
-      }).      
+      }).
       when('/empresaRutaShow/:id', {
         templateUrl: 'partials/empresa-rutaShow.html',
         controller: 'EmpresaRutaShowCtrl'
-      }).      
+      }).
       when('/empresaRutaEdit/:id', {
         templateUrl: 'partials/empresa-rutaForm.html',
         controller: 'EmpresaRutaEditCtrl'
-      }).      
+      }).
+      // -----------------------------------------------------
+      // Empresa - Corrida de Ruta
+      when('/empresaCorridaEdit/:id', {
+        templateUrl: 'partials/empresa-corridaForm.html',
+        controller: 'EmpresaCorridaUpdateCtrl'
+      }).
+      when('/empresaCorridaShow/:id', {
+        templateUrl: 'partials/empresa-corridaShow.html',
+        controller: 'EmpresaCorridaDetailCtrl'
+      }).
+      when('/empresaCorridaNew', {
+        templateUrl: 'partials/empresa-corridaForm.html',
+        controller: 'EmpresaCorridaFormCtrl'
+      }).
+      when('/empresaCorridaList/:id', {
+        templateUrl: 'partials/empresa-corridaList.html',
+        controller: 'EmpresaCorridaListCtrl'
+      }).
       // -----------------------------------------------------
       // Empresa - Comentarios
       when('/empresaComentarios', {
         templateUrl: 'partials/empresa-comentarios.html',
         controller: 'EmpresaComentariosCtrl'
-      }).      
+      }).
       // -----------------------------------------------------
       // Empresa - Estadisticas
       when('/empresaEstadisticas', {

@@ -1,45 +1,44 @@
 <div class="container-fluid">
 	<script src="js/holder/holder.js"></script>	
-		<div align="center"> 
-			<a href="#/login" ng-click="gotoLogin()">
-				<img src="imgs/logo_preliminar.png" href="" width="180px">
-			</a>
-		</div>
-	<h1  align="center" class="page-header">Bienvenido</h1>
 
-      <form name="exForm" novalidate class="css-form">
-     	<input type="hidden" id="id" name="id" ng-model="usuario.id"/>
-     	<input type="hidden" id="EmpresaId" name="EmpresaId" ng-model="usuario.EmpresaId"/>
-     	<input type="hidden" id="email" name="email" ng-model="usuario.email"/>
-		<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
-			<label for="exName">Nombre</label><br/>
-			<input type="text" class="form-control" placeholder="Nombre corto del usuario" id="exName" name="exName" ng-model="usuario.nombre" ng-minlength="4" ng-maxlength="60" required/>
-			<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Se requiere el nombre del usuario.</p>
-			<p ng-show="exForm.exName.$error.minlength" class="help-block">Nombre demasiado corto.</p>
-			<p ng-show="exForm.exName.$error.maxlength" class="help-block">Nombre demasiado largo.</p>   			
-		</div>
-<!--
-		<div class="form-group" ng-class="{ 'has-error' : exForm.email.$invalid && !exForm.email.$pristine }">
-			<label for="email">Correo electr&oacute;nico</label><br/>
-			<input type="email" class="form-control" placeholder="Correo electrónico" id="email" name="email" ng-model="usuario.email" required/>
-			<p ng-show="exForm.email.$invalid && !exForm.email.$pristine" class="help-block">Se requiere un correo v&aacute;lido.</p>		
-		</div>
-	-->
-		<div class="form-group" ng-class="{ 'has-error' : exForm.password.$invalid && !exForm.password.$pristine }">
-			<label for="password">Clave</label><br/>
-			<input type="text" class="form-control" placeholder="Clave" id="password" name="password" ng-model="usuario.password" ng-minlength="3" required/>
-			<p ng-show="exForm.password.$error.minlength" class="help-block">La longitud m&iacute;nima de la clave es de 3.</p>
-		</div>					
-		<!--
-		<div class="form-group" ng-class="{ 'has-error' : !exForm.repassword.$valid }">
-			<label for="repassword">Confirmar clave</label><br/>
-			<input type="password" class="form-control" placeholder="Confirmar clave" id="repassword" name="repassword" ng-model="usuario.repassword" data-match="usuario.password"/>
-			<p ng-show="exForm.repassword.$error.match">Claves deben de coincidir!</p>
-		</div>		
-	-->
-		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuario)">Crear cuenta</button>
-		<button class="btn btn-link" ng-click="cancel()">Cancelar registro</button>
-      </form>
-	  <br/>
+	<div align="center"> 
+		<a href="#/login" ng-click="gotoLogin()">
+			<img src="imgs/logo_preliminar.png" href="" width="180px">
+		</a>
+	</div>
+
+	<link href="css/panels.css" rel="stylesheet">
+    <h1 align="center" class="page-header">Bienvenido</h1>
+	<form name="exForm" novalidate class="form-400">
+		<div class="panel panel-success">
+			<div class="panel-heading" align="center">
+				<b>Datos de usuario</b>
+			</div>
+
+			<div class="panel-body">
+		     	<input type="hidden" id="id" name="id" ng-model="usuario.id"/>
+		     	<input type="hidden" id="EmpresaId" name="EmpresaId" ng-model="usuario.EmpresaId"/>
+		     	<input type="hidden" id="email" name="email" ng-model="usuario.email"/>
+				<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
+					<label for="exName">Nombre</label><br/>
+					<input type="text" class="form-control" placeholder="Nombre corto del usuario" id="exName" name="exName" ng-model="usuario.nombre" ng-minlength="4" ng-maxlength="60" required/>
+					<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Se requiere el nombre del usuario.</p>
+					<p ng-show="exForm.exName.$error.minlength" class="help-block">Nombre demasiado corto.</p>
+					<p ng-show="exForm.exName.$error.maxlength" class="help-block">Nombre demasiado largo.</p>   			
+				</div>
+				<div class="form-group" ng-class="{ 'has-error' : exForm.password.$invalid && !exForm.password.$pristine }">
+					<label for="password">Clave</label><br/>
+					<input type="text" class="form-control" placeholder="Clave secreta del usuario" id="password" name="password" ng-model="usuario.password" ng-minlength="3" required/>
+					<p ng-show="exForm.password.$error.minlength" class="help-block">La longitud m&iacute;nima de la clave es de 3.</p>
+				</div>					
+			</div>
+
+			<div class="panel-heading" align="center">
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuario)">Crear cuenta</button>
+				<button class="btn btn-link" href="#/login" ng-click="cancel()">Cancelar registro</button>
+			</div>
+		</div>	
+	</form>
+	<br/>
 	  				  		
 </div>

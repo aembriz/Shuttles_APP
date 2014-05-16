@@ -35,7 +35,7 @@
 					<th>-</th>
 				</tr>
 			</thead>
-			<tbody>			
+			<tbody>
 				<tr ng-repeat="usr in usuarios | filter:query | orderBy:orderProp">
 					<td>{{usr.id}}</td>
 <!--					<td><a href="#/empresaSolicitudUsuarioShow/{{usr.id}}">{{usr.nombre}}</a></td> -->
@@ -43,14 +43,14 @@
 					<td>{{usr.email}}</td>
 					<td>
 <!--						<a type="button" class="btn btn-info" href="#/empresaSolicitudUsuarioShow/{{usr.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a> -->
-						<a type="button" class="btn btn-danger" ng-click="removerUsuario(usr.id)"><span class="glyphicon glyphicon-remove"></span></a>
+						<a type="button" class="btn btn-danger" ng-click="deleteUsuario(usr.id)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
 
 				</tr>
 			</tbody>
-		</table>		
-		
-	</div>	
-    
+		</table>
+
+	</div>
+
 
 </div>

@@ -4,7 +4,7 @@
 
       <form name="exForm" novalidate class="css-form">
      	<input type="hidden" id="id" name="id" ng-model="ruta.id"/>
-     	<input type="hidden" id="CompanyownerID" name="CompanyownerID" ng-model="ruta.CompanyownerID" value="{{usuario.empresa}}"/>
+     	<input type="hidden" id="CompanyownerID" name="CompanyownerID" ng-model="ruta.CompanyownerID"/>
 		<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
 			<label for="exName">Nombre</label><br/>
 			<input type="text" class="form-control" placeholder="Nombre corto de la ruta" id="exName" name="exName" ng-model="ruta.nombre" ng-minlength="3" ng-maxlength="60" required/>

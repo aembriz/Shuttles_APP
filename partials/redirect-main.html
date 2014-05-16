@@ -2,7 +2,7 @@
   <div ng-controller="EmbarqEmpresaListCtrl" ng-include="'partials/embarq-empresaList.html'"> </div>
 </div>  
 <div ng-show="user.role == 'EMPRESA'">
-  <div ng-controller="EmpresaPerfilCtrl" ng-include="'partials/empresa-perfil.html'"></div>
+  <div ng-controller="EmpresaPerfilShowCtrl" ng-include="'partials/empresa-perfilShow.html'"></div>
 </div>  
 <div ng-show="user.role == 'USUARIO'">
   <div ng-controller="UsuarioPerfilCtrl" ng-include="'partials/usuario-perfil.html'"></div>

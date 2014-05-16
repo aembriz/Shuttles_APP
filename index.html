@@ -36,7 +36,8 @@
                 <br/>
                 <a href="#/loginForgotPass">¿Olvidaste tu contraseña?</a> 
                 <br/>
-                <a href="#/loginRegisterUser" ng-click="gotoRegister()">Registrar nuevo usuario</a> 
+                <a href="#/loginRegisterUser" ng-click="gotoRegister()">Registrar nueva empresa</a> 
+                <br/>
                 <br/>
                 <button class="btn btn-large btn-primary" type="submit" ng-click="loginUser(usr, pwd, logincallbackSuccess, logincallbackError)">Entrar</button>       
               </div>
@@ -49,6 +50,7 @@
         <!--
         <div class="animate-switch" ng-switch-when="register">
         -->
+
           <div class="view-container">
             <div ng-view class="view-frame"></div>
           </div>    
@@ -88,7 +90,7 @@
                 <div ng-show="user.role == 'EMPRESA'">
                 <!-- <div ng-show="user.role == 'USUARIO'"> -->
                     <ul class="nav navbar-nav navbar-left">
-                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/empresaPerfil" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
+                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/empresaPerfilShow" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
                       <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/empresaUsuarioList" ng-click="menuSelect(1)"><b>Usuarios</b></a></li>
                       <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/empresaRutaList" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
                       <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/empresaComentarios" ng-click="menuSelect(3)"><b>Comentarios</b></a></li>
