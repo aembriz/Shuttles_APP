@@ -87,7 +87,6 @@ muukApp.config(['$routeProvider', '$httpProvider',
       }).      
       // -----------------------------------------------------
       // EmbarQ - Corrida de Ruta
-
       when('/embarqCorridaShow/:id', {
         templateUrl: 'partials/embarq-corridaShow.html',
         controller: 'EmbarqCorridaDetailCtrl'
@@ -95,6 +94,16 @@ muukApp.config(['$routeProvider', '$httpProvider',
       when('/embarqCorridaList/:id', {
         templateUrl: 'partials/embarq-corridaList.html',
         controller: 'EmbarqCorridaListCtrl'
+      }).
+      // -----------------------------------------------------
+      // EmbarQ - Solicitud Corrida de Ruta
+      when('/embarqSolicitudCorridaShow/:id', {
+        templateUrl: 'partials/embarq-solicitudCorridaShow.html',
+        controller: 'EmbarqSolicitudCorridaDetailCtrl'
+      }).
+      when('/embarqSolicitudCorridaList/:id', {
+        templateUrl: 'partials/embarq-solicitudCorridaList.html',
+        controller: 'EmbarqSolicitudCorridaListCtrl'
       }).
       // -----------------------------------------------------
       // EmbarQ - Estadisticas
@@ -288,6 +297,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
       }).
   // -----------------------------------------------------
       // MAPA
+      when('/solicitudMapaShow/:id', {
+        templateUrl: 'partials/embarq-solicitudMapaShow.html',
+        controller: 'EmbarqSolicitudMapaFormCtrl'
+      }). 
       when('/mapaview/:id', {
         templateUrl: 'partials/mapanew.html',
         controller: 'MapaFormCtrl'

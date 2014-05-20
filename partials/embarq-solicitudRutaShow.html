@@ -1,47 +1,70 @@
 <div class="container-fluid">
-	<h1 class="page-header">Solicitud de ruta</h1>
+	<br/>
+	<br/>
+	<h1 class="page-header" align="center">Solicitud de Ruta</h1>
+	<link href="css/panels.css" rel="stylesheet">
+    <form name="exForm" novalidate class="form-400">
+	   	<div class="panel panel-info">
+	   		<div class="panel-heading" align="center">
+	   			<!--
+				<a type="button" class="btn btn-info" href="#/mapaview/{{ruta.id}}">Ver mapa</a> 
+			-->
+				<button class="btn btn-link" ng-click="cancel()">Regresar a las solicitudes</button>
+	   		</div>
+	   			
+	   		<div class="panel-body">
+				<ul class="nav nav-tabs">
+				  <li class="active"><a href="#">General</a></li>
+				  <li><a href="#/solicitudMapaShow/{{ruta.id}}">Mapa</a></li>
+				  <li><a href="#/embarqSolicitudCorridaList/{{ruta.id}}">Corridas</a></li>
+				</ul>
 
-      <form name="exForm" novalidate class="css-form">
-		<div class="form-group">
-			<label for="exName">Nombre</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{ruta.nombre}}
-			</div></div>
+				<div class="form-group">
+					<label for="exName">Nombre</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{ruta.nombre}}
+					</div></div>
+				</div>
+				
+				<div class="form-group">
+					<label for="origentxt">Origen</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{ruta.origentxt}}
+					</div></div>			
+				</div>
+				<div class="form-group">
+					<label for="destinotxt">Destino</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{ruta.destinotxt}}
+					</div></div>			
+				</div>		
+				<div class="form-group">
+					<label for="descripcion">Descripci&oacute;n</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{ruta.descripcion}}
+					</div></div>			
+				</div>		
+				<div class="form-group">
+					<label for="distanciaaprox">Distancia aprox. (Km)</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{ruta.distanciaaprox}}
+					</div></div>			
+				</div>		
+				<div class="form-group">
+					<label for="tiempoaprox">Tiempo aprox. (min)</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{ruta.tiempoaprox}}
+					</div></div>			
+				</div>		
+			</div>
+			<div class="panel-heading" align="center">
+				<!--
+				<a type="button" class="btn btn-info" href="#/mapaview/{{ruta.id}}">Ver mapa</a> 
+			-->
+				<button class="btn btn-link" ng-click="cancel()">Regresar a las solicitudes</button>
+			</div>
 		</div>
-		
-		<div class="form-group">
-			<label for="origentxt">Origen</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{ruta.origentxt}}
-			</div></div>			
-		</div>
-		<div class="form-group">
-			<label for="destinotxt">Destino</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{ruta.destinotxt}}
-			</div></div>			
-		</div>		
-		<div class="form-group">
-			<label for="descripcion">Descripci&oacute;n</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{ruta.descripcion}}
-			</div></div>			
-		</div>		
-		<div class="form-group">
-			<label for="distanciaaprox">Distancia aprox. (Km)</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{ruta.distanciaaprox}}
-			</div></div>			
-		</div>		
-		<div class="form-group">
-			<label for="tiempoaprox">Tiempo aprox. (min)</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{ruta.tiempoaprox}}
-			</div></div>			
-		</div>		
-		
-		<a type="button" class="btn btn-info" href="#/mapaview/{{ruta.id}}">Ver mapa</a> 
-		<button class="btn btn-link" ng-click="cancel()">Regresar a las solicitudes</button>
-      </form>
-	  <br/>
+
+    </form>
+	<br/>
 </div>

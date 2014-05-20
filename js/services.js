@@ -179,7 +179,7 @@ muukServices.factory('RutaRechazar', ['$resource', 'SessionService',
 
 // -----------------------------------------------------
 /* EmbarQ - Corrida */
-muukServices.factory('Corrida', ['$resource', 'SessionService',
+muukServices.factory('Corrida', ['$resource', 'SessionService', '$routeParams',
   function($resource, SessionService){
     return $resource(servicesUrl + '/rutacorrida/:exId', {}, {
       query: { method:'GET', params:{}, isArray:true, headers: { 'Access': 'Bearer ' + SessionService.currentUser.authtoken }},
@@ -190,6 +190,12 @@ muukServices.factory('Corrida', ['$resource', 'SessionService',
     });
   }]);
 
+muukServices.factory('CorridaXRuta', ['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/rutacorrida?rutaid=:exId', {}, {
+      query: { method:'GET', params:{}, isArray:true, headers: { 'Access': 'Bearer ' + SessionService.currentUser.authtoken }},
+    });
+  }]);
 // -----------------------------------------------------
 /* EmbarQ - Usuario */
 muukServices.factory('Usuario', ['$resource', 'SessionService',

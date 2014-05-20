@@ -1,29 +1,42 @@
 <div class="container-fluid">
-	<h1 class="page-header">Empresa</h1>
+	<br/>
+	<br/>
+	<h1 class="page-header" align="center">Empresa</h1>
+	<link href="css/panels.css" rel="stylesheet">
+     <form name="exForm" novalidate class="form-400">
+     	<div class="panel panel-info">
+     		<div class="panel-heading" align="center">
+				<a type="button" class="btn btn-info" href="#/embarqEmpresaEdit/{{empresa.id}}">Editar</a>
+				<button class="btn btn-link" ng-click="cancel()">Regresar</button>
+     		</div>
 
-      <form name="exForm" novalidate class="css-form">
-		<div class="form-group">
-			<label for="exName">Nombre</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{empresa.nombre}}
-			</div></div>
-		</div>
-		
-		<div class="form-group">
-			<label for="razonsocial">Razón Social</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{empresa.razonsocial}}
-			</div></div>			
-		</div>
-		<div class="form-group">
-			<label for="rfc">RFC</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{empresa.rfc}}
-			</div></div>			
+     		<div class="panel-body">
+				<div class="form-group">
+					<label for="exName">Nombre</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{empresa.nombre}}
+					</div></div>
+				</div>
+				
+				<div class="form-group">
+					<label for="razonsocial">Razón Social</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{empresa.razonsocial}}
+					</div></div>			
+				</div>
+				<div class="form-group">
+					<label for="rfc">RFC</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{empresa.rfc}}
+					</div></div>			
+				</div>		
+			</div>
+
+			<div class="panel-heading" align="center">
+				<a type="button" class="btn btn-info" href="#/embarqEmpresaEdit/{{empresa.id}}">Editar</a>
+				<button class="btn btn-link" ng-click="cancel()">Regresar</button>
+			</div>			
 		</div>		
-		
-		<a type="button" class="btn btn-info" href="#/embarqEmpresaEdit/{{empresa.id}}">Editar</a>
-		<button class="btn btn-link" ng-click="cancel()">Regresar</button>
-      </form>
-	  <br/>
+    </form>
+	<br/>
 </div>

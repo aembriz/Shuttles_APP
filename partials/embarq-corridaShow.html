@@ -1,58 +1,83 @@
 <div class="container-fluid">
-	<h1 class="page-header">Corrida</h1>
+	<br/>
+	<br/>
+	<h1 class="page-header" align="center">Corrida</h1>
+	<link href="css/panels.css" rel="stylesheet">
+    <form name="exForm" novalidate class="form-1200">
+	   	<div class="panel panel-info">
 
-      <form name="exForm" novalidate class="css-form">
-		<div class="form-group">
-			<label for="horaSalida">Hora de salida</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{corrida.horaSalida}}
-			</div></div>
-		</div>
-		
-		<div class="form-group">
-			<label for="horaLlegada">Hora de llegada</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{corrida.horaLlegada}}
-			</div></div>			
-		</div>
-		<div class="form-group">
-			<label for="capacidadTotal">Capacidad total</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{corrida.capacidadTotal}}
-			</div></div>			
+	   		<div class="panel-heading" align="center">
+	   		<!--	
+				<a type="button" class="btn btn-info" href="#/embarqCorridaEdit/{{corrida.id}}">Editar</a>
+			-->
+				<button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Corridas</button>
+	   		</div>
+
+	   		<div class="panel-body" >
+
+				<ul class="nav nav-tabs">
+				  <li><a href="#/embarqRutaShow/{{ruta.id}}">General</a></li>
+				  <li><a href="#/mapaview/{{ruta.id}}">Mapa</a></li>
+				  <li class="active"><a href="#">Corridas</a></li>
+				</ul>
+
+				<div class="form-group">
+					<label for="horaSalida">Hora de salida</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{corrida.horaSalida}}
+					</div></div>
+				</div>
+				<div class="form-group">
+					<label for="horaLlegada">Hora de llegada</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{corrida.horaLlegada}}
+					</div></div>			
+				</div>
+				<div class="form-group">
+					<label for="capacidadTotal">Capacidad total</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{corrida.capacidadTotal}}
+					</div></div>			
+				</div>		
+				<div class="form-group">
+					<label for="capacidadReservada">Capacidad reservada</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{corrida.capacidadReservada}}
+					</div></div>			
+				</div>		
+				<div class="form-group">
+					<label for="capacidadOfertada">Capacidad ofertada</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{corrida.capacidadOfertada}}
+					</div></div>			
+				</div>				
+				<div class="form-group">
+					<label for="tarifa">Tarifa</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{corrida.tarifa}}
+					</div></div>			
+				</div>				
+				<div class="form-group">
+					<label for="idTransporte">Transporte</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{corrida.idTransporte}}
+					</div></div>			
+				</div>				
+				<div class="form-group">
+					<label for="idChofer">Chofer</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{corrida.idChofer}}
+					</div></div>			
+				</div>	
+			</div>
+
+			<div class="panel-heading" align="center">		
+			<!--		
+				<a type="button" class="btn btn-info" href="#/embarqCorridaEdit/{{corrida.id}}">Editar</a>
+			-->
+				<button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Corridas</button>
+			</div>
 		</div>		
-		<div class="form-group">
-			<label for="capacidadReservada">Capacidad reservada</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{corrida.capacidadReservada}}
-			</div></div>			
-		</div>		
-		<div class="form-group">
-			<label for="capacidadOfertada">Capacidad ofertada</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{corrida.capacidadOfertada}}
-			</div></div>			
-		</div>				
-		<div class="form-group">
-			<label for="tarifa">Tarifa</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{corrida.tarifa}}
-			</div></div>			
-		</div>				
-		<div class="form-group">
-			<label for="idTransporte">Transporte</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{corrida.idTransporte}}
-			</div></div>			
-		</div>				
-		<div class="form-group">
-			<label for="idChofer">Chofer</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{corrida.idChofer}}
-			</div></div>			
-		</div>				
-		<a type="button" class="btn btn-info" href="#/embarqCorridaEdit/{{corrida.id}}">Editar</a>
-		<button class="btn btn-link" ng-click="cancel()">Regresar</button>
-      </form>
-	  <br/>
+    </form>
+    <br/>
 </div>

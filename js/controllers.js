@@ -18,13 +18,11 @@ muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'Sessio
     $scope.gotoRegister = function() {
       // this should replace login with register form
       $scope.mainSection = 'register';
-//      $location.path('register');
     };    
 
     $scope.gotoRegistro = function(exId) {
       // this should replace login with register form
       $scope.mainSection = 'register';
-//      $location.path('registro');
     };    
 
     $scope.gotoLogin = function() {
@@ -459,31 +457,65 @@ muukControllers.controller('EmbarqRutaUpdateCtrl', ['$scope', '$routeParams', 'R
 
 // -----------------------------------------------------
 /* EmbarQ - Corrida */
-muukControllers.controller('EmbarqCorridaListCtrl', ['$scope', '$window', '$routeParams', 'Corrida',
-  function($scope, $window, $routeParams, Corrida) {
-    $scope.corridas = Corrida.query();
+muukControllers.controller('EmbarqCorridaListCtrl', ['$scope', '$window', '$routeParams', '$location', 'Corrida', 'CorridaXRuta',
+  function($scope, $window, $routeParams, $location, Corrida, CorridaXRuta) {
+    $scope.rutaid = $routeParams.id;
+    $scope.corridas = CorridaXRuta.query({exId: $routeParams.id});
     $scope.orderProp = 'nombre';
 
     $scope.deleteCorrida = function (exId) {
       if( $window.confirm("Se eliminará la corrida con id [" + exId + "], ¿Desea continuar?")) {
         Corrida.remove({ exId: exId },
           function(data){
-            $scope.corridas = Corrida.query();
+            $scope.corridas = CorridaXRuta.query({exId: $routeParams.id});
           }
         );
       }
     };
-
+    $scope.cancel = function(){
+      $location.path('embarqRutaList');
+    };
   }]);
 muukControllers.controller('EmbarqCorridaDetailCtrl', ['$scope', '$routeParams', 'Corrida', '$location',
   function($scope, $routeParams, Corrida, $location) {
+    $scope.rutaid = $routeParams.id;
     $scope.corrida = Corrida.show({exId: $routeParams.id});
 
     $scope.cancel = function(){
-      $location.path('embarqCorridaList/' + $scope.corrida.rutaId);
+      $location.path('embarqCorridaList/' + $scope.rutaid);
     };
   }]);
 
+// -----------------------------------------------------
+/* EmbarQ - Solicitud Corrida */
+muukControllers.controller('EmbarqSolicitudCorridaListCtrl', ['$scope', '$window', '$routeParams', '$location', 'Corrida', 'CorridaXRuta',
+  function($scope, $window, $routeParams, $location, Corrida, CorridaXRuta) {
+    $scope.rutaid = $routeParams.id;
+    $scope.corridas = CorridaXRuta.query({exId: $routeParams.id});
+    $scope.orderProp = 'nombre';
+
+    $scope.deleteCorrida = function (exId) {
+      if( $window.confirm("Se eliminará la corrida con id [" + exId + "], ¿Desea continuar?")) {
+        Corrida.remove({ exId: exId },
+          function(data){
+            $scope.corridas = CorridaXRuta.query({exId: $routeParams.id});
+          }
+        );
+      }
+    };
+    $scope.cancel = function(){
+      $location.path('embarqSolicitudRutaList');
+    };
+  }]);
+muukControllers.controller('EmbarqSolicitudCorridaDetailCtrl', ['$scope', '$routeParams', 'Corrida', '$location',
+  function($scope, $routeParams, Corrida, $location) {
+    $scope.rutaid = $routeParams.id;
+    $scope.corrida = Corrida.show({exId: $routeParams.id});
+
+    $scope.cancel = function(){
+      $location.path('embarqSolicitudCorridaList/' + $scope.rutaid);
+    };
+  }]);
 // -----------------------------------------------------
 /* EmbarQ - Solicitud de Ruta */
 muukControllers.controller('EmbarqSolicitudRutaShowCtrl', ['$scope', '$routeParams', 'Ruta', '$location',
@@ -997,45 +1029,92 @@ muukControllers.controller('UsuarioEstadisticasCtrl', ['$scope', '$location', 'A
 var idm;
 muukControllers.controller('MapaFormCtrl', ['$scope', '$routeParams', 'Mapa', '$location',
   function($scope, $routeParams, Mapa, $location) {
-  var consulta= Mapa.query({exId: $routeParams.id});
-  idm = $routeParams.id;
-  //initialize();
-  //carga();
-  consulta.$promise.then(function(result){
-    console.log("ya cargo ---< " + result.length);
-    if(result.length > 0){
-      $scope.pMapa = result;
-      $scope.orderProp = 'id';
-      console.log( $scope.pMapa);
-      consultapuntos();
-    }else{
-      creapuntos();
-    }
-    
-    console.log( $scope.pMapa);
-    //checkInfoMap();
-    
-  },function(error){
-    console.log(error);
-  })
-
-  
-  $scope.save = function(mapa) {
-    console.log("Objeto de cordenadas---> ");
-    console.log(mapa);
-    var ex = new Mapa(mapa);   
-    console.log("Parceo de mapa -----> ");
-    console.log(ex);    
-    ex.$createBulk({}, function(){
-      if($scope.user.role == 'EMPRESA'){
-        $location.path('empresaRutaList');
-      }else if($scope.user.role == 'ADMIN'){
-        $location.path('embarqRutaList');
+    var consulta= Mapa.query({exId: $routeParams.id});
+    idm = $routeParams.id;
+    $scope.rutaid = $routeParams.id;
+    //initialize();
+    //carga();
+    consulta.$promise.then(function(result){
+      console.log("ya cargo ---< " + result.length);
+      if(result.length > 0){
+        $scope.pMapa = result;
+        $scope.orderProp = 'id';
+        console.log( $scope.pMapa);
+        consultapuntos();
+      }else{
+        creapuntos();
       }
-    });
-  }; 
-  }]);
+      
+      console.log( $scope.pMapa);
+      //checkInfoMap();
+      
+    },function(error){
+      console.log(error);
+    })
 
+    $scope.save = function(mapa) {
+      console.log("Objeto de cordenadas---> ");
+      console.log(mapa);
+      var ex = new Mapa(mapa);   
+      console.log("Parceo de mapa -----> ");
+      console.log(ex);    
+      ex.$createBulk({}, function(){
+        if($scope.user.role == 'EMPRESA'){
+          $location.path('empresaRutaList');
+        }else if($scope.user.role == 'ADMIN'){
+          $location.path('embarqRutaList');
+        }
+      });
+    }; 
+
+    $scope.cancel = function(){
+      $location.path('embarqRutaList');
+    };  
+  }]);
+muukControllers.controller('EmbarqSolicitudMapaFormCtrl', ['$scope', '$routeParams', 'Mapa', '$location',
+  function($scope, $routeParams, Mapa, $location) {
+    var consulta= Mapa.query({exId: $routeParams.id});
+    idm = $routeParams.id;
+    $scope.rutaid = $routeParams.id;
+    //initialize();
+    //carga();
+    consulta.$promise.then(function(result){
+      console.log("ya cargo ---< " + result.length);
+      if(result.length > 0){
+        $scope.pMapa = result;
+        $scope.orderProp = 'id';
+        console.log( $scope.pMapa);
+        consultapuntos();
+      }else{
+        creapuntos();
+      }
+      
+      console.log( $scope.pMapa);
+      //checkInfoMap();
+      
+    },function(error){
+      console.log(error);
+    })
+
+    $scope.save = function(mapa) {
+      console.log("Objeto de cordenadas---> ");
+      console.log(mapa);
+      var ex = new Mapa(mapa);   
+      console.log("Parceo de mapa -----> ");
+      console.log(ex);    
+      ex.$createBulk({}, function(){
+        if($scope.user.role == 'EMPRESA'){
+          $location.path('empresaRutaList');
+        }else if($scope.user.role == 'ADMIN'){
+          $location.path('embarqSolicitudRutaList');
+        }
+      });
+    }; 
+
+    $scope.cancel = function(){
+      $location.path('embarqSolicitudRutaList');
+    };  
+  }]);
 
 
 
