@@ -1,52 +1,67 @@
 <div class="container-fluid">
+	<br/>
+	<br/>
 	<script src="js/holder/holder.js"></script>	
-	<h1 class="page-header">Corrida</h1>
+	<h1 class="page-header" align="center">Corrida</h1>
+	<link href="css/panels.css" rel="stylesheet">
 
-      <form name="exForm" novalidate class="css-form">
-     	<input type="hidden" id="id" name="id" ng-model="corrida.id"/>
-		<div class="form-group" ng-class="{ 'has-error' : exForm.horaSalida.$invalid && !exForm.horaSalida.$pristine }">
-			<label for="horaSalida">Hora de salida</label><br/>
-			<input type="text" class="form-control" placeholder="18:35" id="horaSalida" name="horaSalida" ng-model="corrida.horaSalida"/>
-			<p ng-show="exForm.horaSalida.$invalid && !exForm.horaSalida.$pristine" class="help-block">Se requiere la hora de salida.</p>
-		</div>
-		<div class="form-group" ng-class="{ 'has-error' : exForm.horaLlegada.$invalid && !exForm.horaLlegada.$pristine }">
-			<label for="horaLlegada">Hora de llegada</label><br/>
-			<input type="text" class="form-control" placeholder="21:15" id="horaLlegada" name="horaLlegada" ng-model="corrida.horaLlegada"/>
-			<p ng-show="exForm.horaLlegada.$invalid && !exForm.horaLlegada.$pristine" class="help-block">Se requiere la hora de llegada.</p>
-		</div>			
-		<div class="form-group" ng-class="{ 'has-error' : exForm.capacidadTotal.$invalid && !exForm.capacidadTotal.$pristine }">
-			<label for="capacidadTotal">Capacidad total</label><br/>
-			<input type="number" class="form-control" placeholder="30" id="capacidadTotal" name="capacidadTotal" ng-model="corrida.capacidadTotal" min="1"/>
-			<p ng-show="exForm.capacidadTotal.$invalid && !exForm.capacidadTotal.$pristine" class="help-block">Se requiere la capacidad total.</p>
-		</div>			
-		<div class="form-group" ng-class="{ 'has-error' : exForm.capacidadReservada.$invalid && !exForm.capacidadReservada.$pristine }">
-			<label for="capacidadReservada">Capacidad reservada</label><br/>
-			<input type="number" class="form-control" placeholder="25" id="capacidadReservada" name="capacidadReservada" ng-model="corrida.capacidadReservada" min="0"/>
-			<p ng-show="exForm.capacidadReservada.$invalid && !exForm.capacidadReservada.$pristine" class="help-block">Se requiere la capacidad reservada.</p>
-		</div>			
-		<div class="form-group" ng-class="{ 'has-error' : exForm.capacidadOfertada.$invalid && !exForm.capacidadOfertada.$pristine }">
-			<label for="capacidadOfertada">Capacidad ofertada</label><br/>
-			<input type="number" class="form-control" placeholder="23" id="capacidadOfertada" name="capacidadOfertada" ng-model="corrida.capacidadOfertada" min="0"/>
-			<p ng-show="exForm.capacidadOfertada.$invalid && !exForm.capacidadOfertada.$pristine" class="help-block">Se requiere la capacidad ofertada.</p>
-		</div>	
-		<div class="form-group" ng-class="{ 'has-error' : exForm.tarifa.$invalid && !exForm.tarifa.$pristine }">
-			<label for="tarifa">Tarifa</label><br/>
-			<input type="number" class="form-control" placeholder="23" id="tarifa" name="tarifa" ng-model="corrida.tarifa" min="0"/>
-			<p ng-show="exForm.tarifa.$invalid && !exForm.tarifa.$pristine" class="help-block">Se requiere la tarifa.</p>
-		</div>	
-		<div class="form-group" ng-class="{ 'has-error' : exForm.idTransporte.$invalid && !exForm.idTransporte.$pristine }">
-			<label for="idTransporte">Transporte</label><br/>
-			<input type="text" class="form-control" placeholder="AU00234" id="idTransporte" name="idTransporte" ng-model="corrida.idTransporte"/>
-		</div>			
-		<div class="form-group" ng-class="{ 'has-error' : exForm.idChofer.$invalid && !exForm.idChofer.$pristine }">
-			<label for="idChofer">Chofer</label><br/>
-			<input type="text" class="form-control" placeholder="Juan Perez" id="idChofer" name="idChofer" ng-model="corrida.idChofer"/>
-		</div>			
+    <form name="exForm" class="form-400">
+	   	<div class="panel panel-success">
 
-		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(corrida)">Siguiente</button>
-		<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
-      </form>
-      </form>
-	  <br/>
+	   		<div class="panel-heading" align="center">    
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(corrida)">Guardar</button>
+				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+	   		</div>
+
+	   		<div class="panel-body">
+		     	<input type="hidden" id="id" name="id" ng-model="corrida.id"/>
+				<div class="form-group" ng-class="{ 'has-error' : exForm.horaSalida.$invalid && !exForm.horaSalida.$pristine }">
+					<label for="horaSalida">Hora de salida</label><br/>
+					<input type="text" class="form-control" placeholder="18:35" id="horaSalida" name="horaSalida" ng-model="corrida.horaSalida"/>
+					<p ng-show="exForm.horaSalida.$invalid && !exForm.horaSalida.$pristine" class="help-block">Se requiere la hora de salida.</p>
+				</div>
+				<div class="form-group" ng-class="{ 'has-error' : exForm.horaLlegada.$invalid && !exForm.horaLlegada.$pristine }">
+					<label for="horaLlegada">Hora de llegada</label><br/>
+					<input type="text" class="form-control" placeholder="21:15" id="horaLlegada" name="horaLlegada" ng-model="corrida.horaLlegada"/>
+					<p ng-show="exForm.horaLlegada.$invalid && !exForm.horaLlegada.$pristine" class="help-block">Se requiere la hora de llegada.</p>
+				</div>			
+				<div class="form-group" ng-class="{ 'has-error' : exForm.capacidadTotal.$invalid && !exForm.capacidadTotal.$pristine }">
+					<label for="capacidadTotal">Capacidad total</label><br/>
+					<input type="number" class="form-control" placeholder="30" id="capacidadTotal" name="capacidadTotal" ng-model="corrida.capacidadTotal" min="1"/>
+					<p ng-show="exForm.capacidadTotal.$invalid && !exForm.capacidadTotal.$pristine" class="help-block">Se requiere la capacidad total.</p>
+				</div>			
+				<div class="form-group" ng-class="{ 'has-error' : exForm.capacidadReservada.$invalid && !exForm.capacidadReservada.$pristine }">
+					<label for="capacidadReservada">Capacidad reservada</label><br/>
+					<input type="number" class="form-control" placeholder="25" id="capacidadReservada" name="capacidadReservada" ng-model="corrida.capacidadReservada" min="0"/>
+					<p ng-show="exForm.capacidadReservada.$invalid && !exForm.capacidadReservada.$pristine" class="help-block">Se requiere la capacidad reservada.</p>
+				</div>			
+				<div class="form-group" ng-class="{ 'has-error' : exForm.capacidadOfertada.$invalid && !exForm.capacidadOfertada.$pristine }">
+					<label for="capacidadOfertada">Capacidad ofertada</label><br/>
+					<input type="number" class="form-control" placeholder="23" id="capacidadOfertada" name="capacidadOfertada" ng-model="corrida.capacidadOfertada" min="0"/>
+					<p ng-show="exForm.capacidadOfertada.$invalid && !exForm.capacidadOfertada.$pristine" class="help-block">Se requiere la capacidad ofertada.</p>
+				</div>	
+				<div class="form-group" ng-class="{ 'has-error' : exForm.tarifa.$invalid && !exForm.tarifa.$pristine }">
+					<label for="tarifa">Tarifa</label><br/>
+					<input type="number" class="form-control" placeholder="23" id="tarifa" name="tarifa" ng-model="corrida.tarifa" min="0"/>
+					<p ng-show="exForm.tarifa.$invalid && !exForm.tarifa.$pristine" class="help-block">Se requiere la tarifa.</p>
+				</div>	
+				<div class="form-group" ng-class="{ 'has-error' : exForm.idTransporte.$invalid && !exForm.idTransporte.$pristine }">
+					<label for="idTransporte">Transporte</label><br/>
+					<input type="text" class="form-control" placeholder="AU00234" id="idTransporte" name="idTransporte" ng-model="corrida.idTransporte"/>
+				</div>			
+				<div class="form-group" ng-class="{ 'has-error' : exForm.idChofer.$invalid && !exForm.idChofer.$pristine }">
+					<label for="idChofer">Chofer</label><br/>
+					<input type="text" class="form-control" placeholder="Juan Perez" id="idChofer" name="idChofer" ng-model="corrida.idChofer"/>
+				</div>			
+			</div>
+
+			<div class="panel-heading" align="center">  	
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(corrida)">Guardar</button>
+				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+			</div>
+		</div>		
+		      
+    </form>
+	<br/>
 	  				  		
 </div>

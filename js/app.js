@@ -198,7 +198,7 @@ muukApp.config(['$routeProvider', '$httpProvider',
         controller: 'EmpresaRutaListCtrl'
       }).
       when('/empresaRutaNew', {
-        templateUrl: 'partials/empresa-rutaForm.html',
+        templateUrl: 'partials/empresa-rutaFormNew.html',
         controller: 'EmpresaRutaFormCtrl'
       }).
       when('/empresaRutaShow/:id', {
@@ -300,6 +300,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
       when('/solicitudMapaShow/:id', {
         templateUrl: 'partials/embarq-solicitudMapaShow.html',
         controller: 'EmbarqSolicitudMapaFormCtrl'
+      }). 
+      when('/empresaMapaShow/:id', {
+        templateUrl: 'partials/empresa-mapaShow.html',
+        controller: 'EmpresaMapaFormCtrl'
       }). 
       when('/mapaview/:id', {
         templateUrl: 'partials/mapanew.html',

@@ -1,48 +1,72 @@
 <div class="container-fluid">
-    <h1 class="page-header">Corrida</h1>
-	<div class="btn-toolbar" role="toolbar">
-      <div class="btn-group" style="width:100%;">
-      	
-      	<div class="input-group">			
-			<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/embarqCorridaNew"><span class="glyphicon glyphicon-plus"></span></a></span>
-			<span class="input-group-addon">Buscar: </span>
-		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de corridas"/>
+	<br/>
+	<br/>
+    <h1 class="page-header" align="center">Mi Ruta</h1>
+    <link href="css/panels.css" rel="stylesheet">
+    <form name="exForm" novalidate class="form-1200">
+       	<div class="panel panel-info">
+
+	   		<div class="panel-heading" align="center">
+	   			<button class="btn btn-link" ng-click="cancel()">Regresar a mis Rutas</button>
+	   		</div>
+
+	   		<div class="panel-body">
+				<ul class="nav nav-tabs">
+				  <li><a href="#/empresaRutaShow/{{rutaid}}">General</a></li>
+				  <li><a href="#/empresaMapaShow/{{rutaid}}">Mapa</a></li>
+				  <li class="active"><a href="#">Corridas</a></li>
+				</ul>
+
+				<div class="btn-toolbar" role="toolbar">
+			      <div class="btn-group" style="width:100%;">
+			      	
+			      	<div class="input-group">			
+						<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/empresaCorridaNew"><span class="glyphicon glyphicon-plus"></span></a></span>
+						<span class="input-group-addon">Buscar: </span>
+					  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de corridas"/>
+					</div>
+					<img ng-show="corridas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+					<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+						<p ng-bind-html="message"></p>
+					</div>		
+
+			      </div>
+			    </div>
+
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th><a href="" ng-click="orderProp='id'">ID</a></th>
+								<th><a href="" ng-click="orderProp='horaSalida'">Hora de salida</a></th>
+								<th><a href="" ng-click="orderProp='horaLlegada'">Hora de llegada</a></th>
+								<th><a href="" ng-click="orderProp='capacidadOfertada'">Capacidad ofertada</a></th>
+								<th><a href="" ng-click="orderProp='tarifa'">Tarifa</a></th>
+								<th>-</th>
+							</tr>
+						</thead>
+						<tbody>			
+							<tr ng-repeat="corrida in corridas | filter:query | orderBy:orderProp">
+								<td>{{corrida.id}}</td>
+								<td><a href="#/empresaCorridaShow/{{corrida.id}}">{{corrida.horaSalida}}</a></td>
+								<td>{{corrida.horaLlegada}}</td>
+								<td>{{corrida.capacidadOfertada}}</td>
+								<td>{{corrida.tarifa}}</td>
+								<td>
+									<a type="button" class="btn btn-info" href="#/empresaCorridaShow/{{corrida.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
+									<a type="button" class="btn btn-danger" ng-click="deleteCorrida(corrida.id)"><span class="glyphicon glyphicon-remove"></span></a>
+								</td>
+
+							</tr>
+						</tbody>
+					</table>		
+					
+				</div>
+			</div>
+
+	   		<div class="panel-heading" align="center">
+	   			<button class="btn btn-link" ng-click="cancel()">Regresar a mis Rutas</button>
+	   		</div>			
 		</div>
-		<img ng-show="corridas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
-		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
-			<p ng-bind-html="message"></p>
-		</div>		
-
-      </div>
-    </div>
-
-	<div class="table-responsive">
-		<table class="table table-striped">
-			<thead>
-				<tr>
-					<th><a href="" ng-click="orderProp='id'">ID</a></th>
-					<th><a href="" ng-click="orderProp='horaSalida'">Hora de salida</a></th>
-					<th><a href="" ng-click="orderProp='horaLlegada'">Hora de llegada</a></th>
-					<th><a href="" ng-click="orderProp='capacidadOfertada'">Capacidad ofertada</a></th>
-					<th><a href="" ng-click="orderProp='tarifa'">Tarifa</a></th>
-					<th>-</th>
-				</tr>
-			</thead>
-			<tbody>			
-				<tr ng-repeat="corrida in corridas | filter:query | orderBy:orderProp">
-					<td>{{corrida.id}}</td>
-					<td><a href="#/embarqCorridaShow/{{corrida.id}}">{{corrida.horaSalida}}</a></td>
-					<td>{{corrida.horaLlegada}}</td>
-					<td>{{corrida.capacidadOfertada}}</td>
-					<td>{{corrida.tarifa}}</td>
-					<td>
-						<a type="button" class="btn btn-info" href="#/embarqCorridaShow/{{corrida.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
-						<a type="button" class="btn btn-danger" ng-click="deleteCorrida(corrida.id)"><span class="glyphicon glyphicon-remove"></span></a>
-					</td>
-
-				</tr>
-			</tbody>
-		</table>		
-		
-	</div>
+	</form>			
 </div>

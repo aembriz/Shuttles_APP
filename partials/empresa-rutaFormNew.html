@@ -9,17 +9,11 @@
 	   	<div class="panel panel-success">
 
 	   		<div class="panel-heading" align="center">
-				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Guardar</button>
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Siguente</button>
 				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
     		</div>
 
     		<div class="panel-body" >	
-				<ul class="nav nav-tabs">
-				  <li class="active"><a href="#">General</a></li>
-				  <li><a href="#/empresaMapaShow/{{ruta.id}}">Mapa</a></li>
-				  <li><a href="#/empresaCorridaList/{{ruta.id}}">Corridas</a></li>
-				</ul>
-
 		     	<input type="hidden" id="id" name="id" ng-model="ruta.id"/>
 		     	<input type="hidden" id="CompanyownerID" name="CompanyownerID" ng-model="ruta.CompanyownerID"/>
 				<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
@@ -57,7 +51,7 @@
 			</div>	
 
 			<div class="panel-heading" align="center">
-				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Guardar</button>
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Siguente</button>
 				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
 			</div>
     	</div>

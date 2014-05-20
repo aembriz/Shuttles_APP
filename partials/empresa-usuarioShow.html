@@ -1,29 +1,42 @@
 <div class="container-fluid">
-	<h1 class="page-header">Usuario</h1>
+	<br/>
+	<br/>
+	<h1 class="page-header" align="center">Usuario</h1>
+	<link href="css/panels.css" rel="stylesheet">
+    <form name="exForm" novalidate class="form-400">
+	   	<div class="panel panel-info">
 
-      <form name="exForm" novalidate class="css-form">
-		<div class="form-group">
-			<label for="exName">Nombre</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{usuario.nombre}}
-			</div></div>
-		</div>
-		
-		<div class="form-group">
-			<label for="email">Correo electr&oacute;nico</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{usuario.email}}
-			</div></div>			
-		</div>
-		<div class="form-group">
-			<label for="password">Clave</label><br/>
-			<div class="panel panel-default"><div class="panel-body">
-				{{usuario.password}}
-			</div></div>			
+	   		<div class="panel-heading" align="center">
+				<a type="button" class="btn btn-info" href="#/empresaUsuarioEdit/{{usuario.id}}">Editar</a>
+				<button class="btn btn-link" ng-click="cancel()">Regresar</button>
+	   		</div>
+	   			
+	   		<div class="panel-body" >	
+				<div class="form-group">
+					<label for="email">Correo electr&oacute;nico</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{usuario.email}}
+					</div></div>			
+				</div>
+				<div class="form-group">
+					<label for="exName">Nombre</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{usuario.nombre}}
+					</div></div>
+				</div>
+				<div class="form-group">
+					<label for="password">Clave</label><br/>
+					<div class="panel panel-default"><div class="panel-body">
+						{{usuario.password}}
+					</div></div>			
+				</div>	
+			</div>	
+
+			<div class="panel-heading" align="center">	
+				<a type="button" class="btn btn-info" href="#/empresaUsuarioEdit/{{usuario.id}}">Editar</a>
+				<button class="btn btn-link" ng-click="cancel()">Regresar</button>
+			</div>
 		</div>		
-		
-		<a type="button" class="btn btn-info" href="#/empresaUsuarioEdit/{{usuario.id}}">Editar</a>
-		<button class="btn btn-link" ng-click="cancel()">Regresar</button>
-      </form>
-	  <br/>
+    </form>
+    <br/>
 </div>

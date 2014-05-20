@@ -1,30 +1,45 @@
 <div class="container-fluid">
+	<br/>
+	<br/>
 	<script src="js/holder/holder.js"></script>	
-	<h1 class="page-header">Usuarios nuevos</h1>
+	<h1 class="page-header" align="center">Usuarios nuevos</h1>
+	<link href="css/panels.css" rel="stylesheet">
+    <form name="exForm" novalidate class="form-800">
+	   	<div class="panel panel-success">
 
-      <form name="exForm" novalidate class="css-form">
-		<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
-			<label for="exName">Lista de nuevos usuarios</label><br/>
-			<textarea name="exName" class="form-control" placeholder="Nombre, correo@ejemplo.com" ng-model="usuarios" required></textarea>
+	   		<div class="panel-heading" align="center">				
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuarios)">Invitar usuarios</button>
+				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+    		</div>
 
-			<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Se requiere el nombre del usuario.</p>
-			
-		</div>
+    		<div class="panel-body" >
+				<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
+					<label for="exName">Lista de nuevos usuarios</label><br/>
+					<textarea name="exName" class="form-control" placeholder="Nombre, correo@ejemplo.com" ng-model="usuarios" required></textarea>
 
-		<p> 
-			<i>
-				<b>Ejemplo:</b><br/>
-				Felipe Arteaga, Felipe.Arteaga@empresa.com<br/>
-				Maria Felix, maria@empresa.com
-			</i>
-			<br/><br/>
-			<b> Ingresa un usuario por l&iacute;nea (Nombre, Correo): </b> 
+					<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Se requiere el nombre del usuario.</p>
+					
+				</div>
 
-		</p>
+				<p> 
+					<i>
+						<b>Ejemplo:</b><br/>
+						Felipe Arteaga, Felipe.Arteaga@empresa.com<br/>
+						Maria Felix, maria@empresa.com
+					</i>
+					<br/><br/>
+					Ingresa cada usuario en una nueva l&iacute;nea con el formato:
+					<br/><b>Nombre, Correo@empresa.com </b> 
 
-		<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuarios)">Invitar usuarios</button>
-		<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
-      </form>
-	  <br/>
+				</p>
+			</div>	
+
+			<div class="panel-heading" align="center">
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuarios)">Invitar usuarios</button>
+				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+			</div>
+		</div>		
+    </form>
+	<br/>
 	  				  		
 </div>
