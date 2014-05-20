@@ -50,12 +50,12 @@
 						<tbody>			
 							<tr ng-repeat="corrida in corridas | filter:query | orderBy:orderProp">
 								<td>{{corrida.id}}</td>
-								<td><a href="#/embarqCorridaShow/{{corrida.id}}">{{corrida.horaSalida}}</a></td>
+								<td><a href="#/embarqSolicitudCorridaShow/{{corrida.id}}">{{corrida.horaSalida}}</a></td>
 								<td>{{corrida.horaLlegada}}</td>
 								<td>{{corrida.capacidadOfertada}}</td>
 								<td>{{corrida.tarifa}}</td>
 								<td>
-									<a type="button" class="btn btn-info" href="#/embarqCorridaShow/{{corrida.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
+									<a type="button" class="btn btn-info" href="#/embarqSolicitudCorridaShow/{{corrida.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
 									<a type="button" class="btn btn-danger" ng-click="deleteCorrida(corrida.id)"><span class="glyphicon glyphicon-remove"></span></a>
 								</td>
 
@@ -67,7 +67,7 @@
 			</div>
 
 	   		<div class="panel-heading" align="center">
-	   			<button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Rutas</button>
+	   			<button class="btn btn-link" ng-click="cancel()">Regresar a las solicitudes</button>
 	   		</div>			
 		</div>
 			
