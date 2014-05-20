@@ -40,7 +40,7 @@ muukServices.factory('AuthenticationService', ['$http', '$location', 'SessionSer
               }
               else{              
                 rs = data;
-                var user = {name: rs.nombre, username: usr, role: rs.role, authtoken: rs.token, empresa: rs.empresa};
+                var user = {name: rs.nombre, username: usr, role: rs.role, authtoken: rs.token, empresa: rs.empresa, id: rs.id};
                 SessionService.currentUser = user;
                 SessionService.saveSession();
                 callbackSuccess(data);

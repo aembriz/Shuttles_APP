@@ -41,7 +41,7 @@
                 <br/>
                 <button class="btn btn-large btn-primary" type="submit" ng-click="loginUser(usr, pwd, logincallbackSuccess, logincallbackError)">Entrar</button>       
               </div>
-              <div id="rs-message" style="color:red"><strong>{{message}}</strong></div>
+              <div id="rs-message" style="color:red" align="center"><strong>{{message}}</strong></div>
             </form>
           </div>
         </div> <!-- when LOGIN -->
@@ -100,7 +100,7 @@
                 <!-- Usuario -->
                 <div ng-show="user.role == 'USUARIO'">                    
                     <ul class="nav navbar-nav navbar-left">
-                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/usuarioPerfil" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
+                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/usuarioPerfilShow" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
                       <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/usuarioResumen" ng-click="menuSelect(1)"><b>Consultas</b></a></li>
                       <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/usuarioFavoritos" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
                       <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/usuarioEstadisticas" ng-click="menuSelect(3)"><b>Estadísticas</b></a></li>

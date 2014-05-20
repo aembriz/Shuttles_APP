@@ -51,7 +51,7 @@ muukControllers.controller('LoginController', ['$scope', '$location', 'Authentic
       $scope.$apply();
     };
     $scope.logincallbackError = function(request, status, error){
-      $scope.message = request.responseJSON.message;
+      $scope.message = error + '|' + request.responseJSON.message;//request.responseJSON.message;
       $scope.$apply();      
     };            
 
@@ -968,6 +968,31 @@ muukControllers.controller('EmpresaEstadisticasCtrl', ['$scope', '$location',
 muukControllers.controller('UsuarioPerfilCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {
     $scope.usuario = Usuario.show({ exId: SessionService.currentUser.empresa });
+  }]);
+muukControllers.controller('UsuarioPerfilShowCtrl', ['$scope', '$location', 'SessionService', 'AuthenticationService', 'Usuario',
+  function($scope, $location, SessionService, AuthenticationService, Usuario) {
+    $scope.usuario = Usuario.show({ exId: SessionService.currentUser.id }, function(){
+      $scope.usuario.clave = '';
+      for (var i = 0; i < $scope.usuario.password.length; i++) { 
+        $scope.usuario.clave = $scope.usuario.clave + '●';
+      }  
+    });
+
+  }]);
+muukControllers.controller('UsuarioPerfilEditCtrl', ['$scope', '$location', 'SessionService', 'AuthenticationService', 'Usuario',
+  function($scope, $location, SessionService, AuthenticationService, Usuario) {
+    $scope.usuario = Usuario.show({ exId: SessionService.currentUser.id });
+
+    $scope.save = function(usuario) {
+      var ex = new Usuario(usuario);
+      console.log(ex);
+      ex.$update({ exId: usuario.id }, function(){$location.path('usuarioPerfilShow');});
+    };
+
+    $scope.cancel = function(){
+      $location.path('usuarioPerfilShow');
+    };
+
   }]);
 
 // -----------------------------------------------------

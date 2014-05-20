@@ -97,7 +97,7 @@
 									<div class="form-group" ng-class="{ 'has-error' : exForm.secundarioName.$invalid && !exForm.secundarioName.$pristine }">
 										<label for="secundarioName">Nombre</label><br/>
 
-										<input type="text" class="form-control" placeholder="Nombre corto del usuario" id="secundarioName" name="secundarioName" ng-model="empresa.usuarionombre" ng-minlength="3" ng-maxlength="60" required/>
+										<input type="text" class="form-control" placeholder="Nombre corto del usuario" id="secundarioName" name="secundarioName" ng-model="empresa.usuario2nombre" ng-minlength="3" ng-maxlength="60" required/>
 										<p ng-show="exForm.secundarioName.$invalid && !exForm.secundarioName.$pristine" class="help-block">Se requiere el nombre del usuario.</p>
 										<p ng-show="exForm.secundarioName.$error.minlength" class="help-block">Nombre demasiado corto.</p>
 										<p ng-show="exForm.secundarioName.$error.maxlength" class="help-block">Nombre demasiado largo.</p>   			
@@ -106,14 +106,14 @@
 									<div class="form-group" ng-class="{ 'has-error' : exForm.secundarioemail.$invalid && !exForm.secundarioemail.$pristine }">
 										<label for="secundarioemail">Correo electr&oacute;nico</label><br/>
 
-										<input type="email" class="form-control" placeholder="usuario@correo.com" id="secundarioemail" name="secundarioemail" ng-model="empresa.usuarioemail" required/>
+										<input type="email" class="form-control" placeholder="usuario@correo.com" id="secundarioemail" name="secundarioemail" ng-model="empresa.usuario2email" required/>
 										<p ng-show="exForm.secundarioemail.$invalid && !exForm.secundarioemail.$pristine" class="help-block">Se requiere un correo v&aacute;lido.</p>		
 									
 									</div>
 									<div class="form-group" ng-class="{ 'has-error' : exForm.secundariopassword.$invalid && !exForm.secundariopassword.$pristine }">
 										<label for="secundariopassword">Clave</label><br/>
 
-										<input type="text" class="form-control" placeholder="MiClave#1" id="secundariopassword" name="secundariopassword" ng-model="empresa.usuariopassword" ng-minlength="3" required/>
+										<input type="text" class="form-control" placeholder="MiClave#1" id="secundariopassword" name="secundariopassword" ng-model="empresa.usuario2password" ng-minlength="3" required/>
 										<p ng-show="exForm.secundariopassword.$error.minlength" class="help-block">La longitud m&iacute;nima de la clave es de 3.</p>
 									
 									</div>		

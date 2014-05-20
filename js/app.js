@@ -249,9 +249,13 @@ muukApp.config(['$routeProvider', '$httpProvider',
       /* Usuario */
       // *****************************************************
       // Usuario - Perfil
-      when('/usuarioPerfil', {
-        templateUrl: 'partials/usuario-perfil.html',
-        controller: 'UsuarioPerfilCtrl'
+      when('/usuarioPerfilShow', {
+        templateUrl: 'partials/usuario-perfilShow.html',
+        controller: 'UsuarioPerfilShowCtrl'
+      }).
+      when('/usuarioPerfilEdit', {
+        templateUrl: 'partials/usuario-perfilForm.html',
+        controller: 'UsuarioPerfilEditCtrl'
       }).      
       // -----------------------------------------------------
       // Usuario - Consulta
