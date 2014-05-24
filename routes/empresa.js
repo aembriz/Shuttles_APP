@@ -65,13 +65,27 @@ exports.add = function(preregister) {
 
     // validate Usuario
     var usrData = {nombre: req.body.usuarionombre, email: req.body.usuarioemail, password: req.body.usuariopassword, 
-      EstatusId: sts, EmpresaId: 0}
+      EstatusId: sts, EmpresaId: 0, role: 'EMPRESA'}
     var usuario = db.Usuario.build(usrData);   
     var valerr = usuario.validate();
     if(valerr){
       console.log(valerr);  
       res.send({msg: 'Errores al validar al usuario administrador.', err: valerr});
       return;
+    }
+
+    // hay segundo usuario admin
+    var usuario2 = null;
+    if(req.body.usuario2nombre && req.body.usuario2email  && req.body.usuario2password){
+      var usrData2 = {nombre: req.body.usuario2nombre, email: req.body.usuario2email, password: req.body.usuario2password, 
+        EstatusId: sts, EmpresaId: 0, role: 'EMPRESA'}
+      usuario2 = db.Usuario.build(usrData2);   
+      var valerr = usuario2.validate();
+      if(valerr){
+        console.log(valerr);  
+        res.send({msg: 'Errores al validar al segundo usuario administrador.', err: valerr});
+        return;
+      }      
     }
     
     // validate Empresa
@@ -93,9 +107,17 @@ exports.add = function(preregister) {
         empresa.save().success(function(emp){
           emp = emp.dataValues;
           usuario.setDataValue('EmpresaId', emp.id); // se asigna id de la empresa al usuario
-          usuario.save().success(function(usr){            
+          usuario.save().success(function(usr){
+            if(usuario2 != null){
+              usuario2.setDataValue('EmpresaId', emp.id); // se asigna id de la empresa al usuario
+              usuario2.save().error(function(err){
+                res.send({msg: 'Errores al registrar al usuario administrador secundario.', err: err});
+              });
+            }
             res.send({msg: ''});
-            mail.notifyCompanyAuthorization(usr, emp, true);  // notificación
+            if(sts == constEstatus.authorized){
+              mail.notifyCompanyAuthorization(usr, emp, true);  // notificación
+            }            
           }).error(function(err){
             emp.destroy(); // se elimina la empresa que había sido regstrada
             res.send({msg: 'Errores al registrar al usuario administrador.', err: err});
@@ -156,7 +178,7 @@ exports.authorize = function() {
     db.Empresa.find(idToUpdate).success(function(empresa) {
     empresa.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
       // autorizar al usuario administrador (el único regiostrado al momento)
-      db.Usuario.find({where: {EmpresaId: empresa.id} }).success(function(usr){
+      db.Usuario.find({where: ['EmpresaId=? and role=?', empresa.id, 'EMPRESA'] }).success(function(usr){
         usr.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
           res.send({ empresa: empresa} );
         });
@@ -178,7 +200,7 @@ exports.reject = function() {
     db.Empresa.find(idToUpdate).success(function(empresa) {      
       empresa.updateAttributes({ EstatusId: constEstatus.rejected }).success(function(empresa) {
         // notifica el rechazo
-        db.Usuario.find({where: {EmpresaId: empresa.id} }).success(function(usr){
+        db.Usuario.find({where: ['EmpresaId=? and role=?', empresa.id, 'EMPRESA'] }).success(function(usr){
           mail.notifyCompanyAuthorization(usr, empresa, false);  // notificación  
         });        
 

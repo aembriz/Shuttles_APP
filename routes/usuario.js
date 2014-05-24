@@ -27,7 +27,7 @@ exports.login = function(req, res, next){
 			var expires = Date.now() + ( 1 * 3600 * 1000 );
 			var pretoken = 	{iss: user.email, exp: expires};
 			var token = jwt.encode(pretoken , app.get('jwtTokenSecret'));
-			res.json({ token : token, role: user.role, empresa: user.EmpresaId, nombre: user.nombre });
+			res.json({ token : token, role: user.role, empresa: user.EmpresaId, nombre: user.nombre, id: user.id });
 		})(req, res, next);
 	
 };

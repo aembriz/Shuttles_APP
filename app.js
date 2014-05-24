@@ -167,7 +167,17 @@ app.post('/rutacorrida', rutacorrida.add());
 app.put('/rutacorrida/:id', rutacorrida.update());
 app.delete('/rutacorrida/:id', rutacorrida.delete());
 
+// --------------- Ruta Suggestions----------------
+var rutasuggest = require('./routes/procesocompraruta');
+app.get('/compra/rutasugeridas', rutasuggest.listSuggestions());
+app.get('/compra/rutacorrida', rutasuggest.listCorridas());
 
+
+// --------------- Rutas Favoritas----------------
+var rutasuggest = require('./routes/rutafavorita');
+app.get('/rutafavorita', rutasuggest.favouriteList());
+app.put('/rutafavorita/add', rutasuggest.favouriteAdd());
+app.put('/rutafavorita/remove', rutasuggest.favouriteDel());
 
 
 // -------------------------------------------

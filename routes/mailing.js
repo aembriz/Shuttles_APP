@@ -20,8 +20,10 @@ exports.notifyUserInvitations = function(usrs) {
             to: usr.email, // list of receivers
             subject: "Se le ha hecho una invitación para unirse a EmbarQ-Shuttles", // Subject line
             text: "Estimado " + usr.nombre + ", se le está invitando a unirse a la plataforma Shuttles por lo que debe completar el siguiente registro.", // plaintext body
-            html: "Estimado <b>" + usr.nombre + "</b>, se le está invitando a unirse a la plataforma Shuttles por lo que debe completar el siguiente registro." // html body
+            html: "Estimado <b>" + usr.nombre + "</b>, se le está invitando a unirse a la plataforma Shuttles por lo que debe completar el siguiente registro: <a href='http://nubeet.com/shuttles/#/registro/" + usr.id + "'> Activar </a>"  // html body
         }
+
+        //registro/id --> http://nubeet.com/shuttles/registro/[id]
 
         // send mail with defined transport object
         smtpTransport.sendMail(mailOptions, function(error, response){

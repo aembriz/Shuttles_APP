@@ -35,8 +35,13 @@ Ejemplo post de empresa para registro y pre-registro (incluye usuario administra
         "rfc": "JUC93994BA", 
         "usuarionombre": "Arcon",
         "usuarioemail": "arcon@mail.com",
-        "usuariopassword": "mammsdh"
+        "usuariopassword": "mammsdh",
+        "usuario2nombre": "Arcon",
+        "usuario2email": "arcon@mail.com",
+        "usuario2password": "mammsdh"        
     }
+
+_Nota:_ Los datos precedidos por usuario2 se refieren al administrador secundario y son opcionales.
 
 ---------
 
@@ -206,3 +211,95 @@ Se basa en una primera autenticación con Usuario/Password y en caso de ser exit
 Comandos RESTFul:   
 * POST /login = (Recibe credenciales del usuario y en caso de éxito genera un token de autenticación)
  
+
+---------
+
+ Servicios para "Compra"
+-------------------------
+[URL...]/compra
+
+Comandos RESTFul:   
+* GET /compra/rutasuggest?puntoALat=[lat]&puntoALng=[lng]&puntoBLat=[lat]&puntoBLng=[lng] = (Consulta las rutas más próximas a las coordenadas proporcionadas)  
+
+
+El resultado de la sugerencia de rutas es un arreglo con las rutas encontradas. El arreglo no viene ordenado pero contiene el atributo *lejania* que indica la lejanía total entre los puntos de origen y destino proporcionados y las paradas sugeridas de ascenso y descenso para la ruta, por lo que al ordenar en orden inverso por este atributo se tendrá primero en la lista las rutas más "adecuadas" para el origen, destino proporcionados.
+
+    [
+      {
+        "lejania": 12319037.417926596,
+        "ruta": {
+          "id": 3,
+          "nombre": "Jamon jamon",
+          "descripcion": "tres",
+          "distanciaaprox": 14.2,
+          "tiempoaprox": 28,
+          "origentxt": "origen",
+          "destinotxt": "destino",
+          "CompanyownerID": 1,
+          "EstatusId": 3
+        },
+        "ascensoSugerido": {
+          "distancia": 8923021.060774071,
+          "rutaPunto": {
+            "id": 1,
+            "indice": 1,
+            "descripcion": "Esta es la primera",
+            "latitud": -22.5,
+            "longitud": 38.5,
+            "tipo": 1,
+            "RutaId": 3
+          }
+        },
+        "descensoSugerido": {
+          "distancia": 3396016.357152526,
+          "rutaPunto": {
+            "id": 1,
+            "indice": 1,
+            "descripcion": "Esta es la primera",
+            "latitud": -22.5,
+            "longitud": 38.5,
+            "tipo": 1,
+            "RutaId": 3
+          }
+        }
+      }
+    ]
+
+
+---------
+
+ Servicio para "Rutas Favoritas"
+-------------------------
+[URL...]/rutafavorita
+
+Usado para agregar, quitar y listar las rutas favoritas de un usuario
+
+Comandos RESTFul:   
+* PUT /rutafavorita/add?usrid=[id usuario]&rutaid=[id ruta] = (Marca la ruta indicada como favorita)
+* PUT /rutafavorita/remove?usrid=[id usuario]&rutaid=[id ruta] = (Desmarca la ruta como favorita, la quita)
+* GET /rutafavorita?usrid=[id usuario] = (lista las rutas favoritas del usuario)
+
+*Nota*: En cuanto se integre la seguridad se podrá quitar el parámetro usrid porque se tomará del token de seguridad, pero si viene no afecta solo no se tomará en cuenta.
+
+El regreso es un arreglo con las rutas sugeridas, el atributo rutum tiene los datos de la ruta:
+
+    [
+      {
+        "id": 1,
+        "fechaUltimoUso": "2014-01-01T00:00:00.000Z",
+        "usos": 0,
+        "RutaId": 1,
+        "UsuarioId": 5,
+        "rutum": {
+          "id": 1,
+          "nombre": "prueba",
+          "descripcion": "una",
+          "distanciaaprox": 10.2,
+          "tiempoaprox": 28,
+          "origentxt": "origen",
+          "destinotxt": "destino",
+          "CompanyownerID": 1,
+          "EstatusId": 3
+        }
+      }
+    ]
