@@ -4,7 +4,7 @@
 // se debe considerar un proceso de generación de oferta automático
 module.exports = function(sequelize, DataTypes) {
   var Oferta = sequelize.define('Oferta', {
-    fechaOferta: {type: DataTypes.STRING, allowNull: false},
+    fechaOferta: {type: DataTypes.DATE, allowNull: false, isDate: true},
     oferta: {type: DataTypes.INTEGER, allowNull: false}
   }, {
     timestamps: false,
@@ -14,11 +14,21 @@ module.exports = function(sequelize, DataTypes) {
     },
     validate: {
       validateFecha: function(){
-        if( (this.fechaReservacion ) < today ){
+        var today = new Date();
+        if( (this.fechaOferta ) < today ){
           throw new Error('La oferta no puede ser en fechas pasadas.');
         }
       }
-    },
+      /*,
+      validateDuplicados: function(){
+        Oferta.find({where: {fechaOferta: this.fechaOferta, RutaCorridaId: this.RutaCorridaId} }).success(function(previo) {
+          if(previo!=null){
+            throw new Error('Ya existe un registro para la misma fecha y corrida.');  
+          }
+        });
+      }
+      */      
+    }    
   })
 
   return Oferta

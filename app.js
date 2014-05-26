@@ -73,7 +73,7 @@ app.all('/*',function(req,res,next){
 	      res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
 	      res.header('Access-Control-Allow-Credentials', false);
 	      res.header('Access-Control-Max-Age', '86400'); // 24 hours
-	      res.header('Access-Control-Allow-Headers', 'Access, Origin, X-Requested-With, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+	      res.header('Access-Control-Allow-Headers', 'Access, Authorization, Origin, X-Requested-With, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
 	}
 	else{ // CORS
 		res.set('Access-Control-Allow-Origin', '*');
@@ -169,15 +169,30 @@ app.delete('/rutacorrida/:id', rutacorrida.delete());
 
 // --------------- Ruta Suggestions----------------
 var rutasuggest = require('./routes/procesocompraruta');
-app.get('/compra/rutasugeridas', rutasuggest.listSuggestions());
-app.get('/compra/rutacorrida', rutasuggest.listCorridas());
+app.get('/compra/rutasugeridas', usuario.authenticate, rutasuggest.listSuggestions());
+app.get('/compra/ruta/:rutaid/oferta', usuario.authenticate, rutasuggest.listOferta());
+app.post('/compra/reservar/:ofertaid', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.reservationCreate()); // Crea la reservación
+app.post('/compra/cancelar/:reservacionid', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.reservationCancel()); // cancela una reservación
+app.get('/compra/misreservaciones', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.reservationList());
 
 
 // --------------- Rutas Favoritas----------------
 var rutasuggest = require('./routes/rutafavorita');
-app.get('/rutafavorita', rutasuggest.favouriteList());
-app.put('/rutafavorita/add', rutasuggest.favouriteAdd());
-app.put('/rutafavorita/remove', rutasuggest.favouriteDel());
+//app.get('/rutafavorita', rutasuggest.favouriteList());
+app.put('/rutafavorita/add', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.favouriteAdd());
+app.put('/rutafavorita/remove', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.favouriteDel());
+app.get('/rutafavorita', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.favouriteList());
+
+
+// --------------- Oferta ----------------
+var oferta = require('./routes/oferta');
+app.get('/oferta', usuario.authenticate, oferta.list());
+app.get('/oferta/:id', usuario.authenticate, oferta.listOne());
+app.post('/oferta', usuario.authenticate, oferta.add());
+app.put('/oferta/:id', usuario.authenticate, oferta.update());
+app.delete('/oferta/:id', usuario.authenticate, oferta.delete());
+app.put('/oferta/:id/plus', usuario.authenticate, oferta.incrementOferta());
+app.put('/oferta/:id/minus', usuario.authenticate, oferta.decrementOferta());
 
 
 // -------------------------------------------

@@ -18,7 +18,9 @@ exports.set = function(appx, passportx){
 */
 exports.login = function(req, res, next){
 		passport.authenticate('local', function(err, user, info) {
-			if (err) { return next(err) }
+			if (err) { 
+        return next(err) 
+      }
 			if (!user) {
 				return res.json(401, { error: 'User or password are incorrect' });
 			}
@@ -59,7 +61,6 @@ exports.authenticate = function(req, res, next){
 
 			// pass user obj to request chain
 			user = user.dataValues;
-			user.role = 'ROLE_ADMIN'; //TODO: se debe cargar role dinámicamente
 			req.user = user;
 			next();
 		})(req, res, next);
@@ -69,7 +70,8 @@ exports.authenticate = function(req, res, next){
 
 exports.needsRole = function(role) {
   return function(req, res, next) {
-    if (req.user && req.user.role === role)
+    console.log(req.user  + ' && ' +  req.user.role + ' == ' + role);
+    if (req.user && req.user.role == role)
       next();
     else
       res.send(401, 'Unauthorized');

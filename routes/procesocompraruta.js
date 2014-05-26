@@ -10,9 +10,8 @@ exports.listSuggestions = function() {
   return function(req, res) {
     var puntoA = {lat: req.query.puntoALat, lng: req.query.puntoALng};
     var puntoB = {lat: req.query.puntoBLat, lng: req.query.puntoBLng};
-
-    // TODO: obtener el usuario del token de acceso
-    var usrid = 5;
+    
+    var usrid = req.user.id; //5; // TODO: obtener el usuario del token de acceso
     var usr = null;
     db.Usuario.find( 
       {
@@ -106,31 +105,42 @@ var getDistance = function(p1, p2) {
 
 
 /*
-* Lista las corridas y su oferta de acuerdo al la ruta y fcha requerida especificada en el query
+* Lista la oferta disponible para la ruta y la fecha especificada, si no se indica fecha regresa todas las ofertas futuras de la ruta
+* /[rutaid]/oferta/?fecha=[fecha buscada]
 */
-exports.listCorridas = function() { 
+exports.listOferta = function() { 
   return function(req, res){
     var queryParams = {};
-    var queryParamsOferta = {};
-    if('rutaid' in req.query) {
-      queryParams.where = {RutaId: req.query.rutaid};
+    queryParams.where = {};
+    if('rutaid' in req.params) {
+      queryParams.where.RutaId = req.params.rutaid;
     }
     else{
       res.send('{ msg: "Debe indicarse la ruta a consultar."}');
       return;
     }
-
-    if('fecha' in req.query) {
-      queryParamsOferta.where = {fechaOferta: req.query.fecha, RutaId: req.query.rutaid};
+    if('fecha' in req.query) {       
+      /*
+      var fecVar = req.query.fecha.split('-');
+      var dia = new Date(fecVar[0], (parseInt(fecVar[1]) - 1) , fecVar[2]);
+      dia.setHours(0,0,0,0);
+      */
+      queryParams.where.fechaOferta = req.query.fecha + ' 00:00:00';
     }
     else{
-      res.send('{ msg: "Debe indicarse la fecha a consultar."}');
-      return;
-    }    
+      var hoy = new Date();
+      hoy = hoy.toISOString().slice(0, 10); + ' 00:00:00';
+      //hoy = hoy.getFullYear() + '-' + (hoy.getMonth() + 1) + '-' + hoy.getDate() +  ' 00:00:00';
+      queryParams.where.fechaOferta = {gte: hoy};
+    }
+
+    // incluye el objeto corrida dentro de la oferta
+    queryParams.include = [
+        {model: db.RutaCorrida}
+    ];    
 
     // lista todas las disponibilidades de las corridas de la ruta especificada
-    db.Oferta.findAll(queryParamsOferta).success(function(rutacorridaoferta) {      
-      // TODO : ligar datos de la corrida y de la ruta
+    db.Oferta.findAll(queryParams).success(function(rutacorridaoferta) {
       res.send(rutacorridaoferta);
     });        
 
@@ -138,12 +148,75 @@ exports.listCorridas = function() {
 };
 
 
-exports.reservation = function() { 
+exports.reservationCreate = function() { 
   return function(req, res){
-    var reservation = {ruta: req.params.rutaid, corrida: req.params.corridaid, fecha: req.params.fecha};
+    var usrid = 5; // TODO: se debe extraer del token de acceso
+    db.Oferta.find(req.params.ofertaid).success(function(oferta){    
+      if(oferta.values.oferta > 0){
+        oferta.decrement('oferta', 1).success(function(oferta) {
+          var of = oferta.values;
+          var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
+            fechaReservacion: of.fechaOferta};
 
-    db.RutaCorrida.findAll(queryParams).success(function(rutacorrida) {
-      res.send(rutacorrida);
-    });    
+          var reservacion = db.Reservacion.build(resv);
+          reservacion.save().complete(function (err, reservacion) {
+            res.send(
+              (err === null) ? { msg: 'Su reservación has sido registrada.', reservacion: reservacion } : 
+              { msg: 'Existieron errores al registrar su reservación. Por favor vuelva a intentarlo.',  err: err }
+            );
+          });
+
+        });
+      }
+      else{
+        res.send({msg: 'Sentimos informarle que los lugares disponibles ya fueron reservados.'});
+      }
+    }).error(function(err){
+      res.send({msg: 'Existieron problemas al acceder a la oferta.', err: err});      
+    });
+
+  }
+};
+
+exports.reservationCancel = function() { 
+  return function(req, res){    
+    // TODO faltan aplicar las validaciones de políticas de cancelación
+    var usrid = req.user.id; //5 // TODO: validar que la reservación corresponda al usuario extraido del Token de acceso
+    db.Reservacion.find(req.params.reservacionid).success(function(reservacion){
+      if(reservacion != null){
+        if(reservacion.UsuarioId != usrid){
+          res.send('msg: La reservación que pretende cancelar no le pertenece.');
+          return;
+        }
+        // cancela la reservación
+        reservacion.updateAttributes({estatus: 2}).success(function(reservacion) {
+          db.Oferta.find(reservacion.OfertaId).success(function(oferta) {
+            oferta.increment('oferta', 1).success(function(oferta) {
+              res.send({msg: 'Reservacion cancelada', reservacion: reservacion});      
+            });
+          });          
+        }).error(function(err){
+          res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
+        });        
+      }
+    });
+  }
+};
+
+/*
+* Lista las reservaciones del usuario
+*/
+exports.reservationList = function() { 
+  return function(req, res){    
+    var usrid = req.user.id;  //5 // TODO: validar que la reservación corresponda al usuario extraido del Token de acceso
+
+    includes = [
+        {model: db.Ruta},
+        {model: db.RutaCorrida}
+    ];    
+
+    db.Reservacion.findAll({ where: {UsuarioId: usrid}, include: includes }).success(function(reservacion){
+      res.send(reservacion);
+    });
   }
 };

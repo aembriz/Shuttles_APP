@@ -11,7 +11,7 @@ exports.favouriteList = function() {
     var sts = 0;
     var params = {};
     params.where = {};
-    params.where.UsuarioId = req.query.usrid; // TODO: usar el token de acceso para determinar usuario
+    params.where.UsuarioId = req.user.id; 
     
     params.include = [
         {model: db.Ruta, where: {EstatusId: constEstatus.authorized } }
@@ -28,7 +28,7 @@ exports.favouriteList = function() {
  */
 exports.favouriteAdd = function() {
   return function(req, res) {
-    var idUsr = req.query.usrid; // TODO: obtenerlo del token de seguridad
+    var idUsr = req.user.id; // req.query.usrid; // TODO: obtenerlo del token de seguridad
     var idRuta = req.query.rutaid;
     var fav = {RutaId: idRuta, UsuarioId: idUsr};
     var favorita = db.Favorita.build(fav);
@@ -46,7 +46,7 @@ exports.favouriteAdd = function() {
  */
 exports.favouriteDel = function() {
   return function(req, res) {
-    var idUsr = req.query.usrid; // TODO: obtenerlo del token de seguridad
+    var idUsr = req.user.id; // req.query.usrid; // TODO: obtenerlo del token de seguridad
     var idRuta = req.query.rutaid;
 
     db.Favorita.find({ where: {RutaId: idRuta, UsuarioId: idUsr} }).success(function(favorita) {

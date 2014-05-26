@@ -219,10 +219,16 @@ Comandos RESTFul:
 [URL...]/compra
 
 Comandos RESTFul:   
-* GET /compra/rutasuggest?puntoALat=[lat]&puntoALng=[lng]&puntoBLat=[lat]&puntoBLng=[lng] = (Consulta las rutas más próximas a las coordenadas proporcionadas)  
+* GET /compra/rutasugeridas?puntoALat=[lat]&puntoALng=[lng]&puntoBLat=[lat]&puntoBLng=[lng] = (Consulta las rutas más próximas a las coordenadas proporcionadas)  
+* GET /compra/ruta/[id ruta]/oferta = (Lista las corridas y su oferta para la ruta indicada)
+* POST /compra/reservar/[ofertaid] = (Genera una reservación para la oferta indicada (obtener del servicio anterior))
+* GET /compra/misreservaciones = (Lista las reservaciones del usuario)
+* POST /compra/cancelar/[reservacionid] = (Cancela la reservación indicada (obtener del servicio anterior))
 
+**Nota**: Seguridad ya integrada (se requiere pasar el Token)
+. Las acciones reservar, cancelar y misreservaciones requieren el rol USUARIO
 
-El resultado de la sugerencia de rutas es un arreglo con las rutas encontradas. El arreglo no viene ordenado pero contiene el atributo *lejania* que indica la lejanía total entre los puntos de origen y destino proporcionados y las paradas sugeridas de ascenso y descenso para la ruta, por lo que al ordenar en orden inverso por este atributo se tendrá primero en la lista las rutas más "adecuadas" para el origen, destino proporcionados.
+El resultado de la sugerencia de rutas es un arreglo con las rutas encontradas. El arreglo no viene ordenado pero contiene el atributo *lejania* que indica la lejanía total entre los puntos de origen y destino  proporcionados y las paradas sugeridas de ascenso y descenso para la ruta, por lo que al ordenar en orden inverso por este atributo se tendrá primero en la lista las rutas más "adecuadas" para el origen, destino proporcionados.
 
     [
       {
@@ -266,6 +272,32 @@ El resultado de la sugerencia de rutas es un arreglo con las rutas encontradas. 
     ]
 
 
+Ejemplo de resultado de oferta:
+
+      [
+        {
+          "id": 2,
+          "fechaOferta": "2014-05-25T00:00:00.000Z",
+          "oferta": 19,
+          "RutaId": 1,
+          "RutaCorridaId": 2,
+          "rutaCorrida": {
+            "horaSalidaFmt": "07:40",
+            "horaLlegadaFmt": "08:20",
+            "id": 2,
+            "horaSalida": 460,
+            "horaLlegada": 500,
+            "capacidadTotal": 40,
+            "capacidadReservada": 30,
+            "capacidadOfertada": 5,
+            "tarifa": 23,
+            "idTransporte": "NA",
+            "idChofer": "NA",
+            "RutaId": 1
+          }
+        }
+      ]
+
 ---------
 
  Servicio para "Rutas Favoritas"
@@ -280,6 +312,7 @@ Comandos RESTFul:
 * GET /rutafavorita?usrid=[id usuario] = (lista las rutas favoritas del usuario)
 
 *Nota*: En cuanto se integre la seguridad se podrá quitar el parámetro usrid porque se tomará del token de seguridad, pero si viene no afecta solo no se tomará en cuenta.
+**Nota**: Seguridad ya integrada (se requiere pasar el Token)
 
 El regreso es un arreglo con las rutas sugeridas, el atributo rutum tiene los datos de la ruta:
 
