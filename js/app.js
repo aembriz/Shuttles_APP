@@ -213,13 +213,13 @@ muukApp.config(['$routeProvider', '$httpProvider',
       // Empresa - Corrida de Ruta
       when('/empresaCorridaEdit/:id', {
         templateUrl: 'partials/empresa-corridaForm.html',
-        controller: 'EmpresaCorridaUpdateCtrl'
+        controller: 'EmpresaCorridaEditCtrl'
       }).
       when('/empresaCorridaShow/:id', {
         templateUrl: 'partials/empresa-corridaShow.html',
-        controller: 'EmpresaCorridaDetailCtrl'
+        controller: 'EmpresaCorridaShowCtrl'
       }).
-      when('/empresaCorridaNew', {
+      when('/empresaCorridaNew/:id', {
         templateUrl: 'partials/empresa-corridaForm.html',
         controller: 'EmpresaCorridaFormCtrl'
       }).
@@ -289,6 +289,14 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/usuario-buscarRutas.html',
         controller: 'UsuarioBuscarRutasCtrl'
       }).      
+      when('/usuarioBuscarRutasXMapa', {
+        templateUrl: 'partials/usuario-buscarRutasXMapa.html',
+        controller: 'UsuarioBuscarRutasXMapaCtrl'
+      }).
+      when('/usuarioBuscarRutaXDireccion', {
+        templateUrl: 'partials/usuario-buscarRutasXDireccion.html',
+        controller: 'UsuarioBuscarRutasXDireccionCtrl'
+      }).
       // -----------------------------------------------------
       // Usuario - Estadisticas
       when('/usuarioEstadisticas', {

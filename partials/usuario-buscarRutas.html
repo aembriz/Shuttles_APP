@@ -1,6 +1,165 @@
+<link href="css/mapa.css" rel="stylesheet">
+<script src="js/mapa-busqueda.js"></script>
 <div class="container-fluid">
-	<script src="js/holder/holder.js"></script>
-			
-    <h1 class="page-header">Buscar Rutas</h1>
+	<br/>
+	<br/>
+	<h1 class="page-header" align="center">Buscar Ruta</h1>
+	<link href="css/panels.css" rel="stylesheet">
+	<div class="form-1200">
+   	    <div class="panel panel-info">
 
+			<div class="panel-heading" align="center">
+				<b>Buscar por direcci&oacute;n</b>
+			</div>
+
+			<div class="panel-body">
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<tbody>			
+							<tr>
+								<td>
+									<div class="form-group" ng-class="{ 'has-error' : exForm.origentxt.$invalid && !exForm.origentxt.$pristine }">
+										<label for="origentxt">Origen</label><br/>
+										<input type="text" class="form-control" placeholder="Origen de la ruta" id="origentxt" name="origentxt" ng-model="ruta.origentxt"/>
+										<p ng-show="exForm.origentxt.$invalid && !exForm.origentxt.$pristine" class="help-block">Se requiere el origen de la ruta.</p>
+									</div>
+								</td>
+								<td>
+									<div class="form-group" ng-class="{ 'has-error' : exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine }">
+										<label for="destinotxt">Destino</label><br/>
+										<input type="text" class="form-control" placeholder="Destino de la ruta" id="destinotxt" name="destinotxt" ng-model="ruta.destinotxt"/>
+										<p ng-show="exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine" class="help-block">Se requiere el destino de la ruta.</p>
+									</div>	
+								</td>
+								<td style="vertical-align:middle" align="center">
+									<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="ubicar(ruta)">Ubicar en mapa</button>
+								</td>
+
+							</tr>
+						</tbody>
+					</table>		
+					
+				</div>			
+
+			</div>  
+
+			<div class="panel-heading" align="center">
+				<b>Buscar en mapa</b>
+			</div>
+
+			<!-- ayuda en seleccion de mapa -->
+			<div class="animate-switch-container" ng-switch on="PointCount">
+
+				<div class="panel-body" align="center">
+					<!-- 0 points -->
+					<div class="animate-switch" ng-switch-when="0">
+						<b>Ubicar el origen de tu viaje en el mapa</b>
+					</div>
+					<!-- 1 points -->
+					<div class="animate-switch" ng-switch-when="1">
+						<b>Ubicar el destino de tu viaje en el mapa</b>
+					</div>
+					<!-- 2 points -->
+					<div class="animate-switch" ng-switch-when="2">
+						<b>Refina tu origen y destino, posteriormente presiona sugerir ruta</b> 
+					</div>
+					<div  class="box efecto3" id="map_canvas"></div><br/>
+				</div>   
+					 
+			</div>				
+	    </div>
+
+		<div class="animate-switch" ng-if="PointCount == 2">
+			<div class="panel panel-success">
+				<div class="panel-heading" align="center">
+					<b>Rutas encontradas</b><br/>
+					<!-- sugerir rutas -->
+					<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="sugerir()">Sugerir nuevas rutas</button>
+				</div>
+
+				<div class="panel-body" align="center">
+
+					<div class="btn-toolbar" role="toolbar">
+				      <div class="btn-group" style="width:100%;">
+				      	
+				      	<div class="input-group">			
+							<span class="input-group-addon">Buscar: </span>
+						  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de rutas"/>
+						</div>
+						<img ng-show="rutas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+						<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+							<p ng-bind-html="message"></p>
+						</div>		
+
+				      </div>
+				    </div>
+
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th><a href="" ng-click="orderProp='id'">ID</a></th>
+									<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
+									<th><a href="" ng-click="orderProp='origentxt'">Origen</a></th>
+									<th><a href="" ng-click="orderProp='destinotxt'">Destino</a></th>
+									<th>Estatus</th>
+									<th>-</th>
+								</tr>
+							</thead>
+							<tbody>			
+								<!--
+								<p> {{rutas}}</p>
+							-->
+								<tr ng-repeat="ruta in rutas | filter:query | orderBy:orderProp">
+									<td>{{ruta.id}}</td>
+									<td><a href="#/empresaRutaShow/{{ruta.id}}">{{ruta.nombre}}</a></td>
+									<td>{{ruta.origentxt}}</td>
+									<td>{{ruta.destinotxt}}</td>
+									<td>{{ruta.estatu.stsNombre}}</td>
+									<td>
+										<!--
+										<a type="button" class="btn btn-info" href="#/empresaRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
+										<a type="button" class="btn btn-info" href="#/empresaMapaShow/{{ruta.id}}"><span class="glyphicon glyphicon-map-marker"></span></a>						
+										<a type="button" class="btn btn-info" href="#/empresaCorridaList/{{ruta.id}}"><span class="glyphicon glyphicon-calendar"></span></a>
+										<a type="button" class="btn btn-danger" ng-click="deleteRuta(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>
+									-->
+									</td>
+
+								</tr>
+							</tbody>
+						</table>		
+						
+					</div>
+				</div>
+			</div> 
+		</div>
+	</div>  
+
+<!--
+      <div class="panel-body" align="center">
+        <div id="consulta" ng-show="pMapa != null">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Descripci&oacuten</th>
+                <th>Latitud</th>
+                <th>Longitud</th>
+                <th>Tipo</th>
+              </tr>
+            </thead>
+          <tbody>
+            <tr ng-repeat="emp in pMapa | filter:query | orderBy:orderProp ">
+              <td>{{emp.id}}</td>
+              <td>{{emp.descripcion}}</td>
+              <td>{{emp.latitud}}</td>
+              <td>{{emp.longitud}}</td>
+              <td>{{emp.tipo}}</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    -->
+        
 </div>

@@ -274,6 +274,18 @@ muukServices.factory('UsuariosNuevosXEmpresa', ['$resource', 'SessionService',
       query: { method:'GET', params:{}, isArray:true, headers: { 'Access': 'Bearer ' + SessionService.currentUser.authtoken }},
     });
   }]);
+
+// *****************************************************
+/* Usuario */
+// *****************************************************
+/* Usuario - Buscar Ruta */
+muukServices.factory('RutasSugeridas', ['$resource', 'SessionService', 
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/rutasugeridas', {}, {
+      query: { method:'GET', params:{puntoALat: '@OrigenLat', puntoALng: '@OrigenLng', puntoBLat: '@DestinoLat', puntoBLng: '@DestinoLng'}, isArray:true, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }},
+    });
+  }]);
+
 // -----------------------------------------------------
 /* MAPA */
 muukServices.factory('Mapa',['$resource', 'SessionService',
@@ -285,3 +297,41 @@ muukServices.factory('Mapa',['$resource', 'SessionService',
     });
   }]);
 
+// *****************************************************
+/* Usuario */
+// *****************************************************
+/* Usuario - Buscar Ruta */
+
+muukServices.factory('RutaSugerida',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/rutasugeridas', {}, {
+      query: {
+        method: 'GET', 
+        params:{puntoALat: '@OrigenLat', puntoALng: '@OrigenLng', puntoBLat: '@DestinoLat', puntoBLng: '@DestinoLng'}, 
+        isArray:true, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
+  }]);
+
+/*
+muukServices.factory('RutaSugerida',['$resource', 'SessionService',
+  function($resource, SessionService){
+    var ResourceObject = $resource(servicesUrl + '/compra/rutasugeridas');
+    return {
+      getTransformedValues:function() {
+        return ResourceObject.query().$promise.then(function(data){
+
+        });
+      }
+    };
+
+    $resource(, {}, {
+      query: {method: 'GET', params:{puntoALat: '@OrigenLat', puntoALng: '@OrigenLng', puntoBLat: '@DestinoLat', puntoBLng: '@DestinoLng'}, isArray:true, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }}
+    });
+
+    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
+  }]);
+*/

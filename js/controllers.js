@@ -166,7 +166,6 @@ muukControllers.controller('LoginRegisterUserCtrl', ['$scope', 'EmpresaPreregist
       var ex = new EmpresaPreregister(empresa);   
       console.log(ex);    
 
-
       ex.$create({}, $scope.gotoLogin);       
     };
     
@@ -896,7 +895,7 @@ muukControllers.controller('EmpresaCorridaFormCtrl', ['$scope', 'Corrida', '$loc
 
     $scope.reset = function() {
       $scope.corrida = angular.copy($scope.master);
-      $scope.corrida.rutaId = $routeParams.id;
+      $scope.corrida.RutaId = $routeParams.id;
     };
 
     $scope.save = function(corrida) {
@@ -904,13 +903,13 @@ muukControllers.controller('EmpresaCorridaFormCtrl', ['$scope', 'Corrida', '$loc
       console.log(ex);
       //ex.$save();
       ex.$create({}, function(){
-        $location.path('empresaCorridaList/' + $scope.corrida.rutaId);
+        $location.path('empresaCorridaList/' + $scope.corrida.RutaId);
       });
 
     };
 
     $scope.cancel = function(){
-      $location.path('empresaCorridaList/' + $scope.corrida.rutaId);
+      $location.path('empresaCorridaList/' + $scope.corrida.RutaId);
     };
 
     $scope.reset();
@@ -920,7 +919,7 @@ muukControllers.controller('EmpresaCorridaShowCtrl', ['$scope', '$routeParams', 
     $scope.corrida = Corrida.show({exId: $routeParams.id});
 
     $scope.cancel = function(){
-      $location.path('empresaCorridaList/' + $scope.corrida.rutaId);
+      $location.path('empresaCorridaList/' + $scope.corrida.RutaId);
     };
   }]);
 muukControllers.controller('EmpresaCorridaEditCtrl', ['$scope', '$routeParams', 'Corrida', '$location',
@@ -932,11 +931,11 @@ muukControllers.controller('EmpresaCorridaEditCtrl', ['$scope', '$routeParams', 
       var ex = new Corrida(corrida);
       console.log(ex);
       //ex.$save();
-      ex.$update({ exId: corrida.id }, function(){$location.path('empresaCorridaList/' + $scope.corrida.rutaId);});
+      ex.$update({ exId: corrida.id }, function(){$location.path('empresaCorridaList/' + $scope.corrida.RutaId);});
     };
 
     $scope.cancel = function(){
-      $location.path('empresaCorridaList/' + $scope.corrida.rutaId);
+      $location.path('empresaCorridaList/' + $scope.corrida.RutaId);
     };
   }]);
 
@@ -1024,7 +1023,128 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'Auth
 
 // -----------------------------------------------------
 /* Usuario - Rutas */
-muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', 'AuthenticationService',
+muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location','$window', '$q', 'RutaSugerida', 
+  function($scope, $location, $window, $q, RutaSugerida) {
+    $scope.PointCount = 0;
+    $scope.puntoALat = 0;
+    $scope.puntoALng = 0;
+    $scope.puntoBLat = 0;
+    $scope.puntoBLng = 0;
+    creapuntos();
+    $scope.rutas = null;
+    var deferred = $q.defer();
+
+    $scope.ubicar = function(ruta){
+      $location.path('usuarioBuscarRutas');
+    };
+
+    $scope.sugerir = function(){
+      console.log($scope.puntoALat + ' ' + $scope.puntoALng + ' ' + $scope.puntoBLat + ' ' + $scope.puntoBLng);
+      //var ListaRutas = 
+      var RutaList = RutaSugerida.query({puntoALat: $scope.puntoALat, puntoALng: $scope.puntoALng, puntoBLat: $scope.puntoBLat, puntoBLng: $scope.puntoBLng}, 
+        function(results){
+          console.log(results);
+          console.log(results[0]);
+          console.log("Length: " + results.length);
+
+          return results;
+          //deferred.resolve(results);
+        }
+      ).$promise.then(
+        function(res) {
+          console.log(res);
+          console.log(res[0]);
+          console.log("Length: " + res.length);
+
+          return  res;
+          //deferred.resolve(res);
+        }
+      ).then(
+        function(resultado) {
+          console.log(resultado);
+          $scope.rutas = resultado;
+
+        }
+      );
+      //console.log(RutaList);
+      //$scope.rutas = RutaList;
+
+      //console.log(deferred.promise);
+      //$scope.rutas = deferred.promise;
+      //return deferred.promise;
+/*
+      ListaRutas.then(function success(result) {
+        //$scope.rutas = result;//result.toSource();
+        console.log(result);
+        console.log(result[0]);
+        console.log(result[0].Resource);
+        console.log(result.toSource());
+        //console.log($scope.rutas);
+
+
+      },function error(error){
+        console.log(error);
+      });
+*/
+/*
+      var rutas = RutaSugerida.query({puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng});
+      rutas.$promise.then(function(result) {
+        $scope.rutas = result;
+        console.log(result);
+
+
+      },function(error){
+        console.log(error);
+      });*/
+
+//      ListaRutas.resolve();
+    };    
+
+
+  }]);
+muukControllers.controller('UsuarioBuscarRutasXMapaCtrl', ['$scope', '$window', '$location', 'RutasSugeridas',
+  function($scope, $window, $location, RutasSugeridas) {
+    $scope.OrigenLat = 0;
+    $scope.OrigenLng = 0;
+    $scope.DestinoLat = 0;
+    $scope.DestinoLng = 0;
+    creapuntos();
+    $scope.rutas = null;
+
+    $scope.sugerir = function(){
+      RutasSugeridas.query(
+        {
+          puntoALat: $scope.OrigenLat, 
+          puntoALng: $scope.OrigenLng, 
+          puntoBLat: $scope.DestinoLat, 
+          puntoBLng: $scope.DestinoLng
+        }
+      ).$promise.then(
+      function(result){
+        $scope.rutas = result;
+        console.log(result);  
+        return result;
+      },function(error){
+        console.log(error);
+      }).then(
+        function(resultado) {
+          console.log(resultado);
+          $scope.rutas = resultado;
+
+        }
+      );
+    };    
+    /*
+    $scope.reiniciar = function() {
+      $scope.inicio.Lat = "";
+      $scope.inicio.Lon = "";
+      $scope.fin.Lat = "";
+      $scope.fin.Lon = "";
+    };*/
+    //compra/rutasugeridas?puntoALat=[lat]&puntoALng=[lng]&puntoBLat=[lat]&puntoBLng=[lng]
+
+  }]);
+muukControllers.controller('UsuarioBuscarRutasXDireccionCtrl', ['$scope', '$window', '$location',
   function($scope, $location, AuthenticationService) {
 
   }]);
@@ -1126,7 +1246,6 @@ muukControllers.controller('EmbarqSolicitudMapaFormCtrl', ['$scope', '$routePara
       $location.path('embarqSolicitudRutaList');
     };  
   }]);
-
 muukControllers.controller('EmpresaMapaFormCtrl', ['$scope', '$routeParams', 'Mapa', '$location',
   function($scope, $routeParams, Mapa, $location) {
     var consulta= Mapa.query({exId: $routeParams.id});
