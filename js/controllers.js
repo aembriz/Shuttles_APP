@@ -1030,42 +1030,34 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location','$wi
     $scope.puntoALng = 0;
     $scope.puntoBLat = 0;
     $scope.puntoBLng = 0;
+    $scope.rutasuggest = null;
+    $scope.cargandorutas = false;
     creapuntos();
     $scope.rutas = null;
-    var deferred = $q.defer();
+    $scope.orderProp = 'nombre';
+    //var deferred = $q.defer();
 
     $scope.ubicar = function(ruta){
       $location.path('usuarioBuscarRutas');
     };
 
     $scope.sugerir = function(){
-      console.log($scope.puntoALat + ' ' + $scope.puntoALng + ' ' + $scope.puntoBLat + ' ' + $scope.puntoBLng);
+      $scope.cargandorutas = true;
+      $scope.puntoALat = $scope.OrigenLat;
+      $scope.puntoALng = $scope.OrigenLng;
+      $scope.puntoBLat = $scope.DestinoLat;
+      $scope.puntoBLng = $scope.DestinoLng;
+      
       //var ListaRutas = 
       var RutaList = RutaSugerida.query({puntoALat: $scope.puntoALat, puntoALng: $scope.puntoALng, puntoBLat: $scope.puntoBLat, puntoBLng: $scope.puntoBLng}, 
         function(results){
-          console.log(results);
-          console.log(results[0]);
-          console.log("Length: " + results.length);
-
-          return results;
-          //deferred.resolve(results);
-        }
-      ).$promise.then(
-        function(res) {
-          console.log(res);
-          console.log(res[0]);
-          console.log("Length: " + res.length);
-
-          return  res;
-          //deferred.resolve(res);
-        }
-      ).then(
-        function(resultado) {
-          console.log(resultado);
-          $scope.rutas = resultado;
-
+          $scope.cargandorutas = false;
+          console.log("OWL::Rutas sugeridas: " + results.length);
+          $scope.rutasuggest = results;
         }
       );
+
+
       //console.log(RutaList);
       //$scope.rutas = RutaList;
 

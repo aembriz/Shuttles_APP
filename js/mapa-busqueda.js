@@ -44,8 +44,8 @@ function addLatLng(event) {
     angular.element($('.view-frame')).scope().PointCount = 2;
     angular.element($('.view-frame')).scope().DestinoLat = marker.position.lat();
     angular.element($('.view-frame')).scope().DestinoLng = marker.position.lng();
-    angular.element($('.view-frame')).scope().$apply();
-    angular.element($('.view-frame')).scope().sugerir();
+    //angular.element($('.view-frame')).scope().$apply();
+    //angular.element($('.view-frame')).scope().sugerir();
     angular.element($('.view-frame')).scope().$apply();
     //angular.element($('.view-frame')).scope().cargarSugerencias(puntos[0].position, puntos[1].position);
   }
