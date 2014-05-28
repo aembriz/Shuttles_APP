@@ -1,4 +1,5 @@
 var nodemailer = require("nodemailer");
+var db = require('../models')
 
 // create reusable transport method (opens pool of SMTP connections)
 var smtpTransport = nodemailer.createTransport("SMTP",{
@@ -74,6 +75,50 @@ exports.notifyCompanyAuthorization = function(usuario, empresa, authorized) {
 
         // if you don't want to use this transport object anymore, uncomment following line
         //smtpTransport.close(); // shut down the connection pool, no more messages
+    });
+
+}
+
+
+/*
+* Notificaciones a los usuarios que estaban en lista de espera y se les ha asignado un lugar disponible
+*/
+exports.notifyWaitingListAssigned = function(reservacion) {
+    // TODO: revisar mensaje a informar
+    console.log('Notifiying user WaitingList assigned');        
+
+    db.Reservacion.find({where: {id: reservacion.id}, include: [{model: db.Ruta}, {model: db.RutaCorrida}, {model: db.Usuario} ] }).success(
+        function(reserv){
+        reserv = reserv.values;        
+        console.log(reserv);
+        // setup e-mail data with unicode symbols
+        var mailOptions = {
+            from: "EmbarQ <servicios.administrativos@nubeet.com>", // sender address
+            to: reserv.usuario.values.email, // list of receivers
+            subject: "Se ha liberado un espacio en la lista de espera." , // Subject line
+            text: "Estimado " + reserv.usuario.values.nombre + ", " +
+            "se le informa que se liberó un espacio para la ruta [" + reserv.rutum.values.nombre + "] el día " + reserv.fechaReservacion +
+            " a las [" + reserv.rutaCorrida.horaSalidaFmt + "] y por ser usted el siguiente " +
+            "asignado en la lista de espera, se le ha generado un reservación. Deberá confirmar la reservación a la brevedad " +
+            "de lo contrario será cancelada.", // plaintext body
+            html: "Estimado <b>" + reserv.usuario.values.nombre + "</b>, " +
+            "se le informa que se liberó un espacio para la ruta [" + reserv.rutum.values.nombre + "] el día " + reserv.fechaReservacion +
+            " a las [" + reserv.rutaCorrida.horaSalidaFmt + "] y por ser usted el siguiente " + 
+            "asignado en la lista de espera, se le ha generado un reservación. Deberá confirmar la reservación a la brevedad " +
+            "de lo contrario será cancelada. <br> <br> <a href='#'>Ir a reservación</a>"  // html body
+        }
+
+        // send mail with defined transport object
+        smtpTransport.sendMail(mailOptions, function(error, response){
+            if(error){
+                console.log(error);
+            }else{
+                console.log("Message sent: " + response.message);
+            }
+
+            // if you don't want to use this transport object anymore, uncomment following line
+            //smtpTransport.close(); // shut down the connection pool, no more messages
+        });    
     });
 
 }

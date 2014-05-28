@@ -1,6 +1,11 @@
 var db = require('../models')
+var mail = require('./mailing'); // used for sending mails
 
 var constEstatus = {'new': 1, 'authorized': 3, 'rejected': 4}
+
+// TODO revisar y manejar bien estatus de reservaciones y lista de espera
+var constReservEstatus = {'new': 1, 'confirmed': 2, 'canceled': 3}
+var constEsperaEstatus = {'new': 1, 'assigned': 2, 'canceled': 3, 'deprecated': 4}
 
 // -------------------------------------------------
 /*
@@ -147,16 +152,17 @@ exports.listOferta = function() {
   }
 };
 
+// *****************************RESERVACIONES ******************************************
 
 exports.reservationCreate = function() { 
   return function(req, res){
-    var usrid = 5; // TODO: se debe extraer del token de acceso
+    var usrid = req.user.id; //5; // TODO: se debe extraer del token de acceso
     db.Oferta.find(req.params.ofertaid).success(function(oferta){    
       if(oferta.values.oferta > 0){
         oferta.decrement('oferta', 1).success(function(oferta) {
           var of = oferta.values;
           var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
-            fechaReservacion: of.fechaOferta};
+            fechaReservacion: of.fechaOferta, estatus: constReservEstatus.confirmed}; // Se crea como confirmada
 
           var reservacion = db.Reservacion.build(resv);
           reservacion.save().complete(function (err, reservacion) {
@@ -178,6 +184,79 @@ exports.reservationCreate = function() {
   }
 };
 
+exports.reservationCreateBulk = function() { 
+  return function(req, res){
+    var usrid = req.user.id;
+    var ofertas = req.body.ofertaids;
+    var result = {};    
+    var porProcesar = ofertas.length;
+
+    for (var i = 0; i < ofertas.length; i++) {
+      ofertaid = ofertas[i];
+
+      console.log('Procesando -->' + ofertaid);
+      db.Oferta.find(ofertaid).success(function(oferta){    
+        if(oferta.values.oferta > 0){
+          oferta.decrement('oferta', 1).success(function(oferta) {
+            console.log('Procesando -->' + oferta.id + '-->Decrementado');
+            var of = oferta.values;
+            var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
+              fechaReservacion: of.fechaOferta, estatus: constReservEstatus.confirmed}; // Se crea como confirmada
+
+            var reservacion = db.Reservacion.build(resv);
+            reservacion.save().complete(function (err, reservacion) {
+              console.log('Procesando -->' + oferta.id + '-->Reservado');
+              result[oferta.id] =
+                (err === null) ? {msg: 'Su reservación has sido registrada.', reservacion: reservacion } : 
+                {msg: 'Existieron errores al registrar su reservación. Por favor vuelva a intentarlo.',  err: err }
+              ;
+              porProcesar--;
+              if(porProcesar <= 0) {res.send({msg:'', resultado: result});}
+            });
+
+          });
+        }
+        else{
+          result[oferta.id] = {msg: 'Sentimos informarle que los lugares disponibles ya fueron reservados.'};
+          porProcesar--;
+          if(porProcesar <= 0) {res.send({msg:'', resultado: result});}
+        }
+      }).error(function(err){
+        result[0] = {msg: 'Existieron problemas al acceder a la oferta.', err: err};
+        porProcesar--;
+        if(porProcesar <= 0) {res.send({msg:'', resultado: result});}
+      });
+    };
+    
+  }
+};
+
+/*
+* Confirma una reservación pendiente ?reservacionid=[]
+*/
+exports.reservationConfirm = function() { 
+  return function(req, res){
+    var usrid = req.user.id; //5; // TODO: se debe extraer del token de acceso
+    var reservid = req.params.reservacionid;    
+    db.Reservacion.find(reservid).success(function(reservacion){    
+      if(reservacion != null){
+        if(reservacion.UsuarioId != usrid){
+          res.send('msg: La reservación que pretende confirmar no le pertenece.');
+          return;
+        }
+        // cancela la reservación
+        reservacion.updateAttributes({estatus: constReservEstatus.confirmed}).success(function(reservacion) {
+          res.send({msg: 'Reservacion confirmada', reservacion: reservacion});      
+        }).error(function(err){
+          res.send({msg: 'Existieron errores al confirmar la reservación.', err: err});
+        });        
+      }      
+    }).error(function(err){
+      res.send({msg: 'Existieron problemas al acceder a la reservación.', err: err});      
+    });
+  }
+};
+
 exports.reservationCancel = function() { 
   return function(req, res){    
     // TODO faltan aplicar las validaciones de políticas de cancelación
@@ -185,16 +264,14 @@ exports.reservationCancel = function() {
     db.Reservacion.find(req.params.reservacionid).success(function(reservacion){
       if(reservacion != null){
         if(reservacion.UsuarioId != usrid){
-          res.send('msg: La reservación que pretende cancelar no le pertenece.');
+          res.send({msg: 'La reservación que pretende cancelar no le pertenece.'});
           return;
         }
         // cancela la reservación
-        reservacion.updateAttributes({estatus: 2}).success(function(reservacion) {
-          db.Oferta.find(reservacion.OfertaId).success(function(oferta) {
-            oferta.increment('oferta', 1).success(function(oferta) {
-              res.send({msg: 'Reservacion cancelada', reservacion: reservacion});      
-            });
-          });          
+        reservacion.updateAttributes({estatus: constReservEstatus.canceled}).success(function(reservacion) {          
+          // procesa lista de espera y actualización de la oferta
+          processWaitingList(reservacion);
+          res.send({msg: 'Reservación ha sido cancelada exitosamente.', reservacion: reservacion})
         }).error(function(err){
           res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
         });        
@@ -215,8 +292,136 @@ exports.reservationList = function() {
         {model: db.RutaCorrida}
     ];    
 
+    // TODO: tomar en cuenta estatus de las reservaciones a mostrar
     db.Reservacion.findAll({ where: {UsuarioId: usrid}, include: includes }).success(function(reservacion){
       res.send(reservacion);
     });
   }
 };
+
+// *****************************LISTA DE ESPERA ******************************************
+
+exports.waitinglistCreate = function() { 
+  return function(req, res){
+    var usrid = req.user.id; //5; // TODO: se debe extraer del token de acceso
+    db.Oferta.find(req.params.ofertaid).success(function(oferta){              
+      var of = oferta.values;
+      var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
+        fechaReservacion: of.fechaOferta};
+
+      var espera = db.Espera.build(resv);
+      espera.save().complete(function (err, espera) {
+        res.send(
+          (err === null) ? { msg: 'Se ha agregado a la lista de espera.', reservacion: espera } : 
+          { msg: 'Existieron errores al registrarlo en la lista de espera. Por favor vuelva a intentarlo.',  err: err }
+        );
+      });
+    }).error(function(err){
+      res.send({msg: 'Existieron problemas al acceder a la oferta.', err: err});      
+    });
+
+  }
+};
+
+exports.waitinglistCancel = function() { 
+  return function(req, res){    
+    // TODO faltan aplicar las validaciones de políticas de cancelación
+    var usrid = req.user.id; //5 // TODO: validar que la reservación corresponda al usuario extraido del Token de acceso
+    db.Espera.find(req.params.reservacionid).success(function(espera){
+      if(espera != null){
+        if(espera.UsuarioId != usrid){
+          res.send('msg: La reservación en lista de espera que pretende cancelar no le pertenece.');
+          return;
+        }
+        // cancela la reservación
+        espera.updateAttributes({estatus: constEsperaEstatus.canceled}).success(function(espera) {
+          res.send({msg: 'Reservacion de lista de espera cancelada', reservacion: espera});      
+        }).error(function(err){
+          res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
+        });        
+      }
+    });
+  }
+};
+
+/*
+* Lista las reservaciones de lista de espera del usuario (solo muestra Esperas vigentes => NO pasadas o tomadas)
+*/
+exports.waitinglistList = function() { 
+  return function(req, res){    
+    var usrid = req.user.id;  //5 // TODO: validar que la reservación corresponda al usuario extraido del Token de acceso
+
+    includes = [
+        {model: db.Ruta},
+        {model: db.RutaCorrida}
+    ];    
+
+    db.Espera.findAll({ where: {UsuarioId: usrid, estatus: constEsperaEstatus.new}, include: includes }).success(function(reservacion){
+      res.send(reservacion);
+    });
+  }
+};
+
+/*
+* Proceso de asignación de listas de espera pendientes
+* En caso de no haber lista de espera --> incrementa la oferta si proviene de una cancelación (canceledPlaces)
+*/
+var processWaitingList = function(canceledReservation){
+  // TODO: verifica si hay usrs en espera y obtiene a quién le toca  
+  // TODO: procesa reservación para el usuario usando los datos de lista de espera y dejando Reservación en estatus PENDIENTE = new
+
+  var hoy = new Date();
+  hoy.setUTCHours(0,0,0,0);
+  if(canceledReservation.fechaReservacion < hoy){ // si la fecha ya es pasada no se procesa lista de espera
+    return false;
+  }
+
+  var queryWhere = {};
+
+  queryWhere.OfertaId = canceledReservation.OfertaId;
+  queryWhere.fechaReservacion = canceledReservation.fechaReservacion;  
+  queryWhere.estatus = constEsperaEstatus.new; // esperas vigentes
+
+  db.Espera.findAll({ where: queryWhere, order: 'id' }).success(function(espera){
+    if(espera != null && espera.length > 0){
+      var e = espera[0].values; // sólo tomo el primer valor
+      // proceso reservación
+      var resv = {RutaId: e.RutaId, RutaCorridaId: e.RutaCorridaId, OfertaId: canceledReservation.OfertaId, 
+        UsuarioId: e.UsuarioId, fechaReservacion: e.fechaReservacion, estatus: constReservEstatus.new}; // Se crea como pendiente
+
+      var reservacion = db.Reservacion.build(resv);
+      reservacion.save().complete(function (err, reservacion) {
+        if(err == null){
+          db.Espera.find({where: {id: e.id} }).success(function(esp){
+            esp.updateAttributes({estatus: constEsperaEstatus.assigned, ReservacionId: reservacion.id}).success(function(e) {
+              console.log('[COMPRA] Lista de espera convertida a reservación.');
+            }).error(function(err){
+              console.error('No se pudo actualizar la lista de espera [' + e.id + ']');
+            });        
+          }).error(function(err){
+            console.error('No se pudo acceder y actualizar la lista de espera [' + e.id + ']');
+          });
+
+          mail.notifyWaitingListAssigned(reservacion);
+        }
+        else{
+          // TODO: Log de proceso lista de espera fallida. Notificar a EmbarQ
+          console.log("Ocurrieron errores al tratar de procesar la siguiente entrada en lista de espera");
+          console.error("Ocurrieron errores al tratar de procesar la siguiente entrada en lista de espera idOferta [" + objOferta.id + "]");
+        }
+      });    
+    }
+    else{ // No hay lista de espera --> se incrementan lugares
+      db.Oferta.find(canceledReservation.OfertaId).success(function(objOferta){
+        objOferta.increment('oferta', 1).success(function(oferta) {
+          console.log('Se reasignaron lugares cancelados a la oferta [' + objOferta.id + '] ');
+        });
+      }).error(function(err){
+        console.error('No se pudo actualizar la oferta al cancelar la reservación');
+      });
+    }
+
+  });
+
+};
+

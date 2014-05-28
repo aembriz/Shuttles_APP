@@ -223,7 +223,11 @@ Comandos RESTFul:
 * GET /compra/ruta/[id ruta]/oferta = (Lista las corridas y su oferta para la ruta indicada)
 * POST /compra/reservar/[ofertaid] = (Genera una reservación para la oferta indicada (obtener del servicio anterior))
 * GET /compra/misreservaciones = (Lista las reservaciones del usuario)
-* POST /compra/cancelar/[reservacionid] = (Cancela la reservación indicada (obtener del servicio anterior))
+* POST /compra/cancelar/[reservacionid] = (Cancela la reservación indicada (obtener del servicio anterior), en este momento se procesa lista de espera)
+* POST /compra/esperar/[ofertaid] = (Registra en lista de espera la reservación)
+* POST /compra/cancelarespera/[reservacionid] = (Cancela lista de espera)
+* GET /compra/misesperas = (Lista las esperas que le pertenecen al usuario)
+* PUT /compra/confirmar/[reservacionid] = (se confirma una reservación pendiente generada por proceso de lista de espera)
 
 **Nota**: Seguridad ya integrada (se requiere pasar el Token)
 . Las acciones reservar, cancelar y misreservaciones requieren el rol USUARIO
@@ -297,6 +301,44 @@ Ejemplo de resultado de oferta:
           }
         }
       ]
+
+**Reservación multiple (Bulk)**
+
+Ejemplo de objeto post para reservación múltiple, se pasan los ids de las ofertas a reservar:
+
+    {
+       "ofertaids":[4,5]
+    }
+
+Ejemplo de objeto resultado de una reservación múltiple, los resultados vienen identificados por el id de la oferta que se trató de reservar:
+
+    {
+      "msg": "",
+      "resultado": {
+        "4": {
+          "msg": "Existieron errores al registrar su reservación. Por favor vuelva a intentarlo.",
+          "err": {
+            "validateFecha": [
+              "La reservación no puede ser en fechas pasadas."
+            ]
+          }
+        },
+        "5": {
+          "msg": "Su reservación has sido registrada.",
+          "reservacion": {
+            "RutaId": 1,
+            "RutaCorridaId": 2,
+            "OfertaId": 5,
+            "UsuarioId": 9,
+            "fechaReservacion": "2014-05-28T00:00:00.000Z",
+            "estatus": 2,
+            "id": 17,
+            "updatedAt": "2014-05-28T01:07:28.000Z",
+            "createdAt": "2014-05-28T01:07:28.000Z"
+          }
+        }
+      }
+    }
 
 ---------
 

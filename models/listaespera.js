@@ -1,21 +1,21 @@
-// Registros de Reservaciones efectuadas
-// estatus de reservaciones: 1 = Pendiente, 2 = Confirmada, 3 = Cancelada
+// Registros de lista de espera
+// estatus de reservaciones: 1 = En espera, 2 = Asignado, 3 = cancelada, 4 = Obsoleta (ya pasó la fecha de reservación, o el usuario no la tomo)
 module.exports = function(sequelize, DataTypes) {
-  var Reservacion = sequelize.define('Reservacion', {
+  var Espera = sequelize.define('Espera', {
     fechaReservacion: {type: DataTypes.DATE, allowNull: false, isDate: true},
     estatus: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 1}
   }, {
     timestamps: true,
     associate: function(models) {
-      Reservacion.belongsTo(models.Ruta, {foreignKey: 'RutaId'}),
-      Reservacion.belongsTo(models.RutaCorrida, {foreignKey: 'RutaCorridaId'}),
-      Reservacion.belongsTo(models.Usuario, {foreignKey: 'UsuarioId'}),
-      Reservacion.belongsTo(models.Oferta, {foreignKey: 'OfertaId'})
+      Espera.belongsTo(models.Ruta, {foreignKey: 'RutaId'}),
+      Espera.belongsTo(models.RutaCorrida, {foreignKey: 'RutaCorridaId'}),
+      Espera.belongsTo(models.Usuario, {foreignKey: 'UsuarioId'}),
+      Espera.belongsTo(models.Oferta, {foreignKey: 'OfertaId'}),
+      Espera.belongsTo(models.Reservacion, {foreignKey: 'ReservacionId'})
     },
     validate: {
       validateFecha: function(){
         var hoy = new Date();
-        //hoy.setHours(0,0,0,0);
         hoy.setUTCHours(0,0,0,0); // TODO: corregir problemas con las fechas y horarios UTC
         console.log(hoy);
         if( (this.fechaReservacion ) < hoy ){
@@ -25,5 +25,5 @@ module.exports = function(sequelize, DataTypes) {
     }
   })
 
-  return Reservacion
+  return Espera
 }

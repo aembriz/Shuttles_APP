@@ -172,8 +172,16 @@ var rutasuggest = require('./routes/procesocompraruta');
 app.get('/compra/rutasugeridas', usuario.authenticate, rutasuggest.listSuggestions());
 app.get('/compra/ruta/:rutaid/oferta', usuario.authenticate, rutasuggest.listOferta());
 app.post('/compra/reservar/:ofertaid', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.reservationCreate()); // Crea la reservación
+app.post('/compra/reservarbulk/', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.reservationCreateBulk()); // Crea varias reservaciones
+
+app.put('/compra/confirmar/:reservacionid', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.reservationConfirm()); 
+
 app.post('/compra/cancelar/:reservacionid', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.reservationCancel()); // cancela una reservación
 app.get('/compra/misreservaciones', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.reservationList());
+
+app.post('/compra/esperar/:ofertaid', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.waitinglistCreate()); 
+app.post('/compra/cancelarespera/:reservacionid', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.waitinglistCancel()); 
+app.get('/compra/misesperas', usuario.authenticate, usuario.needsRole('USUARIO'), rutasuggest.waitinglistList());
 
 
 // --------------- Rutas Favoritas----------------
