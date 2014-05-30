@@ -5,6 +5,7 @@ function creapuntos(){
   var mapOptions = {
     zoom: 10,
     //Optenemos el centro del mapa
+//    center: new google.maps.LatLng(19.4338902, -99.1530205)
     center: new google.maps.LatLng(19.4338902, -99.1530205)
   };
   map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);

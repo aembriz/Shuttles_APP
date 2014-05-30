@@ -1023,8 +1023,8 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'Auth
 
 // -----------------------------------------------------
 /* Usuario - Rutas */
-muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location','$window', '$q', 'RutaSugerida', 
-  function($scope, $location, $window, $q, RutaSugerida) {
+muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$window', 'RutaSugerida', 'RutaOferta', 'RutaReservar',  'RutaEsperar',
+  function($scope, $location, $window, RutaSugerida, RutaOferta, RutaReservar, RutaEsperar) {
     $scope.PointCount = 0;
     $scope.puntoALat = 0;
     $scope.puntoALng = 0;
@@ -1035,10 +1035,45 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location','$wi
     creapuntos();
     $scope.rutas = null;
     $scope.orderProp = 'nombre';
-    //var deferred = $q.defer();
 
     $scope.ubicar = function(ruta){
       $location.path('usuarioBuscarRutas');
+    };
+
+    $scope.showCorridaList = function(ruta){
+      console.log("Hab::Corridas " + ruta.id);
+      RutaOferta.query({exId: ruta.id}, function(results) {
+        console.log("Hab::Corridas " + results.length);
+        $scope.corridas = results;
+        
+        $('#myModal').modal({
+          show: true
+        });
+
+      });
+    };    
+
+    $scope.reservar = function(corrida){
+      console.log("Hab::reservar " + corrida.id);
+      RutaReservar.query({exId: corrida.id}, function(results) {
+        console.log("Hab::reservar " + results);
+        corrida.reserved = true;
+
+      });
+    };
+
+    $scope.esperar = function(corrida){
+      console.log("Hab::esperar " + corrida.id);
+      RutaEsperar.query({exId: corrida.id}, function(results) {
+        console.log("Hab::esperar " + results);
+        corrida.waiting = true;
+
+      });
+    };
+
+    $scope.favorito = function(ruta){
+      console.log("Hab::favorito " + ruta.RutaId);
+      ruta.isFavorite = ! ruta.isFavorite;
     };
 
     $scope.sugerir = function(){

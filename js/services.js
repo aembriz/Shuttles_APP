@@ -3,8 +3,8 @@
 /* Services */
 
 var muukServices = angular.module('muukServices', ['ngResource']);
-var servicesUrl = "http://localhost:8082";
-//var servicesUrl = "http://54.201.26.22:8082";
+//var servicesUrl = "http://localhost:8082";
+var servicesUrl = "http://54.201.26.22:8082";
 
 muukServices.factory('RoleService', ['$http',
   function ($http) {
@@ -315,6 +315,49 @@ muukServices.factory('RutaSugerida',['$resource', 'SessionService',
 
     //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
   }]);
+
+muukServices.factory('RutaOferta',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/ruta/:exId/oferta', {}, {
+      query: {
+        method: 'GET', 
+        params:{}, 
+        isArray:true, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
+  }]);
+
+muukServices.factory('RutaReservar',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/reservar/:exId', {}, {
+      query: {
+        method: 'POST', 
+        params:{exId: '@exId'}, 
+        isArray:false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
+  }]);
+
+muukServices.factory('RutaEsperar',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/esperar/:exId', {}, {
+      query: {
+        method: 'POST', 
+        params:{exId: '@exId'}, 
+        isArray:false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
+  }]);
+
 
 /*
 muukServices.factory('RutaSugerida',['$resource', 'SessionService',
