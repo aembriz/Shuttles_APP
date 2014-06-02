@@ -30,7 +30,7 @@
 							<span class="input-group-addon">Buscar: </span>
 						  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de rutas"/>
 						</div>
-						<img ng-show="cargandorutas==true" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+						<img ng-show="cargandorutas==true" alt="Loading Content" src="imgs/loading.gif" height="25px" />		
 						<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
 							<p ng-bind-html="message"></p>
 						</div>		
@@ -182,16 +182,12 @@
 			<div class="panel-heading" align="center">
 				<!-- ayuda en seleccion de mapa -->
 
-				<!-- 0 points -->
-				<div class="animate-switch" ng-if="PointCount == 0">
-					<b>Ubicar el origen de tu viaje en el mapa o escribe el origen de la ruta</b>
+				<!-- sin sugerencias -->
+				<div class="animate-switch" ng-if="mostrarSugerencias==false">
+					<b>Ubicar el origen y destino de tu ruta.</b>
 				</div>
-				<!-- 1 points -->
-				<div class="animate-switch" ng-if="PointCount == 1">
-					<b>Ubicar el destino de tu viaje y presionar "Sugerir nuevas rutas"</b>
-				</div>
-				<!-- 2 points -->
-				<div class="animate-switch" ng-if="PointCount == 2">
+				<!-- con sugerencias -->
+				<div class="animate-switch" ng-if="mostrarSugerencias==true">
 					<b>Refina tu origen y destino, posteriormente presiona "Sugerir nuevas rutas"</b> 
 				</div>
 						 
@@ -204,14 +200,16 @@
 							<tr>
 								<td>
 									<div class="form-group" ng-class="{ 'has-error' : exForm.origentxt.$invalid && !exForm.origentxt.$pristine }">
-										<label for="origentxt">Origen</label><br/>
+										<img src="imgs/Origen.png" alt="Origen">
+										<label for="origentxt">Origen</label>
 										<input type="text" class="form-control" placeholder="Origen de la ruta" id="origentxt" name="origentxt" ng-model="ruta.origentxt" required/>
 										<p ng-show="exForm.origentxt.$invalid && !exForm.origentxt.$pristine" class="help-block">Se requiere el origen de la ruta.</p>
 									</div>
 								</td>
 								<td>
 									<div class="form-group" ng-class="{ 'has-error' : exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine }">
-										<label for="destinotxt">Destino</label><br/>
+										<img src="imgs/Destino.png" alt="Destino">
+										<label for="destinotxt">Destino</label>
 										<input type="text" class="form-control" placeholder="Destino de la ruta" id="destinotxt" name="destinotxt" ng-model="ruta.destinotxt" required/>
 										<p ng-show="exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine" class="help-block">Se requiere el destino de la ruta.</p>
 									</div>	
@@ -224,7 +222,7 @@
 							</tr>
 							<tr>
 								<td colspan="2">
-				<div class="box efecto3" id="map_canvas" style="width: 90%; height: 100%"></div>
+									<div class="box efecto3" id="map_canvas" style="width: 90%; height: 100%"></div>
 								</td>
 							</tr>		
 						</tbody>

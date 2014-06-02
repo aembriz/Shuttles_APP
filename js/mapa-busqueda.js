@@ -15,6 +15,15 @@ function creapuntos(){
     center: new google.maps.LatLng(19.4338902, -99.1530205)
   };
   map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
+  var polyOptions = {
+    strokeColor: '#000000',
+    strokeOpacity: 1.0,
+    strokeWeight: 3
+    //editable: true,
+    //draggable: true
+  };
+  poly = new google.maps.Polyline(polyOptions);
+  poly.setMap(map);
 
   // esperamos el click en el mapa
   google.maps.event.addListener(map, 'click', addLatLng);
@@ -46,7 +55,7 @@ function creapuntos(){
       title: 'Origen',
       animation: google.maps.Animation.DROP,
       map: map,
-      icon:"imgs/3.png",
+      icon:"imgs/Origen.png",
       anchorPoint: new google.maps.Point(Lat, Lng)
     });
   }
@@ -58,10 +67,10 @@ function creapuntos(){
     marker1 = new google.maps.Marker({
       //position: event.latLng,
       draggable:true,
-      title: 'Origen',
+      title: 'Destino',
       animation: google.maps.Animation.DROP,
       map: map,
-      icon:"imgs/1.png",
+      icon:"imgs/Destino.png",
       anchorPoint: new google.maps.Point(Lat, Lng)
     });
   }
@@ -157,6 +166,35 @@ function addLatLng(event) {
     // esperamos el drag del marker
     google.maps.event.addListener(markerO, 'dragend', dragendOrigen);
 */
+  if (marker0 == null) {
+    marker0 = new google.maps.Marker({
+      //position: event.latLng,
+      draggable:true,
+      title: 'Origen',
+      animation: google.maps.Animation.DROP,
+      map: map,
+      icon:"imgs/Origen.png",
+      anchorPoint: new google.maps.Point(Lat, Lng)
+    });
+    marker0.setVisible(false);
+    // esperamos el drag del marker
+    google.maps.event.addListener(marker0, 'dragend', dragendOrigen);
+  }
+  if (marker1 == null) {
+    marker1 = new google.maps.Marker({
+      //position: event.latLng,
+      draggable:true,
+      title: 'Destino',
+      animation: google.maps.Animation.DROP,
+      map: map,
+      icon:"imgs/Destino.png",
+      anchorPoint: new google.maps.Point(Lat, Lng)
+    });
+    marker1.setVisible(false);
+    // esperamos el drag del marker
+    google.maps.event.addListener(marker1, 'dragend', dragendDestino);
+  }  
+
   if (!marker0.visible) {
     setOrigenAddress(event.latLng);
     marker0.setPosition(event.latLng);
@@ -197,6 +235,7 @@ function addLatLng(event) {
 
 // evento para mover el marker origen
 function dragendOrigen(event) {
+  setOrigenAddress(event.latLng);
   angular.element($('.view-frame')).scope().OrigenLat = event.latLng.lat();
   angular.element($('.view-frame')).scope().OrigenLng = event.latLng.lng();
   angular.element($('.view-frame')).scope().$apply();
@@ -204,6 +243,7 @@ function dragendOrigen(event) {
 
 // evento para mover el marker destino
 function dragendDestino(event) {
+  setDestinoAddress(event.latLng);
   angular.element($('.view-frame')).scope().DestinoLat = event.latLng.lat();
   angular.element($('.view-frame')).scope().DestinoLng = event.latLng.lng();
   angular.element($('.view-frame')).scope().$apply();
@@ -237,3 +277,58 @@ function setDestinoAddress(pos) {
     }
   });
 }
+
+function bindInfoWindow(marker, map, infowindow, strDescription) {
+    google.maps.event.addListener(marker, 'click', function() {
+      if(strDescription != ""){
+        infowindow.setContent(strDescription);
+        infowindow.open(map, marker);
+      }
+    });
+}
+
+function consultapuntos() {
+  var flightPlanCoordinates = [];
+  infoPuntos = angular.element($('.view-frame')).scope().pMapa;
+  console.log("DATOS DE CONSULTA ----> " + infoPuntos[0].latitud);
+
+  var infowindow =  new google.maps.InfoWindow({
+    content: ""
+  });
+  var mapOptions = {
+    zoom: 10,
+    center:  new google.maps.LatLng(19.4338902, -99.1530205)
+  };
+  /*
+  map = new google.maps.Map(document.getElementById('map_canvas'),
+      mapOptions);
+*/
+  var infowindow =  new google.maps.InfoWindow({
+    content: ""
+  });
+
+  for (var i = 0; i < infoPuntos.length; i++) {
+    console.log(infoPuntos[i].descripcion);
+    flightPlanCoordinates.push(new google.maps.LatLng(parseFloat(infoPuntos[i].latitud), parseFloat(infoPuntos[i].longitud)));
+    var latLng = new google.maps.LatLng( parseFloat(infoPuntos[i].latitud), parseFloat(infoPuntos[i].longitud)); 
+
+    var marker = new google.maps.Marker({
+      position: latLng,
+      map: map,
+      icon:"imgs/"+infoPuntos[i].tipo+".png"
+    });
+    
+    bindInfoWindow(marker, map, infowindow, infoPuntos[i].descripcion);
+  }
+
+  var flightPath = new google.maps.Polyline({
+    path: flightPlanCoordinates,
+    geodesic: true,
+    strokeColor: '#0000FF',
+    strokeOpacity: 1.0,
+    strokeWeight: 2
+  });
+
+  flightPath.setMap(map);
+}
+

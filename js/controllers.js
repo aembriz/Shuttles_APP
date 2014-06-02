@@ -1156,8 +1156,8 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'Sess
 
 // -----------------------------------------------------
 /* Usuario - Rutas */
-muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$window', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove',
-  function($scope, $location, $window, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove) {
+muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$window', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'Mapa',
+  function($scope, $location, $window, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove, Mapa) {
     //$scope.PointCount = 0;
     $scope.mostrarSugerencias = false;
     $scope.puntoALat = 0;
@@ -1169,11 +1169,7 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
     creapuntos();
     $scope.rutas = null;
     $scope.orderProp = 'nombre';
-/*
-    $scope.ubicar = function(ruta){
-      $location.path('usuarioBuscarRutas');
-    };
-*/
+
     $scope.showCorridaList = function(ruta){
       console.log("Hab::Corridas " + ruta.id);
       RutaOferta.query({exId: ruta.id}, function(results) {
@@ -1194,19 +1190,7 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
             // TODO
           }
         }
-
-/*
-        RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
-          for (var i = 0; i < favoritos.length; i++) {
-            for (var j = 0; j < results.length; j++) {
-              results[j].isFavorite = (results[j].id == favoritos[i].rutum.id);
-              if (results[j].isFavorite) { continue; }
-            } 
-          }
-          $scope.corridas = results;
-        });        
-*/
-        
+  
         $('#myModal').modal({
           show: true
         });
@@ -1243,7 +1227,7 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
       }   
     };
 
-    $scope.sugerir = function(){
+    $scope.sugerir = function() {
       $scope.mostrarSugerencias = true;
       $scope.cargandorutas = true;
       $scope.puntoALat = $scope.OrigenLat;
@@ -1274,8 +1258,26 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
     };    
 
     $scope.showMapa = function(ruta){
+      var consulta= Mapa.query({exId: ruta.id});
+      $scope.rutaid = ruta.id;
 
-    }
+      consulta.$promise.then(function(result){
+        console.log("ya cargo ---< " + result.length);
+        if(result.length > 0){
+          $scope.pMapa = result;
+          $scope.orderProp = 'id';
+          console.log($scope.pMapa);
+          consultapuntos();
+        }
+        
+        console.log($scope.pMapa);
+        //checkInfoMap();
+        
+      },function(error){
+        console.log(error);
+      });
+    };
+
   }]);
 muukControllers.controller('UsuarioBuscarRutasXMapaCtrl', ['$scope', '$window', '$location', 'RutasSugeridas',
   function($scope, $window, $location, RutasSugeridas) {
@@ -1356,7 +1358,7 @@ muukControllers.controller('MapaFormCtrl', ['$scope', '$routeParams', 'Mapa', '$
       
     },function(error){
       console.log(error);
-    })
+    });
 
     $scope.save = function(mapa) {
       console.log("Objeto de cordenadas---> ");
