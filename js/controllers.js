@@ -8,7 +8,7 @@ var muukControllers = angular.module('muukControllers', []);
 muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'SessionService',
   function($scope, $location, $window, SessionService) { 
     if(SessionService.currentUser != null){
-      $scope.user = {authenticated: true, name: SessionService.currentUser.name};    
+      $scope.user = {authenticated: true, name: SessionService.currentUser.name, empresa: SessionService.currentUser.empresa, token: SessionService.currentUser.token, role: SessionService.currentUser.role};    
     } 
     else{
       $scope.user = {authenticated: false, name: ''};   
@@ -1008,24 +1008,158 @@ muukControllers.controller('UsuarioRutasCtrl', ['$scope', '$location', 'Authenti
   function($scope, $location, AuthenticationService) {
 
   }]);
-muukControllers.controller('UsuarioReservacionesCtrl', ['$scope', '$location', 'AuthenticationService',
-  function($scope, $location, AuthenticationService) {
+muukControllers.controller('UsuarioReservacionesCtrl', ['$scope', '$location', 'Reservaciones', 'CancelarReservacion',
+  function($scope, $location, Reservaciones, CancelarReservacion) {
 
+    $scope.loadReservaciones = function() {
+      Reservaciones.query({}, function(results){
+        console.log(results);
+        // fill folio
+        for (var i = 0; i < results.length; i++) {
+          results[i].folio = results[i].id.toString();
+          while (results[i].folio.length < 6) {
+            results[i].folio = '0' + results[i].folio;
+          }
+        }
+        // fill ruta
+        $scope.reservaciones = results;
+      });
+    }
+
+    $scope.cancel = function(reservacion) {
+      CancelarReservacion.query({exId: reservacion.id}, function(results) {
+        console.log(results);
+        $scope.loadReservaciones();
+      });
+    }
+
+    $scope.loadReservaciones();
   }]);
-muukControllers.controller('UsuarioCancelacionesCtrl', ['$scope', '$location', 'AuthenticationService',
-  function($scope, $location, AuthenticationService) {
+muukControllers.controller('UsuarioEsperaCtrl', ['$scope', '$location', 'Esperas', 'CancelarEspera',
+  function($scope, $location, Esperas, CancelarEspera) {
 
+    $scope.loadEsperas = function() {
+      Esperas.query({}, function(results){
+        console.log(results);
+        // fill folio
+        for (var i = 0; i < results.length; i++) {
+          results[i].folio = results[i].id.toString();
+          while (results[i].folio.length < 6) {
+            results[i].folio = '0' + results[i].folio;
+          }
+        }
+        // fill ruta
+        $scope.esperas = results;
+      });
+    }
+
+    $scope.cancel = function(espera) {
+      CancelarEspera.query({exId: espera.id}, function(results) {
+        console.log(results);
+        $scope.loadEsperas();
+      });
+    }
+
+    $scope.loadEsperas();
   }]);
-muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'AuthenticationService',
-  function($scope, $location, AuthenticationService) {
+muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'SessionService', 'RutaXEmpresa', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove',
+  function($scope, $location, SessionService, RutaXEmpresa, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove) {
+    $scope.rutas = RutaXEmpresa.query(function(results){
+        var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
+        for (var i = 0; i < favoritos.length; i++) {
+          for (var j = 0; j < results.length; j++) {
+            console.log("comparando " + results[j].id + '/' + favoritos[i].RutaId);
+            results[j].isFavorite = (results[j].id == favoritos[i].RutaId);
+            if (results[j].isFavorite) { break; }
+          } 
+        }
+        $scope.rutas = results;
+      });
 
+    });
+    $scope.orderProp = 'nombre';
+
+    $scope.favorito = function(ruta){
+      console.log(ruta);
+      if (ruta.isFavorite) {
+        var RutaRemovida = RutaFavoritaRemove.query({usrid: SessionService.currentUser.id, rutaid: ruta.id}, function() {
+          console.log('removido');
+          ruta.isFavorite = false;
+        });
+      } else {
+        var RutaAgregada = RutaFavoritaAdd.query({usrid: SessionService.currentUser.id, rutaid: ruta.id}, function(result) {
+          console.log('agregado');
+          ruta.isFavorite = true;
+        });
+      }   
+    };
+
+    $scope.filtraFavoritos = function() {
+      if ($scope.showFavoritos == null) {
+        $scope.showFavoritos = false;
+      }
+      $scope.showFavoritos = !$scope.showFavoritos;
+      RutaXEmpresa.query(function(results){
+          var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
+          for (var i = 0; i < favoritos.length; i++) {
+            for (var j = 0; j < results.length; j++) {
+              console.log("filtrando " + results[j].id + '/' + favoritos[i].RutaId);
+              results[j].isFavorite = (results[j].id == favoritos[i].RutaId);
+              if (results[j].isFavorite) { break; }
+            } 
+          }
+          if ($scope.showFavoritos) {
+            // filtrar solo favoritos
+            while ($scope.rutas.length > 0) {
+              $scope.rutas.pop();
+            }            
+            for (var j = 0; j < results.length; j++) {
+              if (results[j].isFavorite) {
+                $scope.rutas.push(results[j]);
+              }
+            }
+          } else {
+            // mostrar todos
+            $scope.rutas = results;
+          }
+        });
+
+      });      
+/*
+      if ($scope.showFavoritos) {
+        RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
+          console.log(favoritos);
+          for (var i = 0; i < favoritos.length; i++) {
+            favoritos[i].isFavorite = true;            
+          }
+          $scope.rutas = favoritos;
+        });
+
+      } else {
+        RutaXEmpresa.query(function(results){
+            var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
+            for (var i = 0; i < favoritos.length; i++) {
+              for (var j = 0; j < results.length; j++) {
+                console.log("comparando " + results[j].id + '/' + favoritos[i].RutaId);
+                results[j].isFavorite = (results[j].id == favoritos[i].RutaId);
+                if (results[j].isFavorite) { break; }
+              } 
+            }
+            $scope.rutas = results;
+          });
+
+        });
+      }
+*/
+    }
   }]);
 
 // -----------------------------------------------------
 /* Usuario - Rutas */
-muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$window', 'RutaSugerida', 'RutaOferta', 'RutaReservar',  'RutaEsperar',
-  function($scope, $location, $window, RutaSugerida, RutaOferta, RutaReservar, RutaEsperar) {
-    $scope.PointCount = 0;
+muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$window', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove',
+  function($scope, $location, $window, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove) {
+    //$scope.PointCount = 0;
+    $scope.mostrarSugerencias = false;
     $scope.puntoALat = 0;
     $scope.puntoALng = 0;
     $scope.puntoBLat = 0;
@@ -1035,16 +1169,43 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
     creapuntos();
     $scope.rutas = null;
     $scope.orderProp = 'nombre';
-
+/*
     $scope.ubicar = function(ruta){
       $location.path('usuarioBuscarRutas');
     };
-
+*/
     $scope.showCorridaList = function(ruta){
       console.log("Hab::Corridas " + ruta.id);
       RutaOferta.query({exId: ruta.id}, function(results) {
         console.log("Hab::Corridas " + results.length);
         $scope.corridas = results;
+        console.log(results);
+
+        for (var i = 0; i < results.length; i++) {
+          // verificar si tiene reservacion
+          if (results[i].reservacion != null) {
+            // con reservacion
+            results[i].reservacion.folio = results[i].reservacion.id.toString();
+            while (results[i].reservacion.folio.length < 6) {
+              results[i].reservacion.folio = '0' + results[i].reservacion.folio;
+            }
+          } else {
+            // verificar si esta en espera
+            // TODO
+          }
+        }
+
+/*
+        RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
+          for (var i = 0; i < favoritos.length; i++) {
+            for (var j = 0; j < results.length; j++) {
+              results[j].isFavorite = (results[j].id == favoritos[i].rutum.id);
+              if (results[j].isFavorite) { continue; }
+            } 
+          }
+          $scope.corridas = results;
+        });        
+*/
         
         $('#myModal').modal({
           show: true
@@ -1057,8 +1218,6 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
       console.log("Hab::reservar " + corrida.id);
       RutaReservar.query({exId: corrida.id}, function(results) {
         console.log("Hab::reservar " + results);
-        corrida.reserved = true;
-
       });
     };
 
@@ -1066,17 +1225,26 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
       console.log("Hab::esperar " + corrida.id);
       RutaEsperar.query({exId: corrida.id}, function(results) {
         console.log("Hab::esperar " + results);
-        corrida.waiting = true;
-
       });
     };
 
     $scope.favorito = function(ruta){
-      console.log("Hab::favorito " + ruta.RutaId);
-      ruta.isFavorite = ! ruta.isFavorite;
+      console.log(ruta);
+      if (ruta.isFavorite) {
+        var RutaRemovida = RutaFavoritaRemove.query({usrid: SessionService.currentUser.id, rutaid: ruta.id}, function() {
+          console.log('removido');
+          ruta.isFavorite = false;
+        });
+      } else {
+        var RutaAgregada = RutaFavoritaAdd.query({usrid: SessionService.currentUser.id, rutaid: ruta.id}, function(result) {
+          console.log('agregado');
+          ruta.isFavorite = true;
+        });
+      }   
     };
 
     $scope.sugerir = function(){
+      $scope.mostrarSugerencias = true;
       $scope.cargandorutas = true;
       $scope.puntoALat = $scope.OrigenLat;
       $scope.puntoALng = $scope.OrigenLng;
@@ -1086,48 +1254,28 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
       //var ListaRutas = 
       var RutaList = RutaSugerida.query({puntoALat: $scope.puntoALat, puntoALng: $scope.puntoALng, puntoBLat: $scope.puntoBLat, puntoBLng: $scope.puntoBLng}, 
         function(results){
+          console.log(results[0]) 
           $scope.cargandorutas = false;
           console.log("OWL::Rutas sugeridas: " + results.length);
           $scope.rutasuggest = results;
+          var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
+            for (var i = 0; i < favoritos.length; i++) {
+              for (var j = 0; j < results.length; j++) {
+                console.log("comparando " + results[j].ruta.id + '/' + favoritos[i].RutaId);
+                results[j].ruta.isFavorite = (results[j].ruta.id == favoritos[i].RutaId);
+                if (results[j].ruta.isFavorite) { break; }
+              } 
+            }
+            $scope.rutasuggest = results;
+          });
+
         }
       );
-
-
-      //console.log(RutaList);
-      //$scope.rutas = RutaList;
-
-      //console.log(deferred.promise);
-      //$scope.rutas = deferred.promise;
-      //return deferred.promise;
-/*
-      ListaRutas.then(function success(result) {
-        //$scope.rutas = result;//result.toSource();
-        console.log(result);
-        console.log(result[0]);
-        console.log(result[0].Resource);
-        console.log(result.toSource());
-        //console.log($scope.rutas);
-
-
-      },function error(error){
-        console.log(error);
-      });
-*/
-/*
-      var rutas = RutaSugerida.query({puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng});
-      rutas.$promise.then(function(result) {
-        $scope.rutas = result;
-        console.log(result);
-
-
-      },function(error){
-        console.log(error);
-      });*/
-
-//      ListaRutas.resolve();
     };    
 
+    $scope.showMapa = function(ruta){
 
+    }
   }]);
 muukControllers.controller('UsuarioBuscarRutasXMapaCtrl', ['$scope', '$window', '$location', 'RutasSugeridas',
   function($scope, $window, $location, RutasSugeridas) {

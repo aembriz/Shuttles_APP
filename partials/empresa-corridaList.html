@@ -38,8 +38,8 @@
 						<thead>
 							<tr>
 								<th><a href="" ng-click="orderProp='id'">ID</a></th>
-								<th><a href="" ng-click="orderProp='horaSalida'">Hora de salida</a></th>
-								<th><a href="" ng-click="orderProp='horaLlegada'">Hora de llegada</a></th>
+								<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
+								<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
 								<th><a href="" ng-click="orderProp='capacidadOfertada'">Capacidad ofertada</a></th>
 								<th><a href="" ng-click="orderProp='tarifa'">Tarifa</a></th>
 								<th>-</th>
@@ -48,8 +48,8 @@
 						<tbody>			
 							<tr ng-repeat="corrida in corridas | filter:query | orderBy:orderProp">
 								<td>{{corrida.id}}</td>
-								<td><a href="#/empresaCorridaShow/{{corrida.id}}">{{corrida.horaSalida}}</a></td>
-								<td>{{corrida.horaLlegada}}</td>
+								<td><a href="#/empresaCorridaShow/{{corrida.id}}">{{corrida.horaSalidaFmt}}</a></td>
+								<td>{{corrida.horaLlegadaFmt}}</td>
 								<td>{{corrida.capacidadOfertada}}</td>
 								<td>{{corrida.tarifa}}</td>
 								<td>

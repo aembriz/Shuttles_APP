@@ -312,8 +312,6 @@ muukServices.factory('RutaSugerida',['$resource', 'SessionService',
         headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
       }     
     });
-
-    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
   }]);
 
 muukServices.factory('RutaOferta',['$resource', 'SessionService',
@@ -326,8 +324,6 @@ muukServices.factory('RutaOferta',['$resource', 'SessionService',
         headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
       }     
     });
-
-    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
   }]);
 
 muukServices.factory('RutaReservar',['$resource', 'SessionService',
@@ -340,8 +336,6 @@ muukServices.factory('RutaReservar',['$resource', 'SessionService',
         headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
       }     
     });
-
-    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
   }]);
 
 muukServices.factory('RutaEsperar',['$resource', 'SessionService',
@@ -349,13 +343,103 @@ muukServices.factory('RutaEsperar',['$resource', 'SessionService',
     return $resource(servicesUrl + '/compra/esperar/:exId', {}, {
       query: {
         method: 'POST', 
-        params:{exId: '@exId'}, 
-        isArray:false, 
+        params: {exId: '@exId'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+  }]);
+
+muukServices.factory('RutaFavorita',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/rutafavorita', {}, {
+      query: {
+        method: 'GET', 
+        params:{usrid: '@usrid'}, 
+        isArray: true, 
         headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
       }     
     });
 
-    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
+  }]);
+
+muukServices.factory('RutaFavoritaAdd',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/rutafavorita/add', {}, {
+      query: {
+        method: 'PUT', 
+        params: {usrid: '@usrid', rutaid: '@rutaid'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+  }]);
+
+muukServices.factory('RutaFavoritaRemove',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/rutafavorita/remove', {}, {
+      query: {
+        method: 'PUT', 
+//        params: { }, 
+        params: {usrid: '@usrid', rutaid: '@rutaid'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+  }]);
+
+muukServices.factory('Reservaciones',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/misreservaciones', {}, {
+      query: {
+        method: 'GET', 
+        params: { }, 
+        isArray: true, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+  }]);
+
+muukServices.factory('CancelarReservacion',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/cancelar/:exId', {}, {
+      query: {
+        method: 'POST', 
+        params: {exId: '@exId'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+  }]);
+
+muukServices.factory('Esperas',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/misesperas', {}, {
+      query: {
+        method: 'GET', 
+        params: { }, 
+        isArray: true, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+  }]);
+
+muukServices.factory('CancelarEspera',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/cancelarespera/:exId', {}, {
+      query: {
+        method: 'POST', 
+        params: {exId: '@exId'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
   }]);
 
 

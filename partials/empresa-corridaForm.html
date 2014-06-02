@@ -72,7 +72,7 @@
 					<p ng-show="exForm.capacidadOfertada.$invalid && !exForm.capacidadOfertada.$pristine" class="help-block">Se requiere la capacidad ofertada.</p>
 				</div>	
 				<div class="form-group" ng-class="{ 'has-error' : exForm.tarifa.$invalid && !exForm.tarifa.$pristine }">
-					<label for="tarifa">Tarifa</label><br/>
+					<label for="tarifa">Tarifa (MX$)</label><br/>
 					<input type="number" class="form-control" placeholder="23" id="tarifa" name="tarifa" ng-model="corrida.tarifa" min="0" required/>
 					<p ng-show="exForm.tarifa.$invalid && !exForm.tarifa.$pristine" class="help-block">Se requiere la tarifa.</p>
 				</div>	

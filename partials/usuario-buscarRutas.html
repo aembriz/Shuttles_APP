@@ -1,19 +1,24 @@
-<link href="css/mapa.css" rel="stylesheet">
-<script src="js/mapa-busqueda.js"></script>
 <div class="container-fluid">
+	<script src="js/holder/holder.js"></script>
+	<link href="css/mapa.css" rel="stylesheet">
+	<script src="js/mapa-busqueda.js"></script>
 	<br/>
 	<br/>
 	<h1 class="page-header" align="center">Buscar Ruta</h1>
 	<link href="css/panels.css" rel="stylesheet">
+	<link href="css/modal.css" rel="stylesheet">
 	
 	<div class="form-1200">
 
-		<div class="animate-switch" ng-show="PointCount == 2">
+		<div class="animate-switch" ng-show="mostrarSugerencias==true">
 			<div class="panel panel-info">
 				<div class="panel-heading" align="center">
 					<!-- sugerir rutas -->
+					<b>Lista de rutas sugeridas</b>
+<!--
 					<b>Origen</b>: {{OrigenLat}}, {{OrigenLng}} <br>
 					<b>Destino</b>: {{DestinoLat}}, {{DestinoLng}} <br>
+				-->
 				</div>
 
 				<div class="panel-body" align="center">
@@ -75,9 +80,12 @@
 										<button type="submit" class="btn btn-info" ng-click="showCorridaList(sug.ruta)">
 											Ver detalle
 										</button>
-
+										<button type="submit" class="btn btn-info" ng-click="showMapa(sug.ruta)">
+											<span class="glyphicon glyphicon-map-marker"></span>
+										</button>					
+									
 										<!-- Modal - Corrida de las rutas -->
-										<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+										<div class="modal fade modal-wide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 											<div class="modal-dialog">
 											    <div class="modal-content">
 
@@ -115,32 +123,26 @@
 																<thead>
 																	<tr>
 																		<th><a href="" ng-click="orderProp='id'">ID</a></th>
-																		<th><a href="" ng-click="orderProp='horaSalida'">Hora de salida</a></th>
-																		<th><a href="" ng-click="orderProp='horaLlegada'">Hora de llegada</a></th>
+																		<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
+																		<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
 																		<th><a href="" ng-click="orderProp='oferta'">Lugares disponibles</a></th>
-																		<th><a href="" ng-click="orderProp='tarifa'">Tarifa</a></th>
-																		<th>-</th>
+																		<th><a href="" ng-click="orderProp='tarifa'">Tarifa (MX$)</a></th>
+																		<th>Folio</th>
 																	</tr>
 																</thead>
 
 																<tbody>			
 																	<tr ng-repeat="corrida in corridas | filter:query | orderBy:orderProp">
 																		<td>{{corrida.id}}</td>
-																		<td>
-
-																			<a ng-show="corrida.oferta <= 0" ng-click="esperar(corrida.id)">{{corrida.horaSalida}}</a>
-																			<a ng-show="corrida.oferta > 0" ng-click="reservar(corrida.id)">{{corrida.horaSalida}}</a>
-																		
-																		</td>
-																		<td>{{corrida.horaLlegada}}</td>
+																		<td>{{corrida.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{corrida.rutaCorrida.horaLlegadaFmt}}</td>
 																		<td>{{corrida.oferta}}</td>
-																		<td>{{corrida.tarifa}}</td>
+																		<td>${{corrida.rutaCorrida.tarifa}}</td>
 																		<td>
 
-																			<a ng-show="(corrida.oferta <= 0) && (corrida.waiting != true)" type="button" class="btn btn-warning" ng-click="esperar(corrida)">Lista de espera</a>
-																			<a ng-show="(corrida.oferta <= 0) && (corrida.waiting == true)" type="button" class="btn btn-warning" ng-click="esperar(corrida)" disabled>Lista de espera</a>
-																			<a ng-show="(corrida.oferta > 0) && (corrida.reserved != true)" type="button" class="btn btn-success" ng-click="reservar(corrida)">Reservar</a>
-																			<a ng-show="(corrida.oferta > 0) && (corrida.reserved == true)" type="button" class="btn btn-success" ng-click="reservar(corrida)" disabled>Reservar</a>
+																			<a ng-show="(corrida.oferta <= 0) && (corrida.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(corrida)">Lista de espera</a>
+																			<a ng-show="(corrida.oferta > 0) && (corrida.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(corrida)">Reservar</a>
+																			<p ng-show="(corrida.oferta > 0) && (corrida.reservacion != null)">Reservaci&oacute;n {{corrida.reservacion.folio}}</p>
 																		
 																		</td>
 																	</tr>
@@ -196,7 +198,6 @@
 			</div>
 
 			<div class="panel-body">
-				<div class="box efecto3" id="map_canvas" style="width: 90%; height: 100%"></div>
 				<div class="table-responsive">
 					<table class="table">
 						<tbody>			
@@ -215,11 +216,17 @@
 										<p ng-show="exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine" class="help-block">Se requiere el destino de la ruta.</p>
 									</div>	
 								</td>
+								<!--
 								<td style="vertical-align:middle" align="center">
 									<button type="submit" class="btn btn-primary" ng-disabled="exForm.$invalid" ng-click="ubicar(ruta)">Ubicar en mapa</button>
 								</td>
-
+-->
 							</tr>
+							<tr>
+								<td colspan="2">
+				<div class="box efecto3" id="map_canvas" style="width: 90%; height: 100%"></div>
+								</td>
+							</tr>		
 						</tbody>
 					</table>		
 					

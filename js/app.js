@@ -274,10 +274,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
       when('/usuarioReservaciones', {
         templateUrl: 'partials/usuario-reservaciones.html',
         controller: 'UsuarioReservacionesCtrl'
-      }).      
-      when('/usuarioCancelaciones', {
-        templateUrl: 'partials/usuario-cancelaciones.html',
-        controller: 'UsuarioCancelacionesCtrl'
+      }).       
+      when('/usuarioEspera', {
+        templateUrl: 'partials/usuario-espera.html',
+        controller: 'UsuarioEsperaCtrl'
       }).      
       when('/usuarioFavoritos', {
         templateUrl: 'partials/usuario-favoritos.html',

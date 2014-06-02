@@ -1,13 +1,13 @@
 <div class="container-fluid">
-    <h1 class="page-header">Mis Reservaciones</h1>
+    <h1 class="page-header">En espera</h1>
 	<div class="btn-toolbar" role="toolbar">
       <div class="btn-group" style="width:100%;">
       	
       	<div class="input-group">			
 			<span class="input-group-addon">Buscar: </span>
-		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de reservaciones"/>
+		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de espera"/>
 		</div>
-		<img ng-show="reservaciones==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+		<img ng-show="esperas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
 		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
 			<p ng-bind-html="message"></p>
 		</div>		
@@ -24,20 +24,21 @@
 					<th>Origen - Destino</th>
 					<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
 					<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
-					<th>-</th>
+					<th>-</th> 
 				</tr>
 			</thead>
 			<tbody>			
-				<tr ng-repeat="reservacion in reservaciones | filter:query | orderBy:orderProp">
-					<td>{{reservacion.folio}}</td>
-					<td>{{reservacion.rutum.nombre}}</td>
-					<td>{{reservacion.rutum.origentxt}} - {{reservacion.rutum.destinotxt}}</td>
-					<td>{{reservacion.rutaCorrida.horaSalidaFmt}}</td>
-					<td>{{reservacion.rutaCorrida.horaLlegadaFmt}}</td>
+				<tr ng-repeat="espera in esperas | filter:query | orderBy:orderProp">
+					<td>{{espera.folio}}</td>
+					<td>{{espera.rutum.nombre}}</td>
+					<td>{{espera.rutum.origentxt}} - {{espera.rutum.destinotxt}}</td>
+					<td>{{espera.rutaCorrida.horaSalidaFmt}}</td>
+					<td>{{espera.rutaCorrida.horaLlegadaFmt}}</td>
 					<td>
 						<!--
-						<a type="button" class="btn btn-info" href="#/usuarioShowMapa/{{reservacion.RutaId}}"><span class="glyphicon glyphicon-map-marker"></span></a> -->
-						<a type="button" class="btn btn-danger" ng-click="cancel(reservacion)"><span class="glyphicon glyphicon-remove"></span></a>
+						<a type="button" class="btn btn-info" href="#/usuarioShowMapa/{{espera.RutaId}}"><span class="glyphicon glyphicon-map-marker"></span></a> 
+						-->
+						<a type="button" class="btn btn-danger" ng-click="cancel(espera)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
 
 				</tr>
