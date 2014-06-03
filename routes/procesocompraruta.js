@@ -115,6 +115,8 @@ var getDistance = function(p1, p2) {
 */
 exports.listOferta = function() { 
   return function(req, res){
+    var usrid = req.user.id;
+    var result = {msg: 'No se pudo obtener la disponibilidad'};
     var queryParams = {};
     queryParams.where = {};
     if('rutaid' in req.params) {
@@ -146,7 +148,58 @@ exports.listOferta = function() {
 
     // lista todas las disponibilidades de las corridas de la ruta especificada
     db.Oferta.findAll(queryParams).success(function(rutacorridaoferta) {
-      res.send(rutacorridaoferta);
+      //res.send(rutacorridaoferta);
+
+      // liga reservaciones que el usuario ya tiene para esas ofertas
+      db.Reservacion.findAll({ where: {UsuarioId: usrid, estatus: {lte: 2} } }).success(function(reservacion){
+        if(reservacion != null && reservacion.length > 0){
+          var ofertas = [];
+          for (var i = 0; i < rutacorridaoferta.length; i++) {          
+            var of = rutacorridaoferta[i].values;
+            of.rutaCorrida = of.rutaCorrida.values;
+            var ox = of;
+            for (var r = 0; r < reservacion.length; r++) {
+              var rsv = reservacion[r];
+              if(rsv.OfertaId == ox.id){
+                ox['reservacion'] = rsv.values;              
+              }
+            };
+            ofertas.push(ox);
+          }
+          result = ofertas;
+        }
+        else{
+          result = rutacorridaoferta;
+        }
+
+        db.Espera.findAll({ where: {UsuarioId: usrid, estatus: 1 } }).success(function(espera){
+          if(espera != null && espera.length > 0){            
+            for (var i = 0; i < result.length; i++) {  
+              for (var e = 0; e < espera.length; e++) {
+                var esp = espera[e];
+                if(esp.OfertaId == result[i].id){
+                  result[i].espera = esp.values;
+                }
+              };
+            }
+          }          
+          res.send(result);
+          return;
+        }).error(function(err){
+          console.log('Error al obtener la lista de espera asociada a la consulta de oferta.')
+          res.send(result);
+          return;
+        });
+
+      }).error(function(err){
+        result = rutacorridaoferta;
+        res.send(result);
+        return;
+      });
+
+    }).error(function(err){        
+        res.send({msg: 'Error al consultar la oferta par la ruta: ' + req.params.rutaid });
+        return;
     });        
 
   }
@@ -286,6 +339,19 @@ exports.reservationCancel = function() {
 exports.reservationList = function() { 
   return function(req, res){    
     var usrid = req.user.id;  //5 // TODO: validar que la reservación corresponda al usuario extraido del Token de acceso
+    var paramsWhere = {};    
+    paramsWhere.UsuarioId = usrid;
+
+    if('estatus' in req.query){
+      paramsWhere.estatus = constReservEstatus[req.query.estatus];
+    }
+    if('vigente' in req.query){
+      if(req.query.vigente == 'true'){
+        var hoy = new Date();
+        hoy.setUTCHours(0,0,0,0);        
+        paramsWhere.fechaReservacion = {gte: hoy};
+      }      
+    }    
 
     includes = [
         {model: db.Ruta},
@@ -293,7 +359,7 @@ exports.reservationList = function() {
     ];    
 
     // TODO: tomar en cuenta estatus de las reservaciones a mostrar
-    db.Reservacion.findAll({ where: {UsuarioId: usrid}, include: includes }).success(function(reservacion){
+    db.Reservacion.findAll({ where: paramsWhere, include: includes }).success(function(reservacion){
       res.send(reservacion);
     });
   }
@@ -351,12 +417,29 @@ exports.waitinglistList = function() {
   return function(req, res){    
     var usrid = req.user.id;  //5 // TODO: validar que la reservación corresponda al usuario extraido del Token de acceso
 
+    // filtros
+    var paramsWhere = {};    
+    paramsWhere.UsuarioId = usrid;
+    if('estatus' in req.query){
+      paramsWhere.estatus = constEsperaEstatus[req.query.estatus];
+    }
+    else{
+      paramsWhere.estatus = constEsperaEstatus.new;
+    }
+    if('vigente' in req.query){
+      if(req.query.vigente == 'true'){
+        var hoy = new Date();
+        hoy.setUTCHours(0,0,0,0);        
+        paramsWhere.fechaReservacion = {gte: hoy};
+      }      
+    }
+
     includes = [
         {model: db.Ruta},
         {model: db.RutaCorrida}
     ];    
 
-    db.Espera.findAll({ where: {UsuarioId: usrid, estatus: constEsperaEstatus.new}, include: includes }).success(function(reservacion){
+    db.Espera.findAll({ where: paramsWhere, include: includes }).success(function(reservacion){
       res.send(reservacion);
     });
   }

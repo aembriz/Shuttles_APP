@@ -220,13 +220,13 @@ Comandos RESTFul:
 
 Comandos RESTFul:   
 * GET /compra/rutasugeridas?puntoALat=[lat]&puntoALng=[lng]&puntoBLat=[lat]&puntoBLng=[lng] = (Consulta las rutas más próximas a las coordenadas proporcionadas)  
-* GET /compra/ruta/[id ruta]/oferta = (Lista las corridas y su oferta para la ruta indicada)
+* GET /compra/ruta/[id ruta]/oferta = (Lista las corridas y su oferta para la ruta indicada, en caso de haber una reservación o lista de espera ligada a la oferta para el usuario que consulta, estos objetos aparecerán ligados Ver ejemplo más adelante)
 * POST /compra/reservar/[ofertaid] = (Genera una reservación para la oferta indicada (obtener del servicio anterior))
-* GET /compra/misreservaciones = (Lista las reservaciones del usuario)
+* GET /compra/misreservaciones = (Lista las reservaciones del usuario. Permite agregar el filtro estatus=[new/confirmed/canceled] ... se puede combinar con el filtro vigente=[true/false] para mostrar solo las que tienen fech hoy o futura)
 * POST /compra/cancelar/[reservacionid] = (Cancela la reservación indicada (obtener del servicio anterior), en este momento se procesa lista de espera)
 * POST /compra/esperar/[ofertaid] = (Registra en lista de espera la reservación)
 * POST /compra/cancelarespera/[reservacionid] = (Cancela lista de espera)
-* GET /compra/misesperas = (Lista las esperas que le pertenecen al usuario)
+* GET /compra/misesperas = (Lista las esperas que le pertenecen al usuario. Permite agregar el filtro estatus=[new/assigned/canceled/deprecated] ... se puede combinar con el filtro vigente=[true/false] para mostrar solo las que tienen fech hoy o futura)
 * PUT /compra/confirmar/[reservacionid] = (se confirma una reservación pendiente generada por proceso de lista de espera)
 
 **Nota**: Seguridad ya integrada (se requiere pasar el Token)
@@ -278,29 +278,94 @@ El resultado de la sugerencia de rutas es un arreglo con las rutas encontradas. 
 
 Ejemplo de resultado de oferta:
 
-      [
-        {
+    [
+      {
+        "id": 6,
+        "fechaOferta": "2014-05-30T00:00:00.000Z",
+        "oferta": 10,
+        "RutaId": 1,
+        "RutaCorridaId": 2,
+        "rutaCorrida": {
+          "horaSalidaFmt": "07:40",
+          "horaLlegadaFmt": "08:20",
           "id": 2,
-          "fechaOferta": "2014-05-25T00:00:00.000Z",
-          "oferta": 19,
+          "horaSalida": 460,
+          "horaLlegada": 500,
+          "capacidadTotal": 40,
+          "capacidadReservada": 30,
+          "capacidadOfertada": 5,
+          "tarifa": 23,
+          "idTransporte": "NA",
+          "idChofer": "NA",
+          "RutaId": 1
+        },
+        "reservacion": {
+          "id": 17,
+          "fechaReservacion": "2014-05-30T00:00:00.000Z",
+          "estatus": 2,
+          "createdAt": "2014-05-28T01:07:28.000Z",
+          "updatedAt": "2014-05-28T01:07:28.000Z",
           "RutaId": 1,
           "RutaCorridaId": 2,
-          "rutaCorrida": {
-            "horaSalidaFmt": "07:40",
-            "horaLlegadaFmt": "08:20",
-            "id": 2,
-            "horaSalida": 460,
-            "horaLlegada": 500,
-            "capacidadTotal": 40,
-            "capacidadReservada": 30,
-            "capacidadOfertada": 5,
-            "tarifa": 23,
-            "idTransporte": "NA",
-            "idChofer": "NA",
-            "RutaId": 1
-          }
+          "UsuarioId": 9,
+          "OfertaId": 6
         }
-      ]
+      },
+      {
+        "id": 7,
+        "fechaOferta": "2014-06-01T00:00:00.000Z",
+        "oferta": 10,
+        "RutaId": 1,
+        "RutaCorridaId": 2,
+        "rutaCorrida": {
+          "horaSalidaFmt": "07:40",
+          "horaLlegadaFmt": "08:20",
+          "id": 2,
+          "horaSalida": 460,
+          "horaLlegada": 500,
+          "capacidadTotal": 40,
+          "capacidadReservada": 30,
+          "capacidadOfertada": 5,
+          "tarifa": 23,
+          "idTransporte": "NA",
+          "idChofer": "NA",
+          "RutaId": 1
+        }
+      },
+      {
+        "id": 8,
+        "fechaOferta": "2014-06-02T00:00:00.000Z",
+        "oferta": 10,
+        "RutaId": 1,
+        "RutaCorridaId": 2,
+        "rutaCorrida": {
+          "horaSalidaFmt": "07:40",
+          "horaLlegadaFmt": "08:20",
+          "id": 2,
+          "horaSalida": 460,
+          "horaLlegada": 500,
+          "capacidadTotal": 40,
+          "capacidadReservada": 30,
+          "capacidadOfertada": 5,
+          "tarifa": 23,
+          "idTransporte": "NA",
+          "idChofer": "NA",
+          "RutaId": 1
+        },
+        "espera": {
+          "id": 1,
+          "fechaReservacion": "2014-06-02T00:00:00.000Z",
+          "estatus": 1,
+          "createdAt": "2014-05-27T19:06:47.000Z",
+          "updatedAt": "2014-05-28T00:25:45.000Z",
+          "RutaId": 1,
+          "RutaCorridaId": 2,
+          "UsuarioId": 9,
+          "OfertaId": 8,
+          "ReservacionId": 14
+        }
+      }
+    ]
 
 **Reservación multiple (Bulk)**
 
