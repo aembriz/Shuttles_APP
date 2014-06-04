@@ -653,8 +653,15 @@ muukControllers.controller('EmpresaUsuarioFormCtrl', ['$scope', 'Usuario', '$loc
   }]);
 muukControllers.controller('EmpresaUsuarioShowCtrl', ['$scope', '$routeParams', 'Usuario', '$location',
   function($scope, $routeParams, Usuario, $location) {
-    $scope.usuario = Usuario.show({exId: $routeParams.id});
-
+    Usuario.show({exId: $routeParams.id}, function(result) {
+      console.log(result.password.length);
+      result.passwordCoded = '';
+      for (var i = 0; i < result.password.length; i++) {
+        result.passwordCoded = result.passwordCoded + '●';
+      }
+      $scope.usuario = result;
+    });
+    
     $scope.cancel = function(){
       $location.path('empresaUsuarioList');
     };
@@ -788,6 +795,7 @@ muukControllers.controller('EmpresaRutaListCtrl', ['$scope', '$window', 'Ruta', 
   function($scope, $window, Ruta, RutaXEmpresa) {
     $scope.rutas = RutaXEmpresa.query();
     $scope.orderProp = 'nombre';
+    console.log($scope.rutas);
 
     $scope.deleteRuta = function (exId) {
       if( $window.confirm("Se eliminará la ruta con id [" + exId + "], ¿Desea continuar?")) {
@@ -1011,8 +1019,8 @@ muukControllers.controller('UsuarioRutasCtrl', ['$scope', '$location', 'Authenti
 muukControllers.controller('UsuarioReservacionesCtrl', ['$scope', '$location', 'Reservaciones', 'CancelarReservacion',
   function($scope, $location, Reservaciones, CancelarReservacion) {
 
-    $scope.loadReservaciones = function() {
-      Reservaciones.query({}, function(results){
+    $scope.loadReservaciones = function(estatus, vigente) {
+      Reservaciones.query({estatus: estatus, vigente: vigente}, function(results){
         console.log(results);
         // fill folio
         for (var i = 0; i < results.length; i++) {
@@ -1033,7 +1041,11 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$scope', '$location', '
       });
     }
 
-    $scope.loadReservaciones();
+    $scope.tabActive = ["active","",""];
+    $scope.tabSelected = "new";
+    $scope.tabHideOlder = true; 
+
+    $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
   }]);
 muukControllers.controller('UsuarioEsperaCtrl', ['$scope', '$location', 'Esperas', 'CancelarEspera',
   function($scope, $location, Esperas, CancelarEspera) {

@@ -31,27 +31,27 @@
 				</div>
 				<div class="form-group" ng-class="{ 'has-error' : exForm.origentxt.$invalid && !exForm.origentxt.$pristine }">
 					<label for="origentxt">Origen</label><br/>
-					<input type="text" class="form-control" placeholder="Origen de la ruta" id="origentxt" name="origentxt" ng-model="ruta.origentxt"/>
+					<input type="text" class="form-control" placeholder="Descripci&oacute;n del origen de la ruta" id="origentxt" name="origentxt" ng-model="ruta.origentxt" required/>
 					<p ng-show="exForm.origentxt.$invalid && !exForm.origentxt.$pristine" class="help-block">Se requiere el origen de la ruta.</p>
 				</div>
 				<div class="form-group" ng-class="{ 'has-error' : exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine }">
 					<label for="destinotxt">Destino</label><br/>
-					<input type="text" class="form-control" placeholder="Destino de la ruta" id="destinotxt" name="destinotxt" ng-model="ruta.destinotxt"/>
+					<input type="text" class="form-control" placeholder="Descripci&oacute;n del destino de la ruta" id="destinotxt" name="destinotxt" ng-model="ruta.destinotxt" required/>
 					<p ng-show="exForm.destinotxt.$invalid && !exForm.destinotxt.$pristine" class="help-block">Se requiere el destino de la ruta.</p>
 				</div>			
 				<div class="form-group" ng-class="{ 'has-error' : exForm.descripcion.$invalid && !exForm.descripcion.$pristine }">
 					<label for="descripcion">Descripci&oacute;n</label><br/>
-					<input type="text" class="form-control" placeholder="Breve descripci&oacute;n de la ruta" id="descripcion" name="descripcion" ng-model="ruta.descripcion"/>
+					<input type="text" class="form-control" placeholder="Breve descripci&oacute;n de la ruta" id="descripcion" name="descripcion" ng-model="ruta.descripcion" required/>
 					<p ng-show="exForm.descripcion.$invalid && !exForm.descripcion.$pristine" class="help-block">Se requiere la descripc&oacute;n de la ruta.</p>
 				</div>			
 				<div class="form-group" ng-class="{ 'has-error' : exForm.distanciaaprox.$invalid && !exForm.distanciaaprox.$pristine }">
 					<label for="distanciaaprox">Distancia aprox. (Km)</label><br/>
-					<input type="number" class="form-control" placeholder="12.1" id="distanciaaprox" name="distanciaaprox" ng-model="ruta.distanciaaprox" min="1" step="any"/>
+					<input type="number" class="form-control" placeholder="12.1" id="distanciaaprox" name="distanciaaprox" ng-model="ruta.distanciaaprox" min="1" step="any" required/>
 					<p ng-show="exForm.distanciaaprox.$invalid && !exForm.distanciaaprox.$pristine" class="help-block">Se requiere la distancia aproximada de la ruta.</p>
 				</div>			
 				<div class="form-group" ng-class="{ 'has-error' : exForm.tiempoaprox.$invalid && !exForm.tiempoaprox.$pristine }">
 					<label for="tiempoaprox">Tiempo aprox. (min)</label><br/>
-					<input type="number" class="form-control" placeholder="23" id="tiempoaprox" name="tiempoaprox" ng-model="ruta.tiempoaprox" min="1" step="any"/>
+					<input type="number" class="form-control" placeholder="23" id="tiempoaprox" name="tiempoaprox" ng-model="ruta.tiempoaprox" min="1" step="any" required/>
 					<p ng-show="exForm.tiempoaprox.$invalid && !exForm.tiempoaprox.$pristine" class="help-block">Se requiere el tiempo aproximado de la ruta.</p>
 				</div>			
 			</div>	

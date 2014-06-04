@@ -395,7 +395,7 @@ muukServices.factory('Reservaciones',['$resource', 'SessionService',
     return $resource(servicesUrl + '/compra/misreservaciones', {}, {
       query: {
         method: 'GET', 
-        params: { }, 
+        params: { estatus: '@estatus', vigente: '@vigente' }, 
         isArray: true, 
         headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
       }     
