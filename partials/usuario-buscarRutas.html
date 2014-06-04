@@ -139,11 +139,20 @@
 																		<td>{{corrida.oferta}}</td>
 																		<td>${{corrida.rutaCorrida.tarifa}}</td>
 																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(corrida.oferta > 0) && (corrida.espera == null)"></p>
+																			<p ng-show="(corrida.oferta > 0) && (corrida.espera != null)">Reservaci&oacute;n en espera {{corrida.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(corrida.oferta <= 0) && (corrida.espera != null)">Reservaci&oacute;n en espera {{corrida.espera.folio}}</p>
+																			<a ng-show="(corrida.oferta <= 0) && (corrida.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(corrida)">Lista de espera</a>
 
-																			<a ng-show="(corrida.oferta <= 0) && (corrida.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(corrida)">Lista de espera</a>
+																			<!-- RESERVACION con oferta -->
 																			<a ng-show="(corrida.oferta > 0) && (corrida.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(corrida)">Reservar</a>
 																			<p ng-show="(corrida.oferta > 0) && (corrida.reservacion != null)">Reservaci&oacute;n {{corrida.reservacion.folio}}</p>
 																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(corrida.oferta <= 0) && (corrida.reservacion != null)">Reservaci&oacute;n {{corrida.reservacion.folio}}</p>
+																			<p ng-show="(corrida.oferta <= 0) && (corrida.reservacion == null)"></p>
 																		</td>
 																	</tr>
 																</tbody>

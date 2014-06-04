@@ -1178,16 +1178,19 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
         console.log(results);
 
         for (var i = 0; i < results.length; i++) {
-          // verificar si tiene reservacion
+          // asignar folio si tiene reservacion o se encuentra en espera
           if (results[i].reservacion != null) {
             // con reservacion
             results[i].reservacion.folio = results[i].reservacion.id.toString();
             while (results[i].reservacion.folio.length < 6) {
               results[i].reservacion.folio = '0' + results[i].reservacion.folio;
             }
-          } else {
-            // verificar si esta en espera
-            // TODO
+          } else if (results[i].espera != null) {
+            // en espera
+            results[i].espera.folio = results[i].espera.ReservacionId.toString();
+            while (results[i].espera.folio.length < 6) {
+              results[i].espera.folio = '0' + results[i].espera.folio;
+            }
           }
         }
   
