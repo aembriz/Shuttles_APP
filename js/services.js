@@ -446,6 +446,18 @@ muukServices.factory('CancelarEspera',['$resource', 'SessionService',
 
   }]);
 
+muukServices.factory('OfertaGenerar',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/oferta/generar/:exId', {}, {
+      query: {
+        method: 'POST', 
+        params: {exId: '@exId'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+  }]);
 
 /*
 muukServices.factory('RutaSugerida',['$resource', 'SessionService',

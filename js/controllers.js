@@ -874,8 +874,8 @@ muukControllers.controller('EmpresaRutaEditCtrl', ['$scope', '$routeParams', 'Ru
 
 // -----------------------------------------------------
 /* Empresa - Corrida */
-muukControllers.controller('EmpresaCorridaListCtrl', ['$scope', '$window', '$location', '$routeParams', 'Corrida', 'CorridaXRuta',
-  function($scope, $window, $location, $routeParams, Corrida, CorridaXRuta) {
+muukControllers.controller('EmpresaCorridaListCtrl', ['$scope', '$window', '$location', '$routeParams', 'Corrida', 'CorridaXRuta', 'OfertaGenerar',
+  function($scope, $window, $location, $routeParams, Corrida, CorridaXRuta, OfertaGenerar) {
     $scope.rutaid = $routeParams.id;
     $scope.corridas = CorridaXRuta.query({exId: $routeParams.id});
     $scope.orderProp = 'nombre';
@@ -892,6 +892,21 @@ muukControllers.controller('EmpresaCorridaListCtrl', ['$scope', '$window', '$loc
     $scope.cancel = function(){
       $location.path('empresaRutaList');
     };
+    $scope.generarOferta = function(exId) {
+      OfertaGenerar.query({ exId: exId },
+          function(data){
+            console.log(data);
+            if (data.msg != null) {
+              $window.alert(data.msg);
+            }
+            
+          }, function(err){
+            console.log(err);
+            $window.alert(err);
+          }
+        );
+    };
+
   }]);
 muukControllers.controller('EmpresaCorridaFormCtrl', ['$scope', 'Corrida', '$location', '$routeParams',
   function($scope, Corrida, $location, $routeParams) {
@@ -1232,15 +1247,63 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
 
     $scope.reservar = function(corrida){
       console.log("Hab::reservar " + corrida.id);
-      RutaReservar.query({exId: corrida.id}, function(results) {
-        console.log("Hab::reservar " + results);
+      RutaReservar.query({exId: corrida.id}, function(res) {
+        console.log("Hab::reservar " + res);
+
+        RutaOferta.query({exId: corrida.RutaId}, function(results) {
+          console.log("Hab::Corridas " + results.length);
+          $scope.corridas = results;
+          console.log(results);
+
+          for (var i = 0; i < results.length; i++) {
+            // asignar folio si tiene reservacion o se encuentra en espera
+            if (results[i].reservacion != null) {
+              // con reservacion
+              results[i].reservacion.folio = results[i].reservacion.id.toString();
+              while (results[i].reservacion.folio.length < 6) {
+                results[i].reservacion.folio = '0' + results[i].reservacion.folio;
+              }
+            } else if (results[i].espera != null) {
+              // en espera
+              results[i].espera.folio = results[i].espera.ReservacionId.toString();
+              while (results[i].espera.folio.length < 6) {
+                results[i].espera.folio = '0' + results[i].espera.folio;
+              }
+            }
+          }
+        }); 
+
       });
     };
 
     $scope.esperar = function(corrida){
       console.log("Hab::esperar " + corrida.id);
-      RutaEsperar.query({exId: corrida.id}, function(results) {
-        console.log("Hab::esperar " + results);
+      RutaEsperar.query({exId: corrida.id}, function(res) {
+        console.log("Hab::esperar " + res);
+
+        RutaOferta.query({exId: corrida.RutaId}, function(results) {
+          console.log("Hab::Corridas " + results.length);
+          $scope.corridas = results;
+          console.log(results);
+
+          for (var i = 0; i < results.length; i++) {
+            // asignar folio si tiene reservacion o se encuentra en espera
+            if (results[i].reservacion != null) {
+              // con reservacion
+              results[i].reservacion.folio = results[i].reservacion.id.toString();
+              while (results[i].reservacion.folio.length < 6) {
+                results[i].reservacion.folio = '0' + results[i].reservacion.folio;
+              }
+            } else if (results[i].espera != null) {
+              // en espera
+              results[i].espera.folio = results[i].espera.ReservacionId.toString();
+              while (results[i].espera.folio.length < 6) {
+                results[i].espera.folio = '0' + results[i].espera.folio;
+              }
+            }
+          }
+        }); 
+
       });
     };
 
