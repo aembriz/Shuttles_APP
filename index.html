@@ -12,8 +12,7 @@
     <link href="css/bootstrap.css" rel="stylesheet">
     <!-- <link href="css/bootstrap-responsive.css" rel="stylesheet"> -->
     <link href="css/animations.css" rel="stylesheet">
-    <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
-
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&ssensor=false"></script>
   </head>
 
   <body >  
@@ -101,8 +100,8 @@
                 <div ng-show="user.role == 'USUARIO'">                    
                     <ul class="nav navbar-nav navbar-left">
                       <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/usuarioPerfilShow" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
-                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/usuarioResumen" ng-click="menuSelect(1)"><b>Consultas</b></a></li>
-                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/usuarioFavoritos" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
+                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/usuarioFavoritos" ng-click="menuSelect(1)"><b>Consultas</b></a></li>
+                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/usuarioBuscarRutas" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
                       <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/usuarioEstadisticas" ng-click="menuSelect(3)"><b>Estadísticas</b></a></li>
                     </ul>
                 </div>
@@ -184,19 +183,19 @@
                 <!-- menu Consultas -->
                 <div ng-show="menuActive[1] == 'active'">
                   <ul class="nav nav-pills nav-submenu">
-                    <li ng-class="submenuActive[0]"><a href="#/usuarioResumen" ng-click="submenuSelect(0)">Resumen</a></li>
-                    <li ng-class="submenuActive[1]"><a href="#/usuarioViajes" ng-click="submenuSelect(1)">Viajes</a></li>
-                    <li ng-class="submenuActive[2]"><a href="#/usuarioRutas" ng-click="submenuSelect(2)">Rutas</a></li>
-                    <li ng-class="submenuActive[3]"><a href="#/usuarioReservaciones" ng-click="submenuSelect(3)">Reservaciones</a></li>
-                    <li ng-class="submenuActive[4]"><a href="#/usuarioCancelaciones" ng-click="submenuSelect(4)">Cancelaciones</a></li>
+                    <li ng-class="submenuActive[0]"><a href="#/usuarioFavoritos" ng-click="submenuSelect(0)">Mis Rutas</a></li>
+                    <li ng-class="submenuActive[1]"><a href="#/usuarioReservaciones" ng-click="submenuSelect(1)">Mis Reservaciones</a></li>
+                    <li ng-class="submenuActive[2]"><a href="#/usuarioEspera" ng-click="submenuSelect(2)">En espera</a></li>
+<!--
+                    <li ng-class="submenuActive[3]"><a href="#/usuarioResumen" ng-click="submenuSelect(3)">Resumen</a></li>
+                    <li ng-class="submenuActive[4]"><a href="#/usuarioViajes" ng-click="submenuSelect(4)">Viajes</a></li>
+                    <li ng-class="submenuActive[5]"><a href="#/usuarioRutas" ng-click="submenuSelect(5)">Rutas</a></li>
+                  -->
                   </ul>
                 </div> 
                 <!-- menu Rutas / Horarios -->
                 <div ng-show="menuActive[2] == 'active'">
-                  <ul class="nav nav-pills nav-submenu">
-                    <li ng-class="submenuActive[0]"><a href="#/usuarioFavoritos" ng-click="submenuSelect(0)">Favoritos</a></li>
-                    <li ng-class="submenuActive[1]"><a href="#/usuarioBuscarRutas" ng-click="submenuSelect(1)">Buscar Rutas</a></li>
-                  </ul>
+
                 </div> 
                 <!-- menu Estadísticas -->
                 <div ng-show="menuActive[3] == 'active'">

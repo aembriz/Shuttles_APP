@@ -38,7 +38,7 @@
 					<td>{{usr.email}}</td>
 					<td>
 						<a type="button" class="btn btn-info" href="#/empresaUsuarioShow/{{usr.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
-						<a type="button" class="btn btn-danger" ng-click="deleteUsuario(usr.id)"><span class="glyphicon glyphicon-remove"></span></a>
+						<a type="button" class="btn btn-danger" ng-click="deleteUsuario(usr.id)" ng-show="usr.id!=user.id"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
 
 				</tr>

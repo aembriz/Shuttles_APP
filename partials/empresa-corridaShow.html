@@ -4,26 +4,84 @@
 <!--	<h1 class="page-header" align="center">Corrida (Ruta:{{corrida.RutaId}})</h1> -->
 	<h1 class="page-header" align="center">Corrida</h1>
 	<link href="css/panels.css" rel="stylesheet">
-    <form name="exForm" novalidate class="form-400">
+    <form name="exForm" novalidate class="form-500">
 	   	<div class="panel panel-info">
 
 	   		<div class="panel-heading" align="center">
 				<a type="button" class="btn btn-info" href="#/empresaCorridaEdit/{{corrida.id}}">Editar</a>
 				<button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Corridas</button>
 	   		</div>
-
 	   		<div class="panel-body" >	
+				<div class="form-group" >
+					<label for="dias">Habilitada los dias:</label><br/>
+					<div class="span12 centered-pills">
+						<ul class="nav nav-pills">
+							<li class="active" ng-show="corrida.dia1==true"><a>Lun</a></li>
+							<li ng-show="corrida.dia1==false"><a>Lun</a></li>
+
+							<li class="active" ng-show="corrida.dia2==true"><a>Mar</a></li>
+							<li ng-show="corrida.dia2==false"><a>Mar</a></li>
+
+							<li class="active" ng-show="corrida.dia3==true"><a>Mie</a></li>
+							<li ng-show="corrida.dia3==false"><a>Mie</a></li>
+
+							<li class="active" ng-show="corrida.dia4==true"><a>Jue</a></li>
+							<li ng-show="corrida.dia4==false"><a>Jue</a></li>
+
+							<li class="active" ng-show="corrida.dia5==true"><a>Vie</a></li>
+							<li ng-show="corrida.dia5==false"><a>Vie</a></li>
+
+							<li class="active" ng-show="corrida.dia6==true"><a>Sab</a></li>
+							<li ng-show="corrida.dia6==false"><a>Sab</a></li>
+
+							<li class="active" ng-show="corrida.dia7==true"><a>Dom</a></li>
+							<li ng-show="corrida.dia7==false"><a>Dom</a></li>
+						</ul>
+					</div>	
+												<!--
+					<div class="table-responsive">
+						<div class="form-group">	
+							<table class="table table-striped">
+								<tr>
+									<td align="center">
+										Lun<br/><input type="checkbox" ng-model="corrida.dia1"/>
+									</td>
+									<td align="center">
+										Mar<br/><input type="checkbox" ng-model="corrida.dia2"/>
+									</td>
+									<td align="center">
+										Mi&eacute;<br/><input type="checkbox" ng-model="corrida.dia3"/>
+									</td>
+									<td align="center">
+										Jue<br/><input type="checkbox" ng-model="corrida.dia4"/>
+									</td>
+									<td align="center">
+										Vie<br/><input type="checkbox" ng-model="corrida.dia5"/>
+									</td>
+									<td align="center">
+										Sab<br/><input type="checkbox" ng-model="corrida.dia6"/>
+									</td>
+									<td align="center">
+										Dom<br/><input type="checkbox" ng-model="corrida.dia7"/>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>	
+								-->	
+				</div>
+					   		
 				<div class="form-group">
 					<label for="horaSalida">Hora de salida</label><br/>
 					<div class="panel panel-default"><div class="panel-body">
-						{{corrida.horaSalida}}
+						{{corrida.horaSalidaFmt}}
 					</div></div>
 				</div>
 				
 				<div class="form-group">
 					<label for="horaLlegada">Hora de llegada</label><br/>
 					<div class="panel panel-default"><div class="panel-body">
-						{{corrida.horaLlegada}}
+						{{corrida.horaLlegadaFmt}}
 					</div></div>			
 				</div>
 				<div class="form-group">

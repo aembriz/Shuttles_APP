@@ -1,6 +1,58 @@
 <div class="container-fluid">
-	<script src="js/holder/holder.js"></script>
-			
-    <h1 class="page-header">Reservaciones</h1>
+    <h1 class="page-header">Mis Reservaciones</h1>
+	<div class="btn-toolbar" role="toolbar">
+		<ul class="nav nav-tabs">
+		  	<li class="tabActive[0]">
+		  		<a type="submit" ng-click="selectNewTab()">Nuevas</a>
+			</li>
+		  	<li class="tabActive[1]"><a href="#/usuarioReservacionesConfirmadas">Confirmadas</a></li>
+		  	<li class="tabActive[2]"><a href="#/usuarioReservacionesCanceladas">Canceladas</a></li>
+		</ul>
+		<br/>
 
+		<div class="btn-group" style="width:100%;">
+			
+			<div class="input-group">			
+				<span class="input-group-addon">Buscar: </span>
+		  		<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de reservaciones"/>
+			</div>
+			<img ng-show="reservaciones==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+			<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+				<p ng-bind-html="message"></p>
+			</div>		
+
+		</div>
+	</div>
+
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th><a href="" ng-click="orderProp='folio'">Folio</a></th>
+					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
+					<th>Origen - Destino</th>
+					<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
+					<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
+					<th>-</th>
+				</tr>
+			</thead>
+			<tbody>			
+				<tr ng-repeat="reservacion in reservaciones | filter:query | orderBy:orderProp">
+					<td>{{reservacion.folio}}</td>
+					<td>{{reservacion.rutum.nombre}}</td>
+					<td>{{reservacion.rutum.origentxt}} - {{reservacion.rutum.destinotxt}}</td>
+					<td>{{reservacion.rutaCorrida.horaSalidaFmt}}</td>
+					<td>{{reservacion.rutaCorrida.horaLlegadaFmt}}</td>
+					<td>
+						<!--
+						<a type="button" class="btn btn-info" href="#/usuarioShowMapa/{{reservacion.RutaId}}"><span class="glyphicon glyphicon-map-marker"></span></a> -->
+						<a type="button" class="btn btn-danger" ng-click="cancel(reservacion)"><span class="glyphicon glyphicon-remove"></span></a>
+					</td>
+
+				</tr>
+			</tbody>
+		</table>		
+		
+	</div>
 </div>

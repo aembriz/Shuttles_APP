@@ -1,6 +1,65 @@
 <div class="container-fluid">
-	<script src="js/holder/holder.js"></script>
-			
-    <h1 class="page-header">Favoritos</h1>
+    <h1 class="page-header">Mis Rutas</h1>
+	<div class="btn-toolbar" role="toolbar">
+      <div class="btn-group" style="width:100%;">
+      	
+      	<div class="input-group">			
 
+			<span ng-show="showFavoritos == true" class="input-group-addon" style="background-color:orange"><a type="button" class="btn btn-warning btn-xs" ng-click="filtraFavoritos()"><span class="glyphicon glyphicon-star"></span></a></span>
+			<span ng-show="showFavoritos != true" class="input-group-addon"><a type="button" class="btn btn-default btn-xs" ng-click="filtraFavoritos()"><span class="glyphicon glyphicon-star"></span></a></span>
+			<span class="input-group-addon">Buscar: </span>
+		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de rutas"/>
+		</div>
+		<img ng-show="rutas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+			<p ng-bind-html="message"></p>
+		</div>		
+
+      </div>
+    </div>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th><span class="glyphicon glyphicon-star"></span></th>
+					<th><a href="" ng-click="orderProp='id'">ID</a></th>
+					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
+					<th><a href="" ng-click="orderProp='origentxt'">Origen</a></th>
+					<th><a href="" ng-click="orderProp='destinotxt'">Destino</a></th>
+					<th>Estatus</th>
+					<th>-</th>
+				</tr>
+			</thead>
+			<tbody>			
+				<tr ng-repeat="ruta in rutas | filter:query | orderBy:orderProp">
+					<td ng-show="ruta.isFavorite == true">
+						<a type="button"  class="btn btn-warning" ng-click="favorito(ruta)">
+							<span class="glyphicon glyphicon-star"></span>
+						</a>
+					</td>
+					<td ng-show="ruta.isFavorite != true">
+						<a type="button"  class="btn btn-default" ng-click="favorito(ruta)">
+							<span class="glyphicon glyphicon-star-empty"></span>
+						</a>
+					</td>
+					<td>{{ruta.id}}</td>
+					<td>{{ruta.nombre}}</td>
+					<td>{{ruta.origentxt}}</td>
+					<td>{{ruta.destinotxt}}</td>
+					<td>{{ruta.estatu.stsNombre}}</td>
+					<td>
+						<!--
+						<a type="button" class="btn btn-info" href="#/empresaRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
+						<a type="button" class="btn btn-info" href="#/empresaMapaShow/{{ruta.id}}"><span class="glyphicon glyphicon-map-marker"></span></a>						
+						<a type="button" class="btn btn-info" href="#/empresaCorridaList/{{ruta.id}}"><span class="glyphicon glyphicon-calendar"></span></a>
+						<a type="button" class="btn btn-danger" ng-click="deleteRuta(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>
+					-->
+					</td>
+
+				</tr>
+			</tbody>
+		</table>		
+		
+	</div>
 </div>
