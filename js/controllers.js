@@ -1162,6 +1162,7 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'Sess
           $scope.rutas = favoritos;
         });
 
+
       } else {
         RutaXEmpresa.query(function(results){
             var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
@@ -1174,6 +1175,7 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'Sess
             }
             $scope.rutas = results;
           });
+
 
         });
       }

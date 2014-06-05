@@ -58,12 +58,12 @@
 				</div>			
 				<div class="form-group" ng-class="{ 'has-error' : exForm.distanciaaprox.$invalid && !exForm.distanciaaprox.$pristine }">
 					<label for="distanciaaprox">Distancia aprox. (Km)</label><br/>
-					<input type="number" class="form-control" placeholder="12.1" id="distanciaaprox" name="distanciaaprox" ng-model="ruta.distanciaaprox" min="1" step="any"/>
+					<input type="number" class="form-control" placeholder="12.1" id="distanciaaprox" name="distanciaaprox" ng-model="ruta.distanciaaprox" min="1" step="any" required/>
 					<p ng-show="exForm.distanciaaprox.$invalid && !exForm.distanciaaprox.$pristine" class="help-block">Se requiere la distancia aproximada de la ruta.</p>
 				</div>			
 				<div class="form-group" ng-class="{ 'has-error' : exForm.tiempoaprox.$invalid && !exForm.tiempoaprox.$pristine }">
 					<label for="tiempoaprox">Tiempo aprox. (min)</label><br/>
-					<input type="number" class="form-control" placeholder="23" id="tiempoaprox" name="tiempoaprox" ng-model="ruta.tiempoaprox" min="1" step="any"/>
+					<input type="number" class="form-control" placeholder="23" id="tiempoaprox" name="tiempoaprox" ng-model="ruta.tiempoaprox" min="1" step="any" required/>
 					<p ng-show="exForm.tiempoaprox.$invalid && !exForm.tiempoaprox.$pristine" class="help-block">Se requiere el tiempo aproximado de la ruta.</p>
 				</div>			
 			</div>	
