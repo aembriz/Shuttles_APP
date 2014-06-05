@@ -119,7 +119,7 @@
 													-->
 
 														<div class="table-responsive">
-															<table class="table table-striped">
+															<table class="table table-hover">
 																<thead>
 																	<tr>
 																		<th><a href="" ng-click="orderProp='id'">ID</a></th>
@@ -132,6 +132,7 @@
 																</thead>
 
 																<tbody>			
+																	<!--
 																	<tr ng-repeat="corrida in corridas | filter:query | orderBy:orderProp">
 																		<td>{{corrida.id}}</td>
 																		<td>{{corrida.rutaCorrida.horaSalidaFmt}}</td>
@@ -139,22 +140,227 @@
 																		<td>{{corrida.oferta}}</td>
 																		<td>${{corrida.rutaCorrida.tarifa}}</td>
 																		<td>
-																			<!-- ESPERA con oferta -->
 																			<p ng-show="(corrida.oferta > 0) && (corrida.espera == null)"></p>
 																			<p ng-show="(corrida.oferta > 0) && (corrida.espera != null)">Reservaci&oacute;n en espera {{corrida.espera.folio}}</p>
-																			<!-- ESPERA sin oferta -->
 																			<p ng-show="(corrida.oferta <= 0) && (corrida.espera != null)">Reservaci&oacute;n en espera {{corrida.espera.folio}}</p>
 																			<a ng-show="(corrida.oferta <= 0) && (corrida.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(corrida)">Lista de espera</a>
 
-																			<!-- RESERVACION con oferta -->
 																			<a ng-show="(corrida.oferta > 0) && (corrida.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(corrida)">Reservar</a>
 																			<p ng-show="(corrida.oferta > 0) && (corrida.reservacion != null)">Reservaci&oacute;n {{corrida.reservacion.folio}}</p>
 																		
-																			<!-- RESERVACION sin oferta -->
 																			<p ng-show="(corrida.oferta <= 0) && (corrida.reservacion != null)">Reservaci&oacute;n {{corrida.reservacion.folio}}</p>
 																			<p ng-show="(corrida.oferta <= 0) && (corrida.reservacion == null)"></p>
 																		</td>
 																	</tr>
+																-->
+																	<tr class="info" ng-show="dias0.length>0">
+																		<td colspan="6"><b>Hoy {{dias0[0].fecha}}</b></td>
+																	</tr>
+																	<tr ng-repeat="d0 in dias0 | filter:query | orderBy:orderProp">
+																		<td>{{d0.id}}</td>
+																		<td>{{d0.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{d0.rutaCorrida.horaLlegadaFmt}}</td>
+																		<td>{{d0.oferta}}</td>
+																		<td>${{d0.rutaCorrida.tarifa}}</td>
+																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+
+																			<!-- RESERVACION con oferta -->
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion == null)"></p>
+																		</td>
+																	</tr>																
+																	<tr class="info" ng-show="dias1.length>0">
+																		<td colspan="6"><b>Mañana {{dias1[0].fecha}}</b></td>
+																	</tr>
+																	<tr ng-repeat="d0 in dias1 | filter:query | orderBy:orderProp">
+																		<td>{{d0.id}}</td>
+																		<td>{{d0.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{d0.rutaCorrida.horaLlegadaFmt}}</td>
+																		<td>{{d0.oferta}}</td>
+																		<td>${{d0.rutaCorrida.tarifa}}</td>
+																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+
+																			<!-- RESERVACION con oferta -->
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion == null)"></p>
+																		</td>
+																	</tr>																
+																	<tr class="info" ng-show="dias2.length>0">
+																		<td colspan="6"><b>Pasado mañana {{dias2[0].fecha}}</b></td>
+																	</tr>
+																	<tr ng-repeat="d0 in dias2 | filter:query | orderBy:orderProp">
+																		<td>{{d0.id}}</td>
+																		<td>{{d0.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{d0.rutaCorrida.horaLlegadaFmt}}</td>
+																		<td>{{d0.oferta}}</td>
+																		<td>${{d0.rutaCorrida.tarifa}}</td>
+																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+
+																			<!-- RESERVACION con oferta -->
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion == null)"></p>
+																		</td>
+																	</tr>																
+																	<tr class="info" ng-show="dias3.length>0">
+																		<td colspan="6"><b>Pr&oacute;ximo {{dias3[0].fecha}}</b></td>
+																	</tr>
+																	<tr ng-repeat="d0 in dias3 | filter:query | orderBy:orderProp">
+																		<td>{{d0.id}}</td>
+																		<td>{{d0.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{d0.rutaCorrida.horaLlegadaFmt}}</td>
+																		<td>{{d0.oferta}}</td>
+																		<td>${{d0.rutaCorrida.tarifa}}</td>
+																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+
+																			<!-- RESERVACION con oferta -->
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion == null)"></p>
+																		</td>
+																	</tr>																
+																	<tr class="info" ng-show="dias4.length>0">
+																		<td colspan="6"><b>Pr&oacute;ximo {{dias4[0].fecha}}</b></td>
+																	</tr>
+																	<tr ng-repeat="d0 in dias4 | filter:query | orderBy:orderProp">
+																		<td>{{d0.id}}</td>
+																		<td>{{d0.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{d0.rutaCorrida.horaLlegadaFmt}}</td>
+																		<td>{{d0.oferta}}</td>
+																		<td>${{d0.rutaCorrida.tarifa}}</td>
+																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+
+																			<!-- RESERVACION con oferta -->
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion == null)"></p>
+																		</td>
+																	</tr>																
+																	<tr class="info" ng-show="dias5.length>0">
+																		<td colspan="6"><b>Pr&oacute;ximo {{dias5[0].fecha}}</b></td>
+																	</tr>
+																	<tr ng-repeat="d0 in dias5 | filter:query | orderBy:orderProp">
+																		<td>{{d0.id}}</td>
+																		<td>{{d0.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{d0.rutaCorrida.horaLlegadaFmt}}</td>
+																		<td>{{d0.oferta}}</td>
+																		<td>${{d0.rutaCorrida.tarifa}}</td>
+																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+
+																			<!-- RESERVACION con oferta -->
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion == null)"></p>
+																		</td>
+																	</tr>																
+																	<tr class="info" ng-show="dias6.length>0">
+																		<td colspan="6"><b>Pr&oacute;ximo {{dias6[0].fecha}}</b></td>
+																	</tr>
+																	<tr ng-repeat="d0 in dias6 | filter:query | orderBy:orderProp">
+																		<td>{{d0.id}}</td>
+																		<td>{{d0.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{d0.rutaCorrida.horaLlegadaFmt}}</td>
+																		<td>{{d0.oferta}}</td>
+																		<td>${{d0.rutaCorrida.tarifa}}</td>
+																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+
+																			<!-- RESERVACION con oferta -->
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion == null)"></p>
+																		</td>
+																	</tr>																
+																	<tr class="info" ng-show="dias7.length>0">
+																		<td colspan="6"><b>Pr&oacute;ximo {{dias7[0].fecha}}</b></td>
+																	</tr>
+																	<tr ng-repeat="d0 in dias7 | filter:query | orderBy:orderProp">
+																		<td>{{d0.id}}</td>
+																		<td>{{d0.rutaCorrida.horaSalidaFmt}}</td>
+																		<td>{{d0.rutaCorrida.horaLlegadaFmt}}</td>
+																		<td>{{d0.oferta}}</td>
+																		<td>${{d0.rutaCorrida.tarifa}}</td>
+																		<td>
+																			<!-- ESPERA con oferta -->
+																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<!-- ESPERA sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+
+																			<!-- RESERVACION con oferta -->
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																		
+																			<!-- RESERVACION sin oferta -->
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
+																			<p ng-show="(d0.oferta <= 0) && (d0.reservacion == null)"></p>
+																		</td>
+																	</tr>																
 																</tbody>
 															</table>
 														</div>				

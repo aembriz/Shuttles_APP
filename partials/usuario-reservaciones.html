@@ -2,11 +2,9 @@
     <h1 class="page-header">Mis Reservaciones</h1>
 	<div class="btn-toolbar" role="toolbar">
 		<ul class="nav nav-tabs">
-		  	<li class="tabActive[0]">
-		  		<a type="submit" ng-click="selectNewTab()">Nuevas</a>
-			</li>
-		  	<li class="tabActive[1]"><a href="#/usuarioReservacionesConfirmadas">Confirmadas</a></li>
-		  	<li class="tabActive[2]"><a href="#/usuarioReservacionesCanceladas">Canceladas</a></li>
+		  	<li ng-class="tabActive[0]"><a href="" ng-click="selectTab(0)">Por confirmar</a></li>
+		  	<li ng-class="tabActive[1]"><a href="" ng-click="selectTab(1)">Confirmadas</a></li>
+		  	<li ng-class="tabActive[2]"><a href="" ng-click="selectTab(2)">Canceladas</a></li>
 		</ul>
 		<br/>
 
@@ -47,7 +45,10 @@
 					<td>
 						<!--
 						<a type="button" class="btn btn-info" href="#/usuarioShowMapa/{{reservacion.RutaId}}"><span class="glyphicon glyphicon-map-marker"></span></a> -->
-						<a type="button" class="btn btn-danger" ng-click="cancel(reservacion)"><span class="glyphicon glyphicon-remove"></span></a>
+						<a type="button" class="btn btn-info" ng-click="show(reservacion)"><span class="glyphicon glyphicon-zoom-in"></span></a>
+						<a type="button" class="btn btn-success" ng-show="tabSelected=='new'" ng-click="confirmar(reservacion)"><span class="glyphicon glyphicon-ok"></span></a>
+						<a type="button" class="btn btn-danger" ng-show="tabSelected=='new'" ng-click="cancel(reservacion)"><span class="glyphicon glyphicon-remove"></span></a>
+						<a type="button" class="btn btn-danger" ng-show="tabSelected=='confirmed'" ng-click="cancel(reservacion)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
 
 				</tr>
@@ -55,4 +56,92 @@
 		</table>		
 		
 	</div>
+
+	<!-- Modal - Reservación -->
+	<div class="modal fade modal-wide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		    <div class="modal-content">
+
+		      	<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			        <h4 class="modal-title" id="myModalLabel">{{sug.ruta.nombre}}</h4>
+			        <br/>
+			        {{sug.ruta.origentxt}} - {{sug.ruta.destinotxt}}	
+			        <br/>
+			        {{sug.ascensoSugerido.rutaPunto.descripcion}}	
+			        <br/>
+			        {{sug.descensoSugerido.rutaPunto.descripcion}}	
+		    	</div>
+
+		    	<div class="modal-body">
+		    		<!--
+					<div class="list-group">
+						<a ng-repeat="corrida in corridas | filter:query | orderBy:orderProp" href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">List group item heading</h4>
+							<p class="list-group-item-text">...</p>
+						</a>
+							<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">List group item heading</h4>
+							<p class="list-group-item-text">...</p>
+						</a>
+							<a href="#" class="list-group-item">
+							<h4 class="list-group-item-heading">List group item heading</h4>
+							<p class="list-group-item-text">...</p>
+						</a>
+					</div>
+				-->
+
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th><a href="" ng-click="orderProp='id'">ID</a></th>
+									<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
+									<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
+									<th><a href="" ng-click="orderProp='oferta'">Lugares disponibles</a></th>
+									<th><a href="" ng-click="orderProp='tarifa'">Tarifa (MX$)</a></th>
+									<th>Folio</th>
+								</tr>
+							</thead>
+
+							<tbody>			
+								<tr ng-repeat="corrida in corridas | filter:query | orderBy:orderProp">
+									<td>{{corrida.id}}</td>
+									<td>{{corrida.rutaCorrida.horaSalidaFmt}}</td>
+									<td>{{corrida.rutaCorrida.horaLlegadaFmt}}</td>
+									<td>{{corrida.oferta}}</td>
+									<td>${{corrida.rutaCorrida.tarifa}}</td>
+									<td>
+										<!-- ESPERA con oferta -->
+										<p ng-show="(corrida.oferta > 0) && (corrida.espera == null)"></p>
+										<p ng-show="(corrida.oferta > 0) && (corrida.espera != null)">Reservaci&oacute;n en espera {{corrida.espera.folio}}</p>
+										<!-- ESPERA sin oferta -->
+										<p ng-show="(corrida.oferta <= 0) && (corrida.espera != null)">Reservaci&oacute;n en espera {{corrida.espera.folio}}</p>
+										<a ng-show="(corrida.oferta <= 0) && (corrida.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(corrida)">Lista de espera</a>
+
+										<!-- RESERVACION con oferta -->
+										<a ng-show="(corrida.oferta > 0) && (corrida.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(corrida)">Reservar</a>
+										<p ng-show="(corrida.oferta > 0) && (corrida.reservacion != null)">Reservaci&oacute;n {{corrida.reservacion.folio}}</p>
+									
+										<!-- RESERVACION sin oferta -->
+										<p ng-show="(corrida.oferta <= 0) && (corrida.reservacion != null)">Reservaci&oacute;n {{corrida.reservacion.folio}}</p>
+										<p ng-show="(corrida.oferta <= 0) && (corrida.reservacion == null)"></p>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>				
+
+		    	</div>
+
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			        <!--
+			        <button type="button" class="btn btn-success">Salvar cambios</button>
+			    -->
+			    </div>
+			
+	    	</div>
+	  	</div>
+	</div>	<!-- End Modal -->	
 </div>

@@ -271,6 +271,8 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/usuario-rutas.html',
         controller: 'UsuarioRutasCtrl'
       }).      
+      // -----------------------------------------------------
+      // Usuario - Consulta - Reservacones
       when('/usuarioReservaciones', {
         templateUrl: 'partials/usuario-reservaciones.html',
         controller: 'UsuarioReservacionesCtrl'

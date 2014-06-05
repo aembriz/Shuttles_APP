@@ -41,6 +41,7 @@ muukServices.factory('AuthenticationService', ['$http', '$location', 'SessionSer
               else{              
                 rs = data;
                 var user = {name: rs.nombre, username: usr, role: rs.role, authtoken: rs.token, empresa: rs.empresa, id: rs.id};
+                console.log(user);
                 SessionService.currentUser = user;
                 SessionService.saveSession();
                 callbackSuccess(data);
@@ -410,6 +411,19 @@ muukServices.factory('Reservaciones',['$resource', 'SessionService',
 muukServices.factory('CancelarReservacion',['$resource', 'SessionService',
   function($resource, SessionService){
     return $resource(servicesUrl + '/compra/cancelar/:exId', {}, {
+      query: {
+        method: 'POST', 
+        params: {exId: '@exId'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+  }]);
+
+muukServices.factory('ConfirmarReservacion',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/compra/confirmar/:exId', {}, {
       query: {
         method: 'POST', 
         params: {exId: '@exId'}, 

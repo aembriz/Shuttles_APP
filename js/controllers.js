@@ -4,7 +4,6 @@
 
 var muukControllers = angular.module('muukControllers', []);
 
-
 muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'SessionService',
   function($scope, $location, $window, SessionService) { 
     if(SessionService.currentUser != null){
@@ -1046,8 +1045,8 @@ muukControllers.controller('UsuarioRutasCtrl', ['$scope', '$location', 'Authenti
   function($scope, $location, AuthenticationService) {
 
   }]);
-muukControllers.controller('UsuarioReservacionesCtrl', ['$scope', '$location', 'Reservaciones', 'CancelarReservacion',
-  function($scope, $location, Reservaciones, CancelarReservacion) {
+muukControllers.controller('UsuarioReservacionesCtrl', ['$scope', '$location', '$window', 'Reservaciones', 'CancelarReservacion', 'ConfirmarReservacion',
+  function($scope, $location, $window, Reservaciones, CancelarReservacion, ConfirmarReservacion) {
 
     $scope.loadReservaciones = function(estatus, vigente) {
       Reservaciones.query({estatus: estatus, vigente: vigente}, function(results){
@@ -1059,23 +1058,89 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$scope', '$location', '
             results[i].folio = '0' + results[i].folio;
           }
         }
-        // fill ruta
+        // fill reserv
         $scope.reservaciones = results;
       });
     }
 
-    $scope.cancel = function(reservacion) {
-      CancelarReservacion.query({exId: reservacion.id}, function(results) {
+    $scope.init = function(estatus, vigente) {
+      Reservaciones.query({estatus: estatus, vigente: vigente}, function(results){
         console.log(results);
-        $scope.loadReservaciones();
+        // fill folio
+        for (var i = 0; i < results.length; i++) {
+          results[i].folio = results[i].id.toString();
+          while (results[i].folio.length < 6) {
+            results[i].folio = '0' + results[i].folio;
+          }
+        }
+        // fill reserv
+        $scope.reservaciones = results;
+        if ((results.length == 0)&&(estatus=="new")) {
+          // si el resultado fue vacio mostrar el siguiente 
+          $scope.selectTab(1);
+          Reservaciones.query({estatus: "confirmed", vigente: vigente}, function(results){
+            console.log(results);
+            // fill folio
+            for (var i = 0; i < results.length; i++) {
+              results[i].folio = results[i].id.toString();
+              while (results[i].folio.length < 6) {
+                results[i].folio = '0' + results[i].folio;
+              }
+            }
+            // fill ruta
+            $scope.reservaciones = results;
+            if (results.length == 0) {
+              
+            }
+          });
+        }
       });
+    }
+
+    $scope.cancel = function(reservacion) {
+      if( $window.confirm("Se cancelará la reservacion id [" + reservacion.id + "] ¿Continuar?")) {
+        CancelarReservacion.query({exId: reservacion.id}, function(results) {
+          console.log(results);
+          $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
+          if (results.msg != null) {
+            $window.alert(results.msg);
+          }
+        });
+      }
+    }
+
+    $scope.confirm = function(reservacion) {
+      if( $window.confirm("Se confirmará la reservacion id [" + reservacion.id + "] ¿Continuar?")) {
+        ConfirmarReservacion.query({exId: reservacion.id}, function(results) {
+          console.log(results);
+          $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
+          if (results.msg != null) {
+            $window.alert(results.msg);
+          }
+        });
+      }
+    }
+
+    $scope.selectTab = function(tabIndex) {
+      if (tabIndex == 0) {
+        $scope.tabActive = ["active","",""];  
+        $scope.tabSelected = "new";
+      } else if (tabIndex == 1) {
+        $scope.tabActive = ["","active",""];  
+        $scope.tabSelected = "confirmed";
+      } else if (tabIndex == 2) {
+        $scope.tabActive = ["","","active"];  
+        $scope.tabSelected = "canceled";
+      }
+      $scope.reservaciones = null;
+      $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
     }
 
     $scope.tabActive = ["active","",""];
     $scope.tabSelected = "new";
     $scope.tabHideOlder = true; 
 
-    $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
+    $scope.init($scope.tabSelected, $scope.tabHideOlder);    
   }]);
 muukControllers.controller('UsuarioEsperaCtrl', ['$scope', '$location', 'Esperas', 'CancelarEspera',
   function($scope, $location, Esperas, CancelarEspera) {
@@ -1167,34 +1232,6 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$scope', '$location', 'Sess
         });
 
       });      
-/*
-      if ($scope.showFavoritos) {
-        RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
-          console.log(favoritos);
-          for (var i = 0; i < favoritos.length; i++) {
-            favoritos[i].isFavorite = true;            
-          }
-          $scope.rutas = favoritos;
-        });
-
-
-      } else {
-        RutaXEmpresa.query(function(results){
-            var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
-            for (var i = 0; i < favoritos.length; i++) {
-              for (var j = 0; j < results.length; j++) {
-                console.log("comparando " + results[j].id + '/' + favoritos[i].RutaId);
-                results[j].isFavorite = (results[j].id == favoritos[i].RutaId);
-                if (results[j].isFavorite) { break; }
-              } 
-            }
-            $scope.rutas = results;
-          });
-
-
-        });
-      }
-*/
     }
   }]);
 
@@ -1218,9 +1255,8 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
       console.log("Hab::Corridas " + ruta.id);
       RutaOferta.query({exId: ruta.id}, function(results) {
         console.log("Hab::Corridas " + results.length);
-        $scope.corridas = results;
         console.log(results);
-
+        // add folio
         for (var i = 0; i < results.length; i++) {
           // asignar folio si tiene reservacion o se encuentra en espera
           if (results[i].reservacion != null) {
@@ -1236,8 +1272,73 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$scope', '$location', '$w
               results[i].espera.folio = '0' + results[i].espera.folio;
             }
           }
+          var myDate = new Date(results[i].fechaOferta);
+          var diaSemana = myDate.getDay();
+          if (diaSemana == 1) {
+            results[i].fecha = 'Lunes ';
+          } else if (diaSemana == 2) {
+            results[i].fecha = 'Martes ';
+          } else if (diaSemana == 3) {
+            results[i].fecha = 'Miércoles ';
+          } else if (diaSemana == 4) {
+            results[i].fecha = 'Jueves ';
+          } else if (diaSemana == 5) {
+            results[i].fecha = 'Viernes ';
+          } else if (diaSemana == 6) {
+            results[i].fecha = 'Sabado ';
+          } else if (diaSemana == 0) {
+            results[i].fecha = 'Domingo ';
+          }
+          results[i].fecha = results[i].fecha + '[' + myDate.getDate() + '/' + myDate.getMonth() + '/' + myDate.getFullYear() + ']';
         }
-  
+
+        $scope.corridas = results;
+        // inicializamos variables para comparar fechas
+        var daymilisec = 24 * 60 * 60 * 1000;
+        var hoy = new Date();
+        var d1 = new Date(hoy.getTime() + daymilisec);
+        var d2 = new Date(hoy.getTime() + 2 * daymilisec);
+        var d3  = new Date(hoy.getTime() + 3 * daymilisec);
+        var d4  = new Date(hoy.getTime() + 4 * daymilisec);
+        var d5  = new Date(hoy.getTime() + 5 * daymilisec);
+        var d6  = new Date(hoy.getTime() + 6 * daymilisec);
+        var d7  = new Date(hoy.getTime() + 7 * daymilisec);
+        var d8  = new Date(hoy.getTime() + 8 * daymilisec);
+
+        $scope.dias0 = [];
+        $scope.dias1 = [];
+        $scope.dias2 = [];
+        $scope.dias3 = [];
+        $scope.dias4 = [];
+        $scope.dias5 = [];
+        $scope.dias6 = [];
+        $scope.dias7 = [];
+
+        // llenar listas
+        for (var i = 0; i < results.length; i++) {
+          console.log(results[i].fechaOferta);
+          var fechaOferta = new Date(results[i].fechaOferta);
+          console.log(fechaOferta);
+          // filtrado de listas
+          if ((fechaOferta > hoy)&&(fechaOferta < d1)) {
+            $scope.dias0.push(results[i]);
+          } else if ((fechaOferta > d1)&&(fechaOferta < d2)) {
+            $scope.dias1.push(results[i]);
+          } else if ((fechaOferta > d2)&&(fechaOferta < d3)) {
+            $scope.dias2.push(results[i]);
+          } else if ((fechaOferta > d3)&&(fechaOferta < d4)) {
+            $scope.dias3.push(results[i]);
+          } else if ((fechaOferta > d4)&&(fechaOferta < d5)) {
+            $scope.dias4.push(results[i]);
+          } else if ((fechaOferta > d5)&&(fechaOferta < d6)) {
+            $scope.dias5.push(results[i]);
+          } else if ((fechaOferta > d6)&&(fechaOferta < d7)) {
+            $scope.dias6.push(results[i]);
+          } else if ((fechaOferta > d1)&&(fechaOferta < d8)) {
+            $scope.dias7.push(results[i]);
+          }
+        }
+
         $('#myModal').modal({
           show: true
         });
