@@ -2,10 +2,12 @@
 // las ofertas se generan cada día para los 5 días siguientes de tal manera que
 // cambios en el numero de lugares ofertados se aplicarán hasta el sexto día impidiendo que haya cambios de oferta en días ya reservados
 // se debe considerar un proceso de generación de oferta automático
+// complementary key se usa como copia de la rutacorrida para crear el índice único en conjunto con fecha
 module.exports = function(sequelize, DataTypes) {
   var Oferta = sequelize.define('Oferta', {
-    fechaOferta: {type: DataTypes.DATE, allowNull: false, isDate: true},
-    oferta: {type: DataTypes.INTEGER, allowNull: false}
+    fechaOferta: {type: DataTypes.DATE, allowNull: false, isDate: true, unique: 'ofertaunica'},
+    oferta: {type: DataTypes.INTEGER, allowNull: false},
+    complementarykey: {type: DataTypes.INTEGER, allowNull: false, unique: 'ofertaunica'}
   }, {
     timestamps: false,
     associate: function(models) {
@@ -15,20 +17,12 @@ module.exports = function(sequelize, DataTypes) {
     validate: {
       validateFecha: function(){
         var today = new Date();
+        this.setDataValue('complementarykey', this.RutaCorridaId)
         if( (this.fechaOferta ) < today ){
-          throw new Error('La oferta no puede ser en fechas pasadas.');
+          throw new Error('La oferta no puede crearse en fechas pasadas.');
         }
       }
-      /*,
-      validateDuplicados: function(){
-        Oferta.find({where: {fechaOferta: this.fechaOferta, RutaCorridaId: this.RutaCorridaId} }).success(function(previo) {
-          if(previo!=null){
-            throw new Error('Ya existe un registro para la misma fecha y corrida.');  
-          }
-        });
-      }
-      */      
-    }    
+    }            
   })
 
   return Oferta

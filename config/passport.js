@@ -34,7 +34,7 @@ module.exports = function(app, passport) {
 	        //TODO: must check the token expiry and ensure the token is still valid
 	        //if token is expired return 401! (throw an exception, will be caught by catch clause)
 			if (decoded.exp <= Date.now()) {
-				return done(null, false, { message: 'The AuthToken has expired. Log in again please.' }); // token expired
+				return done(null, false, { message: 'The AuthToken has expired. Log in again please. [ERR0001]' }); // token expired
 			}        
 	        
 			//we find the user that has made the request

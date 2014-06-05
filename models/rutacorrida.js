@@ -9,7 +9,14 @@ module.exports = function(sequelize, DataTypes) {
     capacidadOfertada: {type: DataTypes.INTEGER, allowNull: false, validate: { min: 0, max: 300 } },
     tarifa: {type: DataTypes.DECIMAL(10,2), allowNull: false, validate: { min: 0 }},
     idTransporte: DataTypes.STRING,
-    idChofer: DataTypes.STRING
+    idChofer: DataTypes.STRING,
+    dia1: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    dia2: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    dia3: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    dia4: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    dia5: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
+    dia6: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    dia7: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
   }, {
     timestamps: false,
     associate: function(models) {

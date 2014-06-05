@@ -38,6 +38,8 @@ exports.list = function() {
 exports.listOne = function() {
   return function(req, res) {
     var idToFind = req.params.id;
+    if(req.user.role != 'ADMIN') idToFind = req.user.EmpresaId;
+
     db.Empresa.find({ where: { id: idToFind } }).success(function(empresa) {      
         res.send(empresa);
     });
@@ -140,6 +142,11 @@ exports.update = function() {
   return function(req, res) {
     if(!(req.body == null || req.body == undefined) ){
       var idToUpdate = req.params.id;
+      if(req.user.role != 'ADMIN' && idToUpdate != req.user.EmpresaId){
+        res.send({msg: 'No tiene permisos para modificar otra empresa', success: false})
+        return;
+      }
+
       db.Empresa.find(idToUpdate).success(function(empresa) { 
       delete req.body.EstatusId // elimina el atributo estatus porque este solo se maneja internamente
   		empresa.updateAttributes(req.body).success(function(empresa) {
@@ -175,18 +182,35 @@ exports.delete = function() {
 exports.authorize = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
-    db.Empresa.find(idToUpdate).success(function(empresa) {
-    empresa.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
-      // autorizar al usuario administrador (el único regiostrado al momento)
-      db.Usuario.find({where: ['EmpresaId=? and role=?', empresa.id, 'EMPRESA'] }).success(function(usr){
-        usr.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
-          res.send({ empresa: empresa} );
+    db.Empresa.find({where: {id: idToUpdate, EstatusId: constEstatus.new }  }).success(function(empresa) {
+      if(empresa != null){      
+        empresa.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
+          // autorizar al usuario administrador (el único regiostrado al momento)
+          db.Usuario.findAll({where: ['EmpresaId=? and role=?', empresa.id, 'EMPRESA'] }).success(function(usrs){
+            if(usrs != null){
+              for (var i = 0; i < usrs.length; i++) {
+                var usr = usrs[i];
+                usr.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
+                  mail.notifyCompanyAuthorization(usr, empresa, true);  // notificación
+                });
+              };
+              res.send({ msg: 'Se autorizó correctamente la empresa y los usuarios administradores.'} );
+            }
+            else{
+              res.send({ msg: 'Se autorizó correctamente la empresa y pero ocurrieron errores al autorizar a los usuarios administradores.'} );
+            }
+          }).error(function(err){
+            res.send({ empresa: empresa, msg: 'No se pudo autorizar al usuario administrador de la empresa.', err: err} );      
+          });
+        }).error(function(err){
+          res.send({msg: 'No se pudo autorizar la empresa, error al actualizar el registro la empresa.', err: err});
         });
-        mail.notifyCompanyAuthorization(usr, empresa, true);  // notificación
-      }).error(function(err){
-        res.send({ empresa: empresa, msg: 'No se pudo autorizar al usuario administrador de la empresa.', err: err} );      
-      });
-    });
+      }
+      else{
+        res.send({msg: 'No se pudo autorizar la empresa, posiblemente la empresa ya esté autorizada.'});
+      }
+    }).error(function(err){
+      res.send({msg: 'No se pudo autorizar la empresa, error al acceder a la empresa.', err: err});
     });
   }
 };

@@ -52,10 +52,12 @@ exports.update = function() {
         rutacorrida.updateAttributes(req.body).success(function(rutacorrida) {
           res.send(
             { rutacorrida: rutacorrida}
-          ).error(function(err){
-            res.send({ msg: 'Ocurrieron errores al modificar la corrida.', err: err})
-          });      
+          )      
+        }).error(function(err){
+            res.send({ msg: 'Ocurrieron errores al modificar la corrida.', err: err});
         });
+      }).error(function(err){
+          res.send({ msg: 'Ocurrieron errores al acceder a la corrida.', err: err})
       });
     }
     

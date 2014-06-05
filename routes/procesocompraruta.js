@@ -8,6 +8,36 @@ var constReservEstatus = {'new': 1, 'confirmed': 2, 'canceled': 3}
 var constEsperaEstatus = {'new': 1, 'assigned': 2, 'canceled': 3, 'deprecated': 4}
 
 // -------------------------------------------------
+
+/*
+* Lista las rutas disponibles para el usuario, que están autorizadas y tienen oferta
+*/
+exports.listRoutes = function() { 
+  return function(req, res){
+    console.log("LISTANDO RUTAS------------------------");
+    console.log(req.user);
+    var usrid = req.user.id;
+    var sts = 0;
+    var params = {};    
+
+    // filtra rutas autorizadas
+    params.where = {};
+    params.where.EstatusId = constEstatus["authorized"];
+    if(req.user.role!='ADMIN'){
+      params.where.CompanyownerID = req.user.EmpresaId; // TODO: incorporar rutas compartidas
+    }
+
+    params.include = [
+        {model: db.Empresa, as: 'companyowner'},
+        {model: db.Estatus, as: 'Estatus', attributes: ['id', 'stsNombre']}
+      ];
+
+    db.Ruta.findAll(params).success(function(rutas) {
+      res.send(rutas);
+    });
+  }
+};
+
 /*
 * Lista las rutas más cercanas a los puntos partida y destino proporcionados por el usuario
 */
