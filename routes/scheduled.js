@@ -16,13 +16,14 @@ function iniScheduleOfertas(everyXMins, runAfterXHours){
 					return;
 				}
 				console.log("Ejecutando generacion de ofertas automática.");
-				oferta.generaOfertaGlobal();
-				var logg = db.ScheduleLog.build({tipo: 1, mensaje: ''});
-				logg.save().complete(function (err, logg) {
-					if(err != null){
-						console.log('Error al registrar el proceso scheduled. ');
-						console.log(err);
-					}			
+				oferta.generaOfertaGlobal(function(result){				
+					var logg = db.ScheduleLog.build({tipo: 1, mensaje: 'Se generó oferta: ' + result.success + " ["  + result.msg +  "]" });
+					logg.save().complete(function (err, logg) {
+						if(err != null){
+							console.log('Error al registrar el proceso scheduled. ');
+							console.log(err);
+						}			
+					});
 				});
 			}).error(function(err){
 

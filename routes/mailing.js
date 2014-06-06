@@ -13,7 +13,9 @@ var smtpTransport = nodemailer.createTransport("SMTP",{
 
 exports.notifyUserInvitations = function(usrs) {
     console.log('Notifiying user invitations');
+    console.log("Entra a hababababababa---------------->2");
     for(var i=0;i<usrs.length;i++){        
+        console.log("Entra a hababababababa---------------->3");
         var usr = usrs[i];
         // setup e-mail data with unicode symbols
         var mailOptions = {
@@ -24,6 +26,7 @@ exports.notifyUserInvitations = function(usrs) {
             html: "Estimado <b>" + usr.nombre + "</b>, se le está invitando a unirse a la plataforma Shuttles por lo que debe completar el siguiente registro: <a href='http://nubeet.com/shuttles/#/registro/" + usr.id + "'> Activar </a>"  // html body
         }
 
+        console.log(mailOptions);
         //registro/id --> http://nubeet.com/shuttles/registro/[id]
 
         // send mail with defined transport object

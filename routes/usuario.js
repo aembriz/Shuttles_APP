@@ -1,10 +1,9 @@
 var db = require('../models');
 var jwt = require('jwt-simple');
 var mail = require('./mailing'); // used for sending mails
+var constant = require('../config/constant.js');
 var app = null;
 var passport = null;
-
-var constEstatus = {'new': 1, 'authorized': 3, 'rejected': 4}
 
 exports.set = function(appx, passportx){
 	app = appx;
@@ -85,7 +84,7 @@ exports.needsRole = function(role) {
     if (req.user && role.indexOf(req.user.role) >= 0 )
       next();
     else
-      res.send(401, 'Unauthorized');
+      res.send(401, {msg: 'Unauthorized, el role: ' + req.user.role + ' no tiene acceso a este recurso.'} );
   };
 };
 
@@ -98,7 +97,7 @@ exports.list = function() {
     var params = {};
 
     if('estatus' in req.query){
-      sts = constEstatus[req.query.estatus];
+      sts = constant.estatus.Usuario[req.query.estatus];
       if(!params.where) params.where = {};
       params.where.EstatusId = sts;      
     }
@@ -171,13 +170,20 @@ exports.addPre = function() {
     req.body.role = 'USUARIO';
     var usuario = db.Usuario.build(req.body);
     usuario.save(['nombre', 'email', 'EmpresaId', 'role', 'EstatusId']).complete(function (err, usuario) {
-      	if(err == null) {res.send({ msg: '' })}
+      	if(err == null) {
+          console.log("Entra a hababababababa---------------->");
+          mail.notifyUserInvitations([usuario]);
+          res.send({ msg: '', success: true })
+        }
       	else{
       		var msg = {err: err};
       		if(err.code == 'ER_DUP_ENTRY'){
       			msg.msg = 'Ya existe un usuario registrado con el mismo correo, no se puede crear el registro.';
+            res.send({ msg: msg.msg, success: false });
       		}
-      		res.send( msg );
+          else{
+            res.send({ msg: err, success: false }); 
+          }
       	}      
     });
   }
@@ -267,7 +273,7 @@ exports.authorize = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
     db.Usuario.find(idToUpdate).success(function(usuario) {      
-    usuario.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(usuario) {
+    usuario.updateAttributes({ EstatusId: constant.estatus.Usuario.authorized }).success(function(usuario) {
       res.send(
         { usuario: usuario}
       );      
@@ -283,7 +289,7 @@ exports.reject = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
     db.Usuario.find(idToUpdate).success(function(usuario) {      
-    usuario.updateAttributes({ EstatusId: constEstatus.rejected }).success(function(usuario) {
+    usuario.updateAttributes({ EstatusId: constant.estatus.Usuario.rejected }).success(function(usuario) {
       res.send(
         { usuario: usuario}
       );      

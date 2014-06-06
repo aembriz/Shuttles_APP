@@ -34,7 +34,7 @@ exports.add = function() {
     var rutacorrida = db.RutaCorrida.build(req.body);
     rutacorrida.save().complete(function (err, rutacorrida) {
       res.send(
-        (err === null) ? { msg: '' } : { msg: err }
+        (err === null) ? { msg: '', success: true} : { msg: err, success: false }
       );          
     });
   }

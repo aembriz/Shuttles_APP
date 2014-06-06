@@ -178,6 +178,7 @@ Comandos RESTFul:
 * GET /usuario/{id} = (Consulta usuario con el id especificado)  
 * GET /roles = (Lista de roles que se pueden asignar a un usuario)  
 * POST /usuario = (Creación de registro nuevo)  
+* POST /preregister/usuario
 * POST /preregister/usuariobulk = (creación masiva de invitaciones para usuarios de una empresa, al hacer el preregistro se envían notificaciones a los correos de los usuarios)
 * PUT /usuario/{id} = (Update al registro con el id especificado)  
 * PUT /usuario/authorize/{id} = (Marca la empresa designada por el id como autorizada)
@@ -570,3 +571,20 @@ A continuación se muestra el aseguramiento de los servicios por autenticación 
     app.delete('/oferta/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), oferta.delete());
     app.put('/oferta/:id/plus', usuario.authenticate, usuario.needsRole(['ADMIN']), oferta.incrementOferta());
     app.put('/oferta/:id/minus', usuario.authenticate, usuario.needsRole(['ADMIN']), oferta.decrementOferta());
+
+
+------------
+
+Servicio "Compartir rutas" 
+-------------------------
+Usado para compartir rutas entre compañías 
+
+[URL...]/rutacompartir
+
+Comandos RESTFul:   
+* GET /rutacompartida = (Consulta todos. Se pueden incluir los filtros (empresa (dueña de la ruta), empresacliente, ruta, estatus=[new/authorized/rejected]) )  
+* GET /rutacompartida/{id} = (Consulta registro con el id especificado)  
+* POST /rutacompartida = (Creación de registro nuevo)  
+* POST /rutacompartida/[rutaid]/empresa/[empresaid] = (Comparte la ruta indicada con la empresa indicada)  
+* PUT /rutacompartida/{id} = (Update al registro con el id especificado)  
+* DELETE /rutacompartida/{id} = (Elimina registro marcado con el id)  

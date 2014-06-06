@@ -1,12 +1,8 @@
 var db = require('../models')
 var mail = require('./mailing'); // used for sending mails
+var constant = require('../config/constant.js');
 
-var constEstatus = {'new': 1, 'authorized': 3, 'rejected': 4}
-
-// TODO revisar y manejar bien estatus de reservaciones y lista de espera
-var constReservEstatus = {'new': 1, 'confirmed': 2, 'canceled': 3}
-var constEsperaEstatus = {'new': 1, 'assigned': 2, 'canceled': 3, 'deprecated': 4}
-
+var rutacompartida = require('./rutacompartida'); // used for sending mails
 // -------------------------------------------------
 
 /*
@@ -14,27 +10,46 @@ var constEsperaEstatus = {'new': 1, 'assigned': 2, 'canceled': 3, 'deprecated': 
 */
 exports.listRoutes = function() { 
   return function(req, res){
-    console.log("LISTANDO RUTAS------------------------");
-    console.log(req.user);
     var usrid = req.user.id;
     var sts = 0;
     var params = {};    
 
-    // filtra rutas autorizadas
-    params.where = {};
-    params.where.EstatusId = constEstatus["authorized"];
-    if(req.user.role!='ADMIN'){
-      params.where.CompanyownerID = req.user.EmpresaId; // TODO: incorporar rutas compartidas
-    }
 
-    params.include = [
-        {model: db.Empresa, as: 'companyowner'},
-        {model: db.Estatus, as: 'Estatus', attributes: ['id', 'stsNombre']}
-      ];
+    // -------------------
+    var paramWhere = { EmpresaClienteId: req.user.EmpresaId, estatus: constant.estatus.RutaCompartida.authorized
+      , 'Rutum.EstatusId': constant.estatus.Ruta.authorized };
+    
+    db.RutaCompartida.findAll({ where: paramWhere, 
+      include: [{model: db.Ruta}] 
+    }).success(function(rutacompartida) {
+      var rutaids = [];
+      if(rutacompartida!=null){
+        for (var i = 0; i < rutacompartida.length; i++) {
+          rutaids.push(rutacompartida[i].RutaId);
+        };    
+        console.log(rutaids);      
+      }
 
-    db.Ruta.findAll(params).success(function(rutas) {
-      res.send(rutas);
+      db.Ruta.findAll({where: db.Sequelize.or(
+          db.Sequelize.and({CompanyownerID: req.user.EmpresaId}, {EstatusId: constant.estatus.Ruta.authorized} ),
+          {id: rutaids}
+        ), 
+        include: [
+          {model: db.Empresa, as: 'companyowner'},
+          {model: db.Estatus, as: 'Estatus', attributes: ['id', 'stsNombre']}
+        ]
+      }).success(function(rutas) {
+          res.send(rutas);
+      }).error(function(err){
+        res.send({msg: 'No se pudo consultar las rutas del usuario, error.', err: err, success: false});
+      });
+
+      return rutaids;
+    }).error(function(err){
+      console.log(err);
+      res.send({msg: 'No se pudo consultar las rutas compartidas, error.', err: err, success: false});
     });
+    
   }
 };
 
@@ -63,7 +78,7 @@ exports.listSuggestions = function() {
       // busca las rutas que le corresponden al usuario
       var params = {};
       params.where = {};
-      params.where.EstatusId = constEstatus.authorized;
+      params.where.EstatusId = constant.estatus.Ruta.authorized;
       params.where.CompanyownerID = usr.EmpresaId; // TODO: por el momento solo se muestran las rutas de la compañía a la que pertenece
 
       db.Ruta.findAll( 
@@ -203,12 +218,17 @@ exports.listOferta = function() {
         }
 
         db.Espera.findAll({ where: {UsuarioId: usrid, estatus: 1 } }).success(function(espera){
-          if(espera != null && espera.length > 0){            
+          if(espera != null && espera.length > 0){
             for (var i = 0; i < result.length; i++) {  
               for (var e = 0; e < espera.length; e++) {
                 var esp = espera[e];
                 if(esp.OfertaId == result[i].id){
-                  result[i].espera = esp.values;
+                  if(result[i].values != null){
+                    result[i].values.espera = esp.values;
+                  }
+                  else{
+                    result[i].espera = esp.values; 
+                  }
                 }
               };
             }
@@ -245,7 +265,7 @@ exports.reservationCreate = function() {
         oferta.decrement('oferta', 1).success(function(oferta) {
           var of = oferta.values;
           var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
-            fechaReservacion: of.fechaOferta, estatus: constReservEstatus.confirmed}; // Se crea como confirmada
+            fechaReservacion: of.fechaOferta, estatus: constant.estatus.Reservacion.confirmed}; // Se crea como confirmada
 
           var reservacion = db.Reservacion.build(resv);
           reservacion.save().complete(function (err, reservacion) {
@@ -284,7 +304,7 @@ exports.reservationCreateBulk = function() {
             console.log('Procesando -->' + oferta.id + '-->Decrementado');
             var of = oferta.values;
             var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
-              fechaReservacion: of.fechaOferta, estatus: constReservEstatus.confirmed}; // Se crea como confirmada
+              fechaReservacion: of.fechaOferta, estatus: constant.estatus.Reservacion.confirmed}; // Se crea como confirmada
 
             var reservacion = db.Reservacion.build(resv);
             reservacion.save().complete(function (err, reservacion) {
@@ -328,7 +348,7 @@ exports.reservationConfirm = function() {
           return;
         }
         // cancela la reservación
-        reservacion.updateAttributes({estatus: constReservEstatus.confirmed}).success(function(reservacion) {
+        reservacion.updateAttributes({estatus: constant.estatus.Reservacion.confirmed}).success(function(reservacion) {
           res.send({msg: 'Reservacion confirmada', reservacion: reservacion});      
         }).error(function(err){
           res.send({msg: 'Existieron errores al confirmar la reservación.', err: err});
@@ -351,7 +371,7 @@ exports.reservationCancel = function() {
           return;
         }
         // cancela la reservación
-        reservacion.updateAttributes({estatus: constReservEstatus.canceled}).success(function(reservacion) {          
+        reservacion.updateAttributes({estatus: constant.estatus.Reservacion.canceled}).success(function(reservacion) {          
           // procesa lista de espera y actualización de la oferta
           processWaitingList(reservacion);
           res.send({msg: 'Reservación ha sido cancelada exitosamente.', reservacion: reservacion})
@@ -373,7 +393,7 @@ exports.reservationList = function() {
     paramsWhere.UsuarioId = usrid;
 
     if('estatus' in req.query){
-      paramsWhere.estatus = constReservEstatus[req.query.estatus];
+      paramsWhere.estatus = constant.estatus.Reservacion[req.query.estatus];
     }
     if('vigente' in req.query){
       if(req.query.vigente == 'true'){
@@ -430,7 +450,7 @@ exports.waitinglistCancel = function() {
           return;
         }
         // cancela la reservación
-        espera.updateAttributes({estatus: constEsperaEstatus.canceled}).success(function(espera) {
+        espera.updateAttributes({estatus: constant.estatus.Espera.canceled}).success(function(espera) {
           res.send({msg: 'Reservacion de lista de espera cancelada', reservacion: espera});      
         }).error(function(err){
           res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
@@ -451,10 +471,10 @@ exports.waitinglistList = function() {
     var paramsWhere = {};    
     paramsWhere.UsuarioId = usrid;
     if('estatus' in req.query){
-      paramsWhere.estatus = constEsperaEstatus[req.query.estatus];
+      paramsWhere.estatus = constant.estatus.Espera[req.query.estatus];
     }
     else{
-      paramsWhere.estatus = constEsperaEstatus.new;
+      paramsWhere.estatus = constant.estatus.Espera.new;
     }
     if('vigente' in req.query){
       if(req.query.vigente == 'true'){
@@ -493,20 +513,20 @@ var processWaitingList = function(canceledReservation){
 
   queryWhere.OfertaId = canceledReservation.OfertaId;
   queryWhere.fechaReservacion = canceledReservation.fechaReservacion;  
-  queryWhere.estatus = constEsperaEstatus.new; // esperas vigentes
+  queryWhere.estatus = constant.estatus.Espera.new; // esperas vigentes
 
   db.Espera.findAll({ where: queryWhere, order: 'id' }).success(function(espera){
     if(espera != null && espera.length > 0){
       var e = espera[0].values; // sólo tomo el primer valor
       // proceso reservación
       var resv = {RutaId: e.RutaId, RutaCorridaId: e.RutaCorridaId, OfertaId: canceledReservation.OfertaId, 
-        UsuarioId: e.UsuarioId, fechaReservacion: e.fechaReservacion, estatus: constReservEstatus.new}; // Se crea como pendiente
+        UsuarioId: e.UsuarioId, fechaReservacion: e.fechaReservacion, estatus: constant.estatus.Reservacion.new}; // Se crea como pendiente
 
       var reservacion = db.Reservacion.build(resv);
       reservacion.save().complete(function (err, reservacion) {
         if(err == null){
           db.Espera.find({where: {id: e.id} }).success(function(esp){
-            esp.updateAttributes({estatus: constEsperaEstatus.assigned, ReservacionId: reservacion.id}).success(function(e) {
+            esp.updateAttributes({estatus: constant.estatus.Espera.assigned, ReservacionId: reservacion.id}).success(function(e) {
               console.log('[COMPRA] Lista de espera convertida a reservación.');
             }).error(function(err){
               console.error('No se pudo actualizar la lista de espera [' + e.id + ']');

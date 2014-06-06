@@ -1,13 +1,12 @@
 var db = require('../models')
 var mail = require('./mailing');
-
-var constEstatus = {'new': 1, 'authorized': 3, 'rejected': 4}
+var constant = require('../config/constant.js');
 
 exports.list = function() { 
 	return function(req, res){
     var sts = 0;
     if('estatus' in req.query){
-      sts = constEstatus[req.query.estatus];
+      sts = constant.estatus.Empresa[req.query.estatus];
     }
 
     if(sts > 0 ){
@@ -60,9 +59,9 @@ exports.add = function(preregister) {
     }
 
     // asignación de estatus de instancias
-    var sts = constEstatus.new;
+    var sts = constant.estatus.Empresa.new;
     if(!preregister) {      
-      sts = constEstatus.authorized;
+      sts = constant.estatus.Empresa.authorized;
     }
 
     // validate Usuario
@@ -117,7 +116,7 @@ exports.add = function(preregister) {
               });
             }
             res.send({msg: ''});
-            if(sts == constEstatus.authorized){
+            if(sts == constant.estatus.Empresa.authorized){
               mail.notifyCompanyAuthorization(usr, emp, true);  // notificación
             }            
           }).error(function(err){
@@ -182,15 +181,15 @@ exports.delete = function() {
 exports.authorize = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
-    db.Empresa.find({where: {id: idToUpdate, EstatusId: constEstatus.new }  }).success(function(empresa) {
+    db.Empresa.find({where: {id: idToUpdate, EstatusId: constant.estatus.Empresa.new }  }).success(function(empresa) {
       if(empresa != null){      
-        empresa.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
+        empresa.updateAttributes({ EstatusId: constant.estatus.Empresa.authorized }).success(function(empresa) {
           // autorizar al usuario administrador (el único regiostrado al momento)
           db.Usuario.findAll({where: ['EmpresaId=? and role=?', empresa.id, 'EMPRESA'] }).success(function(usrs){
             if(usrs != null){
               for (var i = 0; i < usrs.length; i++) {
                 var usr = usrs[i];
-                usr.updateAttributes({ EstatusId: constEstatus.authorized }).success(function(empresa) {
+                usr.updateAttributes({ EstatusId: constant.estatus.Empresa.authorized }).success(function(usr) {
                   mail.notifyCompanyAuthorization(usr, empresa, true);  // notificación
                 });
               };
@@ -222,7 +221,7 @@ exports.reject = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
     db.Empresa.find(idToUpdate).success(function(empresa) {      
-      empresa.updateAttributes({ EstatusId: constEstatus.rejected }).success(function(empresa) {
+      empresa.updateAttributes({ EstatusId: constant.estatus.Empresa.rejected }).success(function(empresa) {
         // notifica el rechazo
         db.Usuario.find({where: ['EmpresaId=? and role=?', empresa.id, 'EMPRESA'] }).success(function(usr){
           mail.notifyCompanyAuthorization(usr, empresa, false);  // notificación  

@@ -1,6 +1,5 @@
 var db = require('../models')
-
-var constRutaEstatus = {'new': 1, 'authorized': 3, 'rejected': 4}
+var constant = require('../config/constant.js');
 
 var constDiaSem = ['dia7', 'dia1', 'dia2', 'dia3', 'dia4', 'dia5', 'dia6'];
 
@@ -139,17 +138,19 @@ exports.generaOfertaXRuta = function() {
  */
 exports.generaOfertaGlobalServ = function() {
   return function(req, res) {
-    res.send(generaOfertaGlobal());
+    exports.generaOfertaGlobal(function(result){
+      res.send(result);
+    });
   }
 };
 
 
-exports.generaOfertaGlobal = function(){
-console.log("Generando OFEEEEERTAS");
+exports.generaOfertaGlobal = function(resultCallback){
+  console.log("Generando OFEEEEERTAS");
   var hoy = new Date();
   var num = 0;
 
-  db.Ruta.findAll({ where: { EstatusId: constRutaEstatus['authorized'] }, include: [{model: db.RutaCorrida, as: 'Corridas'}] }).success(function(rutas){
+  db.Ruta.findAll({ where: { EstatusId: constant.estatus.Ruta['authorized'] }, include: [{model: db.RutaCorrida, as: 'Corridas'}] }).success(function(rutas){
     if(rutas!=null){
       for (var i = 0; i < rutas.length; i++) {
         var ruta = rutas[i];
@@ -157,13 +158,13 @@ console.log("Generando OFEEEEERTAS");
         if(result.success) num++;
         console.log(result);
       };
-      return({msg: "Se generó exitosamente la oferta para " + num + " rutas.", success: true})
+      resultCallback({msg: "Se generó exitosamente la oferta para " + num + " rutas.", success: true});
     }
     else{
-      return({msg: "No se pudo generar la oferta global, no se encontraron rutas.", success: false})
+      resultCallback({msg: "No se pudo generar la oferta global, no se encontraron rutas.", success: false});
     }
   }).error(function(err){
-      return({msg: "No se pudo generar la oferta global, no se encontraron rutas.", success: false, err: err})
+      resultCallback({msg: "No se pudo generar la oferta global, no se encontraron rutas.", success: false, err: err});
   });  
 }
 
@@ -175,8 +176,8 @@ var generaOfertaRuta = function(ruta, hoy){
   if(ruta!=null){
     var dias = ruta.diasofertafuturo;
 
-    if(ruta.EstatusId != constRutaEstatus['authorized']) {
-      return ({msg: "No se puede generar la oferta, la ruta: " + idRuta + " no está autorizada.", success: false});
+    if(ruta.EstatusId != constant.estatus.Ruta['authorized']) {
+      return ({msg: "No se puede generar la oferta, la ruta: " + ruta.id + " no está autorizada.", success: false});
     }
 
     var i = 1;

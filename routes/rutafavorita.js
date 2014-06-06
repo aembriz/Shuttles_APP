@@ -1,6 +1,6 @@
 var db = require('../models')
+var constant = require('../config/constant.js');
 
-var constEstatus = {'new': 1, 'authorized': 3, 'rejected': 4}
 
 // ----------------------RUTAS FAVORITAS---------------------------
 /*
@@ -14,7 +14,7 @@ exports.favouriteList = function() {
     params.where.UsuarioId = req.user.id; 
     
     params.include = [
-        {model: db.Ruta, where: {EstatusId: constEstatus.authorized } }
+        {model: db.Ruta, where: {EstatusId: constant.estatus.Ruta.authorized } }
     ];
 
     db.Favorita.findAll(params).success(function(rutas) {

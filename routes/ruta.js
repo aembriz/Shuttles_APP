@@ -17,7 +17,7 @@ exports.list = function() {
       params.where.CompanyownerID = req.query.empresa;
     }
 
-    if(req.user.role != 'ADMIN') { params.where.CompanyownerID = req.user.EmpresaId; } // SEC: solo puede ver rutas de su empresa TODO: incluir rutas compartidas
+    if(req.user.role != 'ADMIN') { if(!params.where) params.where = {}; params.where.CompanyownerID = req.user.EmpresaId; } // SEC: solo puede ver rutas de su empresa TODO: incluir rutas compartidas
 
     params.include = [
         {model: db.Empresa, as: 'companyowner'},
