@@ -584,7 +584,54 @@ Usado para compartir rutas entre compañías
 Comandos RESTFul:   
 * GET /rutacompartida = (Consulta todos. Se pueden incluir los filtros (empresa (dueña de la ruta), empresacliente, ruta, estatus=[new/authorized/rejected]) )  
 * GET /rutacompartida/{id} = (Consulta registro con el id especificado)  
+* GET /rutacompartida/[rutaid]/empresasxcompartir = (Consulta las empresas con las que se puede compartir la ruta especificada)
 * POST /rutacompartida = (Creación de registro nuevo)  
-* POST /rutacompartida/[rutaid]/empresa/[empresaid] = (Comparte la ruta indicada con la empresa indicada)  
+* PUT /rutacompartida/[rutaid]/empresa/[empresaid] = (Comparte la ruta indicada con la empresa indicada)  
 * PUT /rutacompartida/{id} = (Update al registro con el id especificado)  
 * DELETE /rutacompartida/{id} = (Elimina registro marcado con el id)  
+
+
+------------
+
+Servicio "Sugerencias / Comentarios" 
+-------------------------
+Usado para crear y listar sugerencias y comentarios 
+
+[URL...]/sugerencia
+
+Comandos RESTFul:   
+* GET /sugerencia = (Consulta las sugerencias (internamente se hacen filtros de acuerdo al rol del Usuario))  
+* GET /sugerencia/{id} = (Consulta registro con el id especificado)  
+* POST /sugerencia = (Creación de registro nuevo)  
+
+Ejemplo de creación de sugerencia:
+
+    {
+      "comentario": "Comentario usuario 9 de la empresa 1",
+      "RutaId": 1,
+      "RutaCorridaId": 22
+    }
+
+**Nota:** Tanto RutaId como RutaCorridaId son opcionales
+
+------------
+
+** FORMATO DE RESPUESTA DE SERVICIOS **
+-------------------------
+El formato de resultado de TODOS los servicios (excepto login y la respuesta de autenticación), es de la siguiente manera:
+
+    {
+      "msg": "",
+      "err": null,
+      "success": true,
+      "msgCode": "ErrEmpX000",
+      "resultObject": **OBJETO**
+    }
+
+Los atributos son:
+* msg = Un mensaje de texto con descripción generál para el usuario.
+* err = objeto de error generado (su formato depende del generador, Ej: el ORM)
+* success = [true/false] false en caso de que haya habido un error en la ejecución del servicio. En su caso desplegar el atributo msg al usuario
+* msgCode = Identificador de la posición del mensaje en el código de los servicios
+* resultObject = aquí se adjunta el resultado del servicio, ya sea un arreglo, un objeto, etc. Tal cual se mandaba antes de implementar este formato de respuesta.
+

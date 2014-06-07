@@ -3,6 +3,9 @@ var mail = require('./mailing'); // used for sending mails
 var constant = require('../config/constant.js');
 
 var rutacompartida = require('./rutacompartida'); // used for sending mails
+
+var util = require('./utilities');
+var constErrorTypes = {'ErrPcrX000': '', 'ErrPcrX000':''};
 // -------------------------------------------------
 
 /*
@@ -39,15 +42,17 @@ exports.listRoutes = function() {
           {model: db.Estatus, as: 'Estatus', attributes: ['id', 'stsNombre']}
         ]
       }).success(function(rutas) {
-          res.send(rutas);
+          //res.send(rutas);
+          res.send(util.formatResponse('', null, true, 'ErrPcrX001', constErrorTypes, rutas));
       }).error(function(err){
-        res.send({msg: 'No se pudo consultar las rutas del usuario, error.', err: err, success: false});
+        //res.send({msg: 'No se pudo consultar las rutas del usuario, error.', err: err, success: false});
+        res.send(util.formatResponse('Ocurrieron errores al acceder a las rutas que puede ver el usuario', err, false, 'ErrPcrX002', constErrorTypes, null));
       });
 
       return rutaids;
-    }).error(function(err){
-      console.log(err);
-      res.send({msg: 'No se pudo consultar las rutas compartidas, error.', err: err, success: false});
+    }).error(function(err){      
+      //res.send({msg: 'No se pudo consultar las rutas compartidas, error.', err: err, success: false});
+      res.send(util.formatResponse('Ocurrieron errores al acceder a las rutas compartidas que puede ver el usuario', err, false, 'ErrPcrX003', constErrorTypes, null));
     });
     
   }
@@ -68,7 +73,8 @@ exports.listSuggestions = function() {
         where: { id: usrid }
       }      
     ).error(function(err){
-      res.send({ msg: 'Problemas al acceder a su perfil de usuario.' });      
+      //res.send({ msg: 'Problemas al acceder a su perfil de usuario.' });      
+      res.send(util.formatResponse('Ocurrieron al acceder al perfil del usuario', err, false, 'ErrPcrX004', constErrorTypes, null));
     }).success(function(usuario) {
       usr = usuario.values;
       console.log(usr);
@@ -120,18 +126,13 @@ exports.listSuggestions = function() {
 
         } // for rutas
 
-        res.send(suggests);    
+        //res.send(suggests);    
+        res.send(util.formatResponse('', null, true, 'ErrPcrX005', constErrorTypes, suggests));
+      }).error(function(err){
+        res.send(util.formatResponse('Ocurrieron errores al acceder a las rutas que puede ver el usuario', err, false, 'ErrPcrX006', constErrorTypes, null));
       });
 
     });
-
-
-    // calcula la distancia a las paradas de la ruta
-    /*
-    db.RutaPunto.findAll( {where: {tipo: 3}, order: 'indice' } ).success(function(rutapunto) {      
-      res.send(rutapunto);    
-    });
-    */
 
   }
 };
@@ -168,7 +169,8 @@ exports.listOferta = function() {
       queryParams.where.RutaId = req.params.rutaid;
     }
     else{
-      res.send('{ msg: "Debe indicarse la ruta a consultar."}');
+      //res.send('{ msg: "Debe indicarse la ruta a consultar."}');
+      res.send(util.formatResponse('Debe indicarse la ruta a consultar', null, false, 'ErrPcrX007', constErrorTypes, null));
       return;
     }
     if('fecha' in req.query) {       
@@ -194,6 +196,11 @@ exports.listOferta = function() {
     // lista todas las disponibilidades de las corridas de la ruta especificada
     db.Oferta.findAll(queryParams).success(function(rutacorridaoferta) {
       //res.send(rutacorridaoferta);
+
+      if(rutacorridaoferta==null){
+        res.send(util.formatResponse('Ocurrieron errores al listar la oferta para el usuario', null, false, 'ErrPcrX008', constErrorTypes, null));
+        return;
+      }
 
       // liga reservaciones que el usuario ya tiene para esas ofertas
       db.Reservacion.findAll({ where: {UsuarioId: usrid, estatus: {lte: 2} } }).success(function(reservacion){
@@ -233,22 +240,26 @@ exports.listOferta = function() {
               };
             }
           }          
-          res.send(result);
+          //res.send(result);
+          res.send(util.formatResponse('', null, true, 'ErrPcrX009', constErrorTypes, result));
           return;
         }).error(function(err){
           console.log('Error al obtener la lista de espera asociada a la consulta de oferta.')
-          res.send(result);
+          //res.send(result);
+          res.send(util.formatResponse('Ocurrieron errores al acceder a la lista de espera del usuario', err, true, 'ErrPcrX010', constErrorTypes, result));
           return;
         });
 
       }).error(function(err){
         result = rutacorridaoferta;
-        res.send(result);
+        //res.send(result);
+        res.send(util.formatResponse('Ocurrieron errores al acceder a la lista de reservaciiones del usuario', err, true, 'ErrPcrX011', constErrorTypes, result));
         return;
       });
 
     }).error(function(err){        
-        res.send({msg: 'Error al consultar la oferta par la ruta: ' + req.params.rutaid });
+        //res.send({msg: 'Error al consultar la oferta par la ruta: ' + req.params.rutaid });
+        res.send(util.formatResponse('Ocurrieron errores al acceder a la oferta para el usuario', err, false, 'ErrPcrX012', constErrorTypes, null));
         return;
     });        
 
@@ -261,6 +272,10 @@ exports.reservationCreate = function() {
   return function(req, res){
     var usrid = req.user.id; //5; // TODO: se debe extraer del token de acceso
     db.Oferta.find(req.params.ofertaid).success(function(oferta){    
+      if(oferta==null){
+        res.send(util.formatResponse('Ocurrieron errores al crear la reservación', null, false, 'ErrPcrX013', constErrorTypes, null));
+        return;
+      }
       if(oferta.values.oferta > 0){
         oferta.decrement('oferta', 1).success(function(oferta) {
           var of = oferta.values;
@@ -269,19 +284,29 @@ exports.reservationCreate = function() {
 
           var reservacion = db.Reservacion.build(resv);
           reservacion.save().complete(function (err, reservacion) {
-            res.send(
-              (err === null) ? { msg: 'Su reservación has sido registrada.', reservacion: reservacion } : 
-              { msg: 'Existieron errores al registrar su reservación. Por favor vuelva a intentarlo.',  err: err }
-            );
+            //res.send(
+            //  (err === null) ? { msg: 'Su reservación has sido registrada.', reservacion: reservacion } : 
+            //  { msg: 'Existieron errores al registrar su reservación. Por favor vuelva a intentarlo.',  err: err }
+            //);
+            if(err==null){
+              res.send(util.formatResponse('Su reservación fue registrada correctamente.', null, true, 'ErrPcrX014', constErrorTypes, reservacion));
+            }
+            else{
+              res.send(util.formatResponse('Ocurrieron errores al crear la reservación', err, false, 'ErrPcrX015', constErrorTypes, null));
+            }
           });
 
+        }).error(function(err){
+          res.send(util.formatResponse('Ocurrieron errores al crear la reservación', err, false, 'ErrPcrX016', constErrorTypes, null));
         });
       }
       else{
-        res.send({msg: 'Sentimos informarle que los lugares disponibles ya fueron reservados.'});
+        //res.send({msg: 'Sentimos informarle que los lugares disponibles ya fueron reservados.'});
+        res.send(util.formatResponse('Sentimos informarle que los lugares disponibles ya fueron reservados',  null, false, 'ErrPcrX017', constErrorTypes, null));
       }
     }).error(function(err){
-      res.send({msg: 'Existieron problemas al acceder a la oferta.', err: err});      
+      //res.send({msg: 'Existieron problemas al acceder a la oferta.', err: err});      
+      res.send(util.formatResponse('Ocurrieron errores al crear la reservación', err, false, 'ErrPcrX018', constErrorTypes, null));
     });
 
   }
@@ -297,37 +322,48 @@ exports.reservationCreateBulk = function() {
     for (var i = 0; i < ofertas.length; i++) {
       ofertaid = ofertas[i];
 
-      console.log('Procesando -->' + ofertaid);
-      db.Oferta.find(ofertaid).success(function(oferta){    
+      db.Oferta.find(ofertaid).success(function(oferta){
+        if(oferta == null){
+          res.send(util.formatResponse('Ocurrieron errores al crear las reservaciones', null, false, 'ErrPcrX019', constErrorTypes, null));
+          return;
+        }
         if(oferta.values.oferta > 0){
-          oferta.decrement('oferta', 1).success(function(oferta) {
-            console.log('Procesando -->' + oferta.id + '-->Decrementado');
+          oferta.decrement('oferta', 1).success(function(oferta) {            
             var of = oferta.values;
             var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
               fechaReservacion: of.fechaOferta, estatus: constant.estatus.Reservacion.confirmed}; // Se crea como confirmada
 
             var reservacion = db.Reservacion.build(resv);
             reservacion.save().complete(function (err, reservacion) {
-              console.log('Procesando -->' + oferta.id + '-->Reservado');
               result[oferta.id] =
-                (err === null) ? {msg: 'Su reservación has sido registrada.', reservacion: reservacion } : 
+                (err === null) ? {msg: 'Su reservación has sido creada correctamente.', reservacion: reservacion } : 
                 {msg: 'Existieron errores al registrar su reservación. Por favor vuelva a intentarlo.',  err: err }
               ;
               porProcesar--;
-              if(porProcesar <= 0) {res.send({msg:'', resultado: result});}
+              if(porProcesar <= 0) {
+                //res.send({msg:'', resultado: result});
+                res.send(util.formatResponse('Se crearon correctamente las reservaciones', null, false, 'ErrPcrX020', constErrorTypes, result));
+              }
             });
-
+          }).error(function(err){
+            result[oferta.id] = {msg: 'Ocurrieron errores al crear la reservación.'};
           });
         }
         else{
           result[oferta.id] = {msg: 'Sentimos informarle que los lugares disponibles ya fueron reservados.'};
           porProcesar--;
-          if(porProcesar <= 0) {res.send({msg:'', resultado: result});}
+          if(porProcesar <= 0) {
+            //res.send({msg:'', resultado: result});
+            res.send(util.formatResponse('Se crearon correctamente las reservaciones', null, false, 'ErrPcrX021', constErrorTypes, result));
+          }
         }
       }).error(function(err){
         result[0] = {msg: 'Existieron problemas al acceder a la oferta.', err: err};
         porProcesar--;
-        if(porProcesar <= 0) {res.send({msg:'', resultado: result});}
+        if(porProcesar <= 0) {
+          //res.send({msg:'', resultado: result});
+          res.send(util.formatResponse('Se crearon correctamente las reservaciones', null, false, 'ErrPcrX022', constErrorTypes, result));
+        }
       });
     };
     
@@ -344,18 +380,25 @@ exports.reservationConfirm = function() {
     db.Reservacion.find(reservid).success(function(reservacion){    
       if(reservacion != null){
         if(reservacion.UsuarioId != usrid){
-          res.send('msg: La reservación que pretende confirmar no le pertenece.');
+          //res.send('msg: La reservación que pretende confirmar no le pertenece.');
+          res.send(util.formatResponse('No tiene permisos sobre esta reservación', null, false, 'ErrPcrX023', constErrorTypes, null));
           return;
         }
         // cancela la reservación
         reservacion.updateAttributes({estatus: constant.estatus.Reservacion.confirmed}).success(function(reservacion) {
-          res.send({msg: 'Reservacion confirmada', reservacion: reservacion});      
+          //res.send({msg: 'Reservacion confirmada', reservacion: reservacion});      
+          res.send(util.formatResponse('Se confirmó correctamente la reservación', null, false, 'ErrPcrX024', constErrorTypes, reservacion));
         }).error(function(err){
-          res.send({msg: 'Existieron errores al confirmar la reservación.', err: err});
+          //res.send({msg: 'Existieron errores al confirmar la reservación.', err: err});
+          res.send(util.formatResponse('Ocurrieron errores al confirmar la reservación', err, false, 'ErrPcrX025', constErrorTypes, null));
         });        
-      }      
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al confirmar las reservaciones', null, false, 'ErrPcrX026', constErrorTypes, null));
+      }
     }).error(function(err){
-      res.send({msg: 'Existieron problemas al acceder a la reservación.', err: err});      
+      //res.send({msg: 'Existieron problemas al acceder a la reservación.', err: err});      
+      res.send(util.formatResponse('Ocurrieron errores al confirmar la reservación', err, false, 'ErrPcrX027', constErrorTypes, null));
     });
   }
 };
@@ -367,18 +410,26 @@ exports.reservationCancel = function() {
     db.Reservacion.find(req.params.reservacionid).success(function(reservacion){
       if(reservacion != null){
         if(reservacion.UsuarioId != usrid){
-          res.send({msg: 'La reservación que pretende cancelar no le pertenece.'});
+          //res.send({msg: 'La reservación que pretende cancelar no le pertenece.'});
+          res.send(util.formatResponse('No tiene permisos sobre la reservación', null, false, 'ErrPcrX028', constErrorTypes, null));
           return;
         }
         // cancela la reservación
         reservacion.updateAttributes({estatus: constant.estatus.Reservacion.canceled}).success(function(reservacion) {          
           // procesa lista de espera y actualización de la oferta
           processWaitingList(reservacion);
-          res.send({msg: 'Reservación ha sido cancelada exitosamente.', reservacion: reservacion})
+          //res.send({msg: 'Reservación ha sido cancelada exitosamente.', reservacion: reservacion})
+          res.send(util.formatResponse('Se canceló correctamente la reservación', null, true, 'ErrPcrX029', constErrorTypes, reservacion));
         }).error(function(err){
-          res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
+          //res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
+          res.send(util.formatResponse('Ocurrieron errores al cancelar la reservación', err, false, 'ErrPcrX030', constErrorTypes, null));
         });        
       }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al cancelar la reservación', null, false, 'ErrPcrX031', constErrorTypes, null));
+      }
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al cancelar la reservación', err, false, 'ErrPcrX032', constErrorTypes, null));
     });
   }
 };
@@ -410,7 +461,10 @@ exports.reservationList = function() {
 
     // TODO: tomar en cuenta estatus de las reservaciones a mostrar
     db.Reservacion.findAll({ where: paramsWhere, include: includes }).success(function(reservacion){
-      res.send(reservacion);
+      //res.send(reservacion);
+      res.send(util.formatResponse('', null, true, 'ErrPcrX033', constErrorTypes, reservacion));
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al acceder a las reservaciones', err, false, 'ErrPcrX034', constErrorTypes, null));
     });
   }
 };
@@ -420,20 +474,31 @@ exports.reservationList = function() {
 exports.waitinglistCreate = function() { 
   return function(req, res){
     var usrid = req.user.id; //5; // TODO: se debe extraer del token de acceso
-    db.Oferta.find(req.params.ofertaid).success(function(oferta){              
+    db.Oferta.find(req.params.ofertaid).success(function(oferta){
+      if(oferta==null){
+        res.send(util.formatResponse('Ocurrieron errores al crear la solicitud de espera', null, false, 'ErrPcrX035', constErrorTypes, null));
+        return;
+      }
       var of = oferta.values;
       var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
         fechaReservacion: of.fechaOferta};
 
       var espera = db.Espera.build(resv);
       espera.save().complete(function (err, espera) {
-        res.send(
-          (err === null) ? { msg: 'Se ha agregado a la lista de espera.', reservacion: espera } : 
-          { msg: 'Existieron errores al registrarlo en la lista de espera. Por favor vuelva a intentarlo.',  err: err }
-        );
+        //res.send(
+        //  (err === null) ? { msg: 'Se ha agregado a la lista de espera.', reservacion: espera } : 
+        //  { msg: 'Existieron errores al registrarlo en la lista de espera. Por favor vuelva a intentarlo.',  err: err }
+        //);
+        if(err==null){
+          res.send(util.formatResponse('Se creó correctamente la solicitud de espera', null, true, 'ErrPcrX036', constErrorTypes, espera));
+        }
+        else{
+          res.send(util.formatResponse('Ocurrieron errores al crear la solicitud de espera', err, false, 'ErrPcrX037', constErrorTypes, null));
+        }
       });
     }).error(function(err){
-      res.send({msg: 'Existieron problemas al acceder a la oferta.', err: err});      
+      //res.send({msg: 'Existieron problemas al acceder a la oferta.', err: err});      
+      res.send(util.formatResponse('Ocurrieron errores al crear la solicitud de espera', err, false, 'ErrPcrX038', constErrorTypes, null));
     });
 
   }
@@ -446,15 +511,21 @@ exports.waitinglistCancel = function() {
     db.Espera.find(req.params.reservacionid).success(function(espera){
       if(espera != null){
         if(espera.UsuarioId != usrid){
-          res.send('msg: La reservación en lista de espera que pretende cancelar no le pertenece.');
+          //res.send('msg: La reservación en lista de espera que pretende cancelar no le pertenece.');
+          res.send(util.formatResponse('No tiene permisos sobre la solicitud de espera', null, false, 'ErrPcrX039', constErrorTypes, null));
           return;
         }
         // cancela la reservación
         espera.updateAttributes({estatus: constant.estatus.Espera.canceled}).success(function(espera) {
-          res.send({msg: 'Reservacion de lista de espera cancelada', reservacion: espera});      
+          //res.send({msg: 'Reservacion de lista de espera cancelada', reservacion: espera});      
+          res.send(util.formatResponse('Se canceló correctamente la solicitud de espera', null, true, 'ErrPcrX040', constErrorTypes, espera));
         }).error(function(err){
-          res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
+          //res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
+          res.send(util.formatResponse('Ocurrieron errores al cancelar la solicitud de espera', err, false, 'ErrPcrX041', constErrorTypes, null));
         });        
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al cancelar la solicitud de espera', null, false, 'ErrPcrX042', constErrorTypes, null));
       }
     });
   }
@@ -490,7 +561,10 @@ exports.waitinglistList = function() {
     ];    
 
     db.Espera.findAll({ where: paramsWhere, include: includes }).success(function(reservacion){
-      res.send(reservacion);
+      //res.send(reservacion);
+      res.send(util.formatResponse('', null, true, 'ErrPcrX043', constErrorTypes, reservacion));
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al acceder a las solicitudes de espera', err, false, 'ErrPcrX044', constErrorTypes, null));
     });
   }
 };

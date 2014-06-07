@@ -5,6 +5,9 @@ var constant = require('../config/constant.js');
 var app = null;
 var passport = null;
 
+var util = require('./utilities');
+var constErrorTypes = {'ErrUsrX000': '', 'ErrUsrX000':''};
+
 exports.set = function(appx, passportx){
 	app = appx;
 	passport = passportx;
@@ -112,7 +115,10 @@ exports.list = function() {
       ];
 
     db.Usuario.findAll(params).success(function(usuario) {
-      res.send(usuario);
+      //res.send(usuario);
+      res.send(util.formatResponse('', null, true, 'ErrUsrX001', constErrorTypes, usuario));
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al acceder a los usuarios', err, false, 'ErrUsrX002', constErrorTypes, null));
     });
   }
 };
@@ -133,8 +139,10 @@ exports.listOne = function() {
         ]
       }      
     ).success(function(usuario) {      
-      res.send(usuario);    
-
+      //res.send(usuario);    
+      res.send(util.formatResponse('', null, true, 'ErrUsrX003', constErrorTypes, usuario));
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al acceder al usuario', err, false, 'ErrUsrX004', constErrorTypes, null));
     });
   }
 };
@@ -147,15 +155,18 @@ exports.add = function() {
   return function(req, res) {
     req.body.EstatusId = 1; // inicia con estatus nueva y despues se autoriza
     var usuario = db.Usuario.build(req.body);
-    usuario.save().complete(function (err, usuario) {
-      
-      	if(err == null) {res.send({ msg: '' })}
+    usuario.save().complete(function (err, usuario) {      
+      	if(err == null) {
+          //res.send({ msg: '' })
+          res.send(util.formatResponse('Se creó correctamente al usuario', null, true, 'ErrUsrX005', constErrorTypes, usuario));
+        }
       	else{
-      		var msg = {err: err};
+      		var msg = '';
       		if(err.code == 'ER_DUP_ENTRY'){
-      			msg.msg = 'Ya existe un usuario registrado con el mismo correo, no se puede crear el registro.';
+      			msg = 'Ya existe un usuario registrado con el mismo correo, no se puede crear el registro.';
       		}
-      		res.send( msg );
+      		//res.send( msg );
+          res.send(util.formatResponse('Ocurrieron errores al crear al usuario. ' + msg, err, false, 'ErrUsrX006', constErrorTypes, null));
       	}      
     });
   }
@@ -171,19 +182,17 @@ exports.addPre = function() {
     var usuario = db.Usuario.build(req.body);
     usuario.save(['nombre', 'email', 'EmpresaId', 'role', 'EstatusId']).complete(function (err, usuario) {
       	if(err == null) {
-          console.log("Entra a hababababababa---------------->");
           mail.notifyUserInvitations([usuario]);
-          res.send({ msg: '', success: true })
+          //res.send({ msg: '', success: true })
+          res.send(util.formatResponse('Se pre-registró correctamente al usuario', null, true, 'ErrUsrX007', constErrorTypes, usuario));
         }
       	else{
-      		var msg = {err: err};
+      		var msg = '';
       		if(err.code == 'ER_DUP_ENTRY'){
-      			msg.msg = 'Ya existe un usuario registrado con el mismo correo, no se puede crear el registro.';
-            res.send({ msg: msg.msg, success: false });
+      			msg = 'Ya existe un usuario registrado con el mismo correo, no se puede crear el registro.';
+            //res.send({ msg: msg.msg, success: false });
       		}
-          else{
-            res.send({ msg: err, success: false }); 
-          }
+          res.send(util.formatResponse('Ocurrieron errores al pre-registrar al usuario. ' + msg, err, false, 'ErrUsrX008', constErrorTypes, null));
       	}      
     });
   }
@@ -206,14 +215,18 @@ exports.addPreBulk = function() {
   		}
   		
   		// creating users  		
-		db.Usuario.bulkCreate(bulkObj).success(function(created) {
-			mail.notifyUserInvitations(bulkObj);
-			res.send({ msg: created.length  + ' created'})
-		});    
+  		db.Usuario.bulkCreate(bulkObj).success(function(created) {
+  			mail.notifyUserInvitations(bulkObj);
+  			//res.send({ msg: created.length  + ' created'})
+        res.send(util.formatResponse('Se pre-registraron ' + created.length + ' usuarios', null, true, 'ErrUsrX009', constErrorTypes, created));
+  		}).error(function(err){
+        res.send(util.formatResponse('Ocurrieron errores al pre-registrar usuarios', err, false, 'ErrUsrX010', constErrorTypes, null));
+      });    
 				
   	}
   	else{
-  		res.send({ msg: 'The request is not properly formed.'});
+  		//res.send({ msg: 'The request is not properly formed.'});
+      res.send(util.formatResponse('Ocurrieron errores al pre-registrar usuarios. Los usuarios no tienen el formato correcto.', null, false, 'ErrUsrX011', constErrorTypes, null));
   	}
   }
 };
@@ -227,12 +240,20 @@ exports.update = function() {
     if(!(req.body == null || req.body == undefined) ){
       var idToUpdate = req.params.id;
       db.Usuario.find(idToUpdate).success(function(usuario) {
-        delete req.body.EstatusId // elimina el atributo estatus porque este solo se maneja internamente
-        usuario.updateAttributes(req.body).success(function(usuario) {
-          res.send(
-            { usuario: usuario}
-          );      
-        });
+        if(usuario != null){        
+          delete req.body.EstatusId // elimina el atributo estatus porque este solo se maneja internamente
+          usuario.updateAttributes(req.body).success(function(usuario) {
+            //res.send( { usuario: usuario} );      
+            res.send(util.formatResponse('Se modificó correctamente al usuario', null, true, 'ErrUsrX012', constErrorTypes, usuario));
+          }).error(function(err){
+            res.send(util.formatResponse('Ocurrieron errores al modificar al usuario', err, false, 'ErrUsrX013', constErrorTypes, null));
+          });
+        }
+        else{
+          res.send(util.formatResponse('Ocurrieron errores al modificar al usuario', null, false, 'ErrUsrX014', constErrorTypes, null));
+        }
+      }).error(function(err){
+        res.send(util.formatResponse('Ocurrieron errores al modificar al usuario', err, false, 'ErrUsrX015', constErrorTypes, null));
       });
     }
   }
@@ -245,9 +266,22 @@ exports.delete = function() {
   return function(req, res) {
     var idToDelete = req.params.id;
     db.Usuario.find(idToDelete).success(function(usuario) {
-      return usuario.destroy().success(function (err){
-        res.send((!err) ? { msg: '' } : { msg:'error: ' + err });
-      });
+      if(usuario != null){        
+        return usuario.destroy().success(function (err){
+          //res.send((!err) ? { msg: '' } : { msg:'error: ' + err });
+          if(err==null){
+            res.send(util.formatResponse('Se eliminó correctamente al usuario', null, true, 'ErrUsrX016', constErrorTypes, null));
+          }
+          else{
+            res.send(util.formatResponse('Ocurrieron errores al eliminar al usuario', err, false, 'ErrUsrX017', constErrorTypes, null));
+          }
+        });
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al eliminar al usuario', null, false, 'ErrUsrX018', constErrorTypes, null));
+      }
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al eliminar al usuario', err, false, 'ErrUsrX019', constErrorTypes, null));
     });
   }
 };
@@ -259,7 +293,7 @@ exports.listRoles = function() {
   return function(req, res){
 
   	var roles = ['ADMIN', 'EMPRESA', 'USUARIO'];
-	res.send(roles);
+    res.send(roles);
 
   }
 };
@@ -273,11 +307,19 @@ exports.authorize = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
     db.Usuario.find(idToUpdate).success(function(usuario) {      
-    usuario.updateAttributes({ EstatusId: constant.estatus.Usuario.authorized }).success(function(usuario) {
-      res.send(
-        { usuario: usuario}
-      );      
-    });
+      if(usuario!=null){        
+        usuario.updateAttributes({ EstatusId: constant.estatus.Usuario.authorized }).success(function(usuario) {
+          //res.send( { usuario: usuario} );      
+          res.send(util.formatResponse('Se autorizó correctamente al usuario', null, true, 'ErrUsrX020', constErrorTypes, usuario));
+        }).error(function(err){
+          res.send(util.formatResponse('Ocurrieron errores al autorizar al usuario', err, false, 'ErrUsrX021', constErrorTypes, null));
+        });
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al autorizar al usuario', null, false, 'ErrUsrX022', constErrorTypes, null));
+      }
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al autorizar al usuario', err, false, 'ErrUsrX023', constErrorTypes, null));
     });
   }
 };
@@ -289,11 +331,19 @@ exports.reject = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
     db.Usuario.find(idToUpdate).success(function(usuario) {      
-    usuario.updateAttributes({ EstatusId: constant.estatus.Usuario.rejected }).success(function(usuario) {
-      res.send(
-        { usuario: usuario}
-      );      
-    });
+      if(usuario!=null) {
+        usuario.updateAttributes({ EstatusId: constant.estatus.Usuario.rejected }).success(function(usuario) {
+          //res.send( { usuario: usuario} );
+          res.send(util.formatResponse('Se rechazó correctamente al usuario', null, true, 'ErrUsrX024', constErrorTypes, usuario));
+        }).error(function(err){
+          res.send(util.formatResponse('Ocurrieron errores al rechazar al usuario', err, false, 'ErrUsrX025', constErrorTypes, null));
+        });
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al rechazar al usuario', null, false, 'ErrUsrX026', constErrorTypes, null));
+      }
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al rechazar al usuario', err, false, 'ErrUsrX027', constErrorTypes, null));
     });
   }
 };

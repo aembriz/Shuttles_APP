@@ -211,12 +211,28 @@ app.put('/oferta/:id/minus', usuario.authenticate, usuario.needsRole(['ADMIN']),
 var rutacompartida = require('./routes/rutacompartida');
 app.get('/rutacompartida', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.list());
 app.get('/rutacompartida/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.listOne());
+app.get('/rutacompartida/:rutaid/empresasxcompartir', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.listEmpresaToShare());
 app.post('/rutacompartida', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.add());
-app.post('/rutacompartida/:rutaid/empresa/:empresaid', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.share());
 app.put('/rutacompartida/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.update());
+app.put('/rutacompartida/:rutaid/empresa/:empresaid', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.share());
 app.put('/rutacompartida/authorize/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.authorize());
 app.put('/rutacompartida/reject/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.reject());
 app.delete('/rutacompartida/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.delete());
+
+
+// --------------- Sugerencia / Comentario ----------------
+var sugerencia = require('./routes/sugerencia');
+app.get('/sugerencia', usuario.authenticate, sugerencia.list());
+app.get('/sugerencia/:id', usuario.authenticate, sugerencia.listOne());
+app.post('/sugerencia', usuario.authenticate, sugerencia.add());
+
+
+
+// --------------- Pruebas ----------------
+var mail = require('./routes/mailing');
+mail.initialize(app);
+app.get('/prueba', usuario.authenticate, mail.prueba());
+
 
 // ------------------INI Schedulers-------------------------
 

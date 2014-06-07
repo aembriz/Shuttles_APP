@@ -1,12 +1,15 @@
 var db = require('../models')
 var constant = require('../config/constant.js');
+var util = require('./utilities');
+var constErrorTypes = {'ErrOfeX000': '', 'ErrOfeX000':''};
 
 var constDiaSem = ['dia7', 'dia1', 'dia2', 'dia3', 'dia4', 'dia5', 'dia6'];
 
 exports.list = function() { 
   return function(req, res){
     db.Oferta.findAll().success(function(oferta) {
-      res.send(oferta);
+      //res.send(oferta);
+      res.send(util.formatResponse('', null, true, 'ErrOfeX001', constErrorTypes, oferta));
     });
   }
 };
@@ -18,7 +21,8 @@ exports.listOne = function() {
   return function(req, res) {
     var idToFind = req.params.id;
     db.Oferta.find( idToFind ).success(function(oferta) {      
-      res.send(oferta);    
+      //res.send(oferta);    
+      res.send(util.formatResponse('', null, true, 'ErrOfeX002', constErrorTypes, oferta));
     });
   }
 };
@@ -31,9 +35,12 @@ exports.add = function() {
   return function(req, res) {
     var oferta = db.Oferta.build(req.body);
     oferta.save().complete(function (err, oferta) {
-      res.send(
-        (err === null) ? { msg: '' } : { msg: err }
-      );          
+      if(err==null){
+        res.send(util.formatResponse('Se creó correctamente la oferta', null, true, 'ErrOfeX003', constErrorTypes, oferta));
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al crear la oferta', err, false, 'ErrOfeX004', constErrorTypes));
+      }
     });
   }
 };
@@ -45,11 +52,15 @@ exports.update = function() {
   return function(req, res) {
     var idToUpdate = req.params.id;
     db.Oferta.find(idToUpdate).success(function(oferta) {      
-    oferta.updateAttributes(req.body).success(function(oferta) {
-      res.send(
-        { oferta: oferta}
-      );      
-    });
+      if(oferta != null){
+        oferta.updateAttributes(req.body).success(function(oferta) {
+          //res.send({ oferta: oferta} );      
+          res.send(util.formatResponse('Se modificó correctamente la oferta', null, true, 'ErrOfeX005', constErrorTypes, oferta));
+        });
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al modificar la oferta', null, false, 'ErrOfeX006', constErrorTypes));
+      }
     });
   }
 };
@@ -61,9 +72,21 @@ exports.delete = function() {
   return function(req, res) {
     var idToDelete = req.params.id;
     db.Oferta.find(idToDelete).success(function(oferta) {
-      return oferta.destroy().success(function (err){
-        res.send((!err) ? { msg: '' } : { msg:'error: ' + err });
-      });
+      if(oferta!=null){      
+        return oferta.destroy().success(function (err){
+          if(err==null){
+            res.send(util.formatResponse('Se eliminó correctamente la oferta', null, true, 'ErrOfeX007', constErrorTypes, null));
+          }
+          else{
+            res.send(util.formatResponse('Ocurrieron errores eliminar la oferta', err, false, 'ErrOfeX008', constErrorTypes, null));
+          }          
+        });
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores eliminar la oferta', null, false, 'ErrOfeX009', constErrorTypes, null));
+      }
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores eliminar la oferta', err, false, 'ErrOfeX010', constErrorTypes, null));
     });
   }
 };
@@ -81,11 +104,14 @@ exports.incrementOferta = function() {
       places = req.body.lugares;
     }
     db.Oferta.find(idToUpdate).success(function(oferta) {
-    oferta.increment('oferta', places).success(function(oferta) {
-      res.send(
-        { oferta: oferta}
-      );      
-    });
+      oferta.increment('oferta', places).success(function(oferta) {
+        //res.send( { oferta: oferta} );      
+        res.send(util.formatResponse('Se incrementó correctamente la oferta', null, true, 'ErrOfeX011', constErrorTypes, oferta));
+      }).error(function(err){
+        res.send(util.formatResponse('Ocurrieron errores inrementar la oferta', err, false, 'ErrOfeX012', constErrorTypes, null));
+      });
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores inrementar la oferta', err, false, 'ErrOfeX013', constErrorTypes, null));
     });
   }
 };
@@ -101,11 +127,14 @@ exports.decrementOferta = function() {
       places = req.body.lugares;
     }    
     db.Oferta.find(idToUpdate).success(function(oferta) {
-    oferta.decrement('oferta', places).success(function(oferta) {
-      res.send(
-        { oferta: oferta}
-      );      
-    });
+      oferta.decrement('oferta', places).success(function(oferta) {
+        //res.send( { oferta: oferta} );      
+        res.send(util.formatResponse('Se decrementó correctamente la oferta', null, true, 'ErrOfeX014', constErrorTypes, oferta));
+      }).error(function(err){
+        res.send(util.formatResponse('Ocurrieron errores decrementar la oferta', err, false, 'ErrOfeX015', constErrorTypes, null));
+      });
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores decrementar la oferta', err, false, 'ErrOfeX016', constErrorTypes, null));
     });
   }
 };
@@ -121,13 +150,16 @@ exports.generaOfertaXRuta = function() {
     db.Ruta.find({ where: {id: idRuta}, include: [{model: db.RutaCorrida, as: 'Corridas'}] }).success(function(ruta){
       var result = generaOfertaRuta(ruta, hoy);
       if(result.success){
-        res.send(result);
+        //res.send(result);
+        res.send(util.formatResponse('Se generó correctamente la oferta', null, true, 'ErrOfeX017', constErrorTypes, result));
       }
       else{
-        res.send(result);
+        //res.send(result);
+        res.send(util.formatResponse(result.msg, null, false, 'ErrOfeX018', constErrorTypes, null));
       }
     }).error(function(err){
-      res.send({msg: "No se pudo acceder a la ruta para generar la oferta ruta: " + idRuta, success: false, err: err});
+      //res.send({msg: "No se pudo acceder a la ruta para generar la oferta ruta: " + idRuta, success: false, err: err});
+      res.send(util.formatResponse('Ocurrieron errores al generar la oferta', err, false, 'ErrOfeX019', constErrorTypes, null));
     });
 
   }
@@ -139,14 +171,14 @@ exports.generaOfertaXRuta = function() {
 exports.generaOfertaGlobalServ = function() {
   return function(req, res) {
     exports.generaOfertaGlobal(function(result){
-      res.send(result);
+      //res.send(result);
+      res.send(util.formatResponse(result.msg, null, result.success, 'ErrOfeX020', constErrorTypes, null));
     });
   }
 };
 
 
-exports.generaOfertaGlobal = function(resultCallback){
-  console.log("Generando OFEEEEERTAS");
+exports.generaOfertaGlobal = function(resultCallback){  
   var hoy = new Date();
   var num = 0;
 

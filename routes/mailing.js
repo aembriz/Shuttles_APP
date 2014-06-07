@@ -1,5 +1,12 @@
 var nodemailer = require("nodemailer");
 var db = require('../models')
+var app = null;
+
+var initialize = function(myapp){
+    console.log("Entrando a  ");
+    app = myapp;
+};
+exports.initialize = initialize;
 
 // create reusable transport method (opens pool of SMTP connections)
 var smtpTransport = nodemailer.createTransport("SMTP",{
@@ -125,3 +132,66 @@ exports.notifyWaitingListAssigned = function(reservacion) {
     });
 
 }
+
+
+
+// ***********************************************************************
+// OTRO
+jade = require('jade');
+sys = require('sys');
+path = require('path');
+// ***********************************************************************
+
+emails = {
+  send: function(template, mailOptions, templateOptions) {
+    mailOptions.to = mailOptions.to;
+console.log(path.join(path.resolve(__dirname, '..'), 'views', 'mailer', template));
+    jade.renderFile(path.join(path.resolve(__dirname, '..'), 'views', 'mailer', template), templateOptions, function(err, text) {
+
+console.log(err);
+
+      // Add the rendered Jade template to the mailOptions
+      mailOptions.from = "EmbarQ <servicios.administrativos@nubeet.com>"
+      //mailOptions.body = text;
+      mailOptions.text = text;
+      mailOptions.html = text;
+
+      // Merge the app's mail options
+      /*
+      var keys = Object.keys(app.set('mailOptions')),
+          k;
+      for (var i = 0, len = keys.length; i < len; i++) {
+        k = keys[i];
+        if (!mailOptions.hasOwnProperty(k))
+          mailOptions[k] = app.set('mailOptions')[k]
+      }
+      */
+
+      console.log('[SENDING MAIL]', sys.inspect(mailOptions));
+
+      // Only send mails in production
+      if (app.settings.env == 'production' || true) {
+        smtpTransport.sendMail(mailOptions,
+          function(err, result) {
+            if (err) {
+              console.log(err);
+            }
+          }
+        );
+      }
+    });
+  },
+
+  sendWelcome: function(user) {
+    console.log("enviando a-->");
+    console.log(user);
+    this.send('welcomeHtml.jade', { to: user.email, subject: 'Welcome to Nodepad' }, { user: user } );
+  }
+};
+
+exports.prueba = function() {
+    return function(req, res){
+        emails.sendWelcome(req.user);
+        res.send("mailllllll");
+    }    
+};
