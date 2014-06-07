@@ -83,13 +83,13 @@
 				<div class="form-group" ng-class="{ 'has-error' : exForm.horaSalidaFmt.$invalid && !exForm.horaSalidaFmt.$pristine }">
 					<label for="horaSalidaFmt">Hora de salida</label><br/>
 
-					<input type="text" class="form-control" placeholder="18:35" id="horaSalidaFmt" name="horaSalidaFmt" ng-model="corrida.horaSalidaFmt" required/> 
+					<input type="time" class="form-control" placeholder="18:35" id="horaSalidaFmt" name="horaSalidaFmt" ng-model="corrida.horaSalidaFmt" required/> 
 					<p ng-show="exForm.horaSalidaFmt.$invalid && !exForm.horaSalidaFmt.$pristine" class="help-block">Se requiere la hora de salida.</p>
 				</div>
 				
 				<div class="form-group" ng-class="{ 'has-error' : exForm.horaLlegadaFmt.$invalid && !exForm.horaLlegadaFmt.$pristine }">
 					<label for="horaLlegadaFmt">Hora de llegada</label><br/>
-					<input type="text" class="form-control" placeholder="21:15" id="horaLlegadaFmt" name="horaLlegadaFmt" ng-model="corrida.horaLlegadaFmt" required/>
+					<input type="time" class="form-control" placeholder="21:15" id="horaLlegadaFmt" name="horaLlegadaFmt" ng-model="corrida.horaLlegadaFmt" required/>
 					<p ng-show="exForm.horaLlegadaFmt.$invalid && !exForm.horaLlegadaFmt.$pristine" class="help-block">Se requiere la hora de llegada.</p>
 				</div>			
 				<div class="form-group" ng-class="{ 'has-error' : exForm.capacidadTotal.$invalid && !exForm.capacidadTotal.$pristine }">

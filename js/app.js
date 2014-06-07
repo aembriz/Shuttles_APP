@@ -86,6 +86,12 @@ muukApp.config(['$routeProvider', '$httpProvider',
         controller: 'EmbarqRutaListCtrl'
       }).      
       // -----------------------------------------------------
+      // EmbarQ - Ruta compartida
+      when('/embarqRutaCompartidaList', {
+        templateUrl: 'partials/embarq-rutaCompartidaList.html',
+        controller: 'EmbarqRutaCompartidaListCtrl'
+      }).      
+      // -----------------------------------------------------
       // EmbarQ - Corrida de Ruta
       when('/embarqCorridaShow/:id', {
         templateUrl: 'partials/embarq-corridaShow.html',
@@ -291,14 +297,6 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/usuario-buscarRutas.html',
         controller: 'UsuarioBuscarRutasCtrl'
       }).      
-      when('/usuarioBuscarRutasXMapa', {
-        templateUrl: 'partials/usuario-buscarRutasXMapa.html',
-        controller: 'UsuarioBuscarRutasXMapaCtrl'
-      }).
-      when('/usuarioBuscarRutaXDireccion', {
-        templateUrl: 'partials/usuario-buscarRutasXDireccion.html',
-        controller: 'UsuarioBuscarRutasXDireccionCtrl'
-      }).
       // -----------------------------------------------------
       // Usuario - Estadisticas
       when('/usuarioEstadisticas', {

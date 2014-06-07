@@ -25,6 +25,7 @@
 					<th><a href="" ng-click="orderProp='id'">ID</a></th>
 					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
 					<th><a href="" ng-click="orderProp='email'">E-mail</a></th>
+					<th><a href="" ng-click="orderProp='role'">Rol</a></th>
 					<th>-</th>
 				</tr>
 			</thead>
@@ -36,6 +37,7 @@
 					<td>{{usr.id}}</td>
 					<td><a href="#/empresaUsuarioShow/{{usr.id}}">{{usr.nombre}}</a></td>
 					<td>{{usr.email}}</td>
+					<td>{{usr.role}}</td>
 					<td>
 						<a type="button" class="btn btn-info" href="#/empresaUsuarioShow/{{usr.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
 						<a type="button" class="btn btn-danger" ng-click="deleteUsuario(usr.id)" ng-show="usr.id!=user.id"><span class="glyphicon glyphicon-remove"></span></a>

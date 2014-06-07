@@ -165,13 +165,13 @@
 																		<td>
 																			<!-- ESPERA con oferta -->
 																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
-																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
 																			<!-- ESPERA sin oferta -->
-																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
-																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null) && (d0.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
 
 																			<!-- RESERVACION con oferta -->
-																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null) && (d0.espera == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
 																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
 																		
 																			<!-- RESERVACION sin oferta -->
@@ -191,13 +191,13 @@
 																		<td>
 																			<!-- ESPERA con oferta -->
 																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
-																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
 																			<!-- ESPERA sin oferta -->
-																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
-																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null) && (d0.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
 
 																			<!-- RESERVACION con oferta -->
-																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null) && (d0.espera == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
 																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
 																		
 																			<!-- RESERVACION sin oferta -->
@@ -217,13 +217,13 @@
 																		<td>
 																			<!-- ESPERA con oferta -->
 																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
-																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
 																			<!-- ESPERA sin oferta -->
-																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
-																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null) && (d0.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
 
 																			<!-- RESERVACION con oferta -->
-																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null) && (d0.espera == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
 																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
 																		
 																			<!-- RESERVACION sin oferta -->
@@ -243,13 +243,13 @@
 																		<td>
 																			<!-- ESPERA con oferta -->
 																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
-																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
 																			<!-- ESPERA sin oferta -->
-																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
-																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null) && (d0.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
 
 																			<!-- RESERVACION con oferta -->
-																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null) && (d0.espera == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
 																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
 																		
 																			<!-- RESERVACION sin oferta -->
@@ -269,13 +269,13 @@
 																		<td>
 																			<!-- ESPERA con oferta -->
 																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
-																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
 																			<!-- ESPERA sin oferta -->
-																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
-																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null) && (d0.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
 
 																			<!-- RESERVACION con oferta -->
-																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null) && (d0.espera == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
 																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
 																		
 																			<!-- RESERVACION sin oferta -->
@@ -295,13 +295,13 @@
 																		<td>
 																			<!-- ESPERA con oferta -->
 																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
-																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
 																			<!-- ESPERA sin oferta -->
-																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
-																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null) && (d0.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
 
 																			<!-- RESERVACION con oferta -->
-																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null) && (d0.espera == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
 																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
 																		
 																			<!-- RESERVACION sin oferta -->
@@ -321,13 +321,13 @@
 																		<td>
 																			<!-- ESPERA con oferta -->
 																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
-																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
 																			<!-- ESPERA sin oferta -->
-																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
-																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null) && (d0.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
 
 																			<!-- RESERVACION con oferta -->
-																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null) && (d0.espera == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
 																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
 																		
 																			<!-- RESERVACION sin oferta -->
@@ -347,13 +347,13 @@
 																		<td>
 																			<!-- ESPERA con oferta -->
 																			<p ng-show="(d0.oferta > 0) && (d0.espera == null)"></p>
-																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
+																			<p ng-show="(d0.oferta > 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
 																			<!-- ESPERA sin oferta -->
-																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Reservaci&oacute;n en espera {{d0.espera.folio}}</p>
-																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
+																			<p ng-show="(d0.oferta <= 0) && (d0.espera != null)">Lista de espera {{d0.espera.folio}}</p>
+																			<a ng-show="(d0.oferta <= 0) && (d0.espera == null) && (d0.reservacion == null)" type="button" class="btn btn-warning" ng-click="esperar(d0)">Lista de espera</a>
 
 																			<!-- RESERVACION con oferta -->
-																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
+																			<a ng-show="(d0.oferta > 0) && (d0.reservacion == null) && (d0.espera == null)" type="button" class="btn btn-success" ng-click="reservar(d0)">Reservar</a>
 																			<p ng-show="(d0.oferta > 0) && (d0.reservacion != null)">Reservaci&oacute;n {{d0.reservacion.folio}}</p>
 																		
 																			<!-- RESERVACION sin oferta -->

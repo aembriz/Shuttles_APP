@@ -80,9 +80,9 @@
                 <!-- EmbarQ -->              
                 <div ng-show="user.role == 'ADMIN'">
                     <ul class="nav navbar-nav navbar-left">
-                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/embarqEmpresaList" ng-click="menuSelect(0)"><b>Empresas</b></a></li>
-                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/embarqRutaList" ng-click="menuSelect(1)"><b>Rutas / Horarios</b></a></li>
-                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/embarqEstadisticas" ng-click="menuSelect(2)"><b>Estadísticas</b></a></li>
+                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/embarqEstadisticas" ng-click="menuSelect(0)"><b>Estadísticas</b></a></li>
+                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/embarqEmpresaList" ng-click="menuSelect(1)"><b>Empresas</b></a></li>
+                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/embarqRutaList" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
                     </ul>
                 </div>
                 <!-- Empresa -->
@@ -123,23 +123,24 @@
             <div class="row">
               <!-- EmbarQ --> 
               <div ng-show="user.role == 'ADMIN'">
-                <!-- menu empresas -->
+                <!-- menu Estadísticas -->
                 <div ng-show="menuActive[0] == 'active'">
+
+                </div>  
+                <!-- menu empresas -->
+                <div ng-show="menuActive[1] == 'active'">
                   <ul class="nav nav-pills nav-submenu">                    
                     <li ng-class="submenuActive[0]"><a href="#/embarqEmpresaList" ng-click="submenuSelect(0)">Lista de Empresas</a></li>
                     <li ng-class="submenuActive[1]"><a href="#/embarqSolicitudEmpresaList" ng-click="submenuSelect(1)">Solicitudes de nuevas empresas</a></li>
                   </ul>
                 </div>  
                 <!-- menu Rutas / Horarios -->
-                <div ng-show="menuActive[1] == 'active'">
+                <div ng-show="menuActive[2] == 'active'">
                   <ul class="nav nav-pills nav-submenu">                    
                     <li ng-class="submenuActive[0]"><a href="#/embarqRutaList" ng-click="submenuSelect(0)">Lista de Rutas</a></li>
-                    <li ng-class="submenuActive[1]"><a href="#/embarqSolicitudRutaList" ng-click="submenuSelect(1)">Solicitudes de nuevas rutas</a></li>
+                    <li ng-class="submenuActive[1]"><a href="#/embarqRutaCompartidaList" ng-click="submenuSelect(1)">Rutas Compartidas</a></li>
+                    <li ng-class="submenuActive[2]"><a href="#/embarqSolicitudRutaList" ng-click="submenuSelect(2)">Solicitudes de nuevas rutas</a></li>
                   </ul>
-                </div>  
-                <!-- menu Estadísticas -->
-                <div ng-show="menuActive[2] == 'active'">
-
                 </div>  
               </div>
 

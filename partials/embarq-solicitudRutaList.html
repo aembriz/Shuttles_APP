@@ -27,6 +27,7 @@
 			<thead>
 				<tr>
 					<th><a href="" ng-click="orderProp='id'">ID</a></th>
+					<th><a href="" ng-click="orderProp='companyowner.nombre'">Empresa</a></th>
 					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
 					<th><a href="" ng-click="orderProp='origentxt'">Origen</a></th>
 					<th><a href="" ng-click="orderProp='destinotxt'">Destino</a></th>
@@ -36,6 +37,7 @@
 			<tbody>			
 				<tr ng-repeat="ruta in rutas | filter:query | orderBy:orderProp">
 					<td>{{ruta.id}}</td>
+					<td>{{ruta.companyowner.nombre}}</td>
 					<td><a href="#/embarqSolicitudRutaShow/{{ruta.id}}">{{ruta.nombre}}</a></td>
 					<td>{{ruta.origentxt}}</td>
 					<td>{{ruta.destinotxt}}</td>

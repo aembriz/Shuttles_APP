@@ -29,6 +29,7 @@
 				<tr>
 					<th><a href="" ng-click="orderProp='folio'">Folio</a></th>
 					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
+<!--					<th><a href="" ng-click="orderProp='nombre'">fecha</a></th> -->
 					<th>Origen - Destino</th>
 					<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
 					<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
@@ -44,9 +45,10 @@
 					<td>{{reservacion.rutaCorrida.horaLlegadaFmt}}</td>
 					<td>
 						<!--
-						<a type="button" class="btn btn-info" href="#/usuarioShowMapa/{{reservacion.RutaId}}"><span class="glyphicon glyphicon-map-marker"></span></a> -->
+						<a type="button" class="btn btn-info" href="#/usuarioShowMapa/{{reservacion.RutaId}}"><span class="glyphicon glyphicon-map-marker"></span></a> 
 						<a type="button" class="btn btn-info" ng-click="show(reservacion)"><span class="glyphicon glyphicon-zoom-in"></span></a>
-						<a type="button" class="btn btn-success" ng-show="tabSelected=='new'" ng-click="confirmar(reservacion)"><span class="glyphicon glyphicon-ok"></span></a>
+						-->
+						<a type="button" class="btn btn-success" ng-show="tabSelected=='new'" ng-click="confirm(reservacion)"><span class="glyphicon glyphicon-ok"></span></a>
 						<a type="button" class="btn btn-danger" ng-show="tabSelected=='new'" ng-click="cancel(reservacion)"><span class="glyphicon glyphicon-remove"></span></a>
 						<a type="button" class="btn btn-danger" ng-show="tabSelected=='confirmed'" ng-click="cancel(reservacion)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
