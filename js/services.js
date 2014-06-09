@@ -507,6 +507,37 @@ muukServices.factory('OfertaGenerar',['$resource', 'SessionService',
 
   }]);
 
+muukServices.factory('EmpresasXCompartir',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/rutacompartida/:exId/empresasxcompartir', {}, {
+      query: {
+        method: 'GET', 
+        params: {exId: '@exId'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+
+  }]);
+
+muukServices.factory('Comentarios',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/sugerencia', {}, {
+      query: {
+        method: 'GET', 
+        params: {}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      },
+      create: {
+        method: 'POST', 
+        params: {}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }  
+    });
+
+  }]);
 /*
 muukServices.factory('RutaSugerida',['$resource', 'SessionService',
   function($resource, SessionService){

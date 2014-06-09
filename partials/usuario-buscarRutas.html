@@ -99,7 +99,16 @@
 												        <br/>
 												        {{sug.descensoSugerido.rutaPunto.descripcion}}	
 											    	</div>
-
+											    	<div class="modal-header" ng-show="((errMsg != null)&&(errMsg != ''))||(sucMsg != null)&&(sucMsg != '')">
+														<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
+														  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+														  <strong>Error!</strong> {{errMsg}}
+														</div>
+														<div class="alert alert-success alert-dismissable" ng-show="(sucMsg != null)&&(sucMsg != '')">
+														  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+														  {{sucMsg}}
+														</div>
+													</div>
 											    	<div class="modal-body">
 											    		<!--
 														<div class="list-group">

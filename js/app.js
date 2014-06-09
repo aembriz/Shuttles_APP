@@ -118,6 +118,12 @@ muukApp.config(['$routeProvider', '$httpProvider',
         controller: 'EmbarqEstadisticasCtrl'
       }).
       // -----------------------------------------------------
+      // EmbarQ - Comentarios
+      when('/embarqComentarios', {
+        templateUrl: 'partials/embarq-comentariosList.html',
+        controller: 'EmbarqComentariosListCtrl'
+      }).      
+      // -----------------------------------------------------
       // EmbarQ - Solicitud de empresa
       when('/embarqSolicitudEmpresaList', {
         templateUrl: 'partials/embarq-solicitudEmpresaList.html',
@@ -296,6 +302,12 @@ muukApp.config(['$routeProvider', '$httpProvider',
       when('/usuarioBuscarRutas', {
         templateUrl: 'partials/usuario-buscarRutas.html',
         controller: 'UsuarioBuscarRutasCtrl'
+      }).      
+      // -----------------------------------------------------
+      // Usuario - Comentarios
+      when('/usuarioComentarios', {
+        templateUrl: 'partials/usuario-comentarios.html',
+        controller: 'UsuarioComentariosCtrl'
       }).      
       // -----------------------------------------------------
       // Usuario - Estadisticas

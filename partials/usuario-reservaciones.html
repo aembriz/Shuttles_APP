@@ -9,7 +9,6 @@
 		<br/>
 
 		<div class="btn-group" style="width:100%;">
-			
 			<div class="input-group">			
 				<span class="input-group-addon">Buscar: </span>
 		  		<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de reservaciones"/>
@@ -28,11 +27,13 @@
 			<thead>
 				<tr>
 					<th><a href="" ng-click="orderProp='folio'">Folio</a></th>
-					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
+					<th><a href="" ng-click="orderProp='rutum.nombre'">Nombre</a></th>
 <!--					<th><a href="" ng-click="orderProp='nombre'">fecha</a></th> -->
 					<th>Origen - Destino</th>
-					<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
-					<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
+					<th><a href="" ng-click="orderProp='rutaCorrida.horaSalidaFmt'">Hora de salida</a></th>
+					<th><a href="" ng-click="orderProp='rutaCorrida.horaLlegadaFmt'">Hora de llegada</a></th>
+					<th><a href="" ng-click="orderProp='fechaCreada'">Reservado el</a></th>
+					<th><a href="" ng-click="orderProp='fechaReservada'">Reservado para</a></th>
 					<th>-</th>
 				</tr>
 			</thead>
@@ -43,6 +44,8 @@
 					<td>{{reservacion.rutum.origentxt}} - {{reservacion.rutum.destinotxt}}</td>
 					<td>{{reservacion.rutaCorrida.horaSalidaFmt}}</td>
 					<td>{{reservacion.rutaCorrida.horaLlegadaFmt}}</td>
+					<td>{{reservacion.fechaCreada}}</td>
+					<td>{{reservacion.fechaReservada}}</td>
 					<td>
 						<!--
 						<a type="button" class="btn btn-info" href="#/usuarioShowMapa/{{reservacion.RutaId}}"><span class="glyphicon glyphicon-map-marker"></span></a> 
@@ -63,8 +66,15 @@
 	<div class="modal fade modal-wide" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 		    <div class="modal-content">
-
 		      	<div class="modal-header">
+					<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
+					  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					  <strong>Error!</strong> {{errMsg}}
+					</div>
+					<div class="alert alert-success alert-dismissable" ng-show="true">
+					  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					  {{sucMsg}}
+					</div>	
 			        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			        <h4 class="modal-title" id="myModalLabel">{{sug.ruta.nombre}}</h4>
 			        <br/>

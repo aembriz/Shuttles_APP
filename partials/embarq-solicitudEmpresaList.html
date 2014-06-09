@@ -3,7 +3,14 @@
 
 	<div class="btn-toolbar" role="toolbar">
       <div class="btn-group" style="width:100%;">
-      	
+		<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
+		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  <strong>Error!</strong> {{errMsg}}
+		</div>
+		<div class="alert alert-success alert-dismissable" ng-show="(sucMsg != null)&&(sucMsg != '')">
+		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  {{sucMsg}}
+		</div>      	
       	<div class="input-group">			
       	<!--
 			<span class="input-group-addon" style="background-color:lightgreen"><a type="button" class="btn btn-success btn-xs" ng-click="autorizarTodo()"><span class="glyphicon glyphicon-ok"></span>Autorizar todo</a></span>

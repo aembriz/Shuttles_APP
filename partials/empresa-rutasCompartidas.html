@@ -1,6 +1,113 @@
 <div class="container-fluid">
-	<script src="js/holder/holder.js"></script>
-			
-    <h1 class="page-header">Rutas compartidas</h1>
+    <h1 class="page-header">Rutas Compartidas</h1>
+	<link href="css/modal.css" rel="stylesheet">
+	<div class="btn-toolbar" role="toolbar">
+      <div class="btn-group" style="width:100%;">
+		<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
+		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  <strong>Error!</strong> {{errMsg}}
+		</div>
+		<div class="alert alert-success alert-dismissable" ng-show="(sucMsg != null)&&(sucMsg != '')">
+		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  {{sucMsg}}
+		</div>        	
+      	<div class="input-group">			
+      		<!--
+			<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/embarqRutaNew"><span class="glyphicon glyphicon-plus"></span></a></span>
+		-->
+			<span class="input-group-addon">Buscar: </span>
+		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de rutas"/>
+		</div>
+		<img ng-show="rutas==null" alt="Loading Content" src="imgs/loading.gif" height="25px" />		
+		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+			<p ng-bind-html="message"></p>
+		</div>		
 
+      </div>
+    </div>
+
+	<div class="table-responsive">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th><a href="" ng-click="orderProp='id'">ID</a></th>
+					<th><a href="" ng-click="orderProp='empresa.nombre'">Pertenece</a></th>
+<!--					<th><a href="" ng-click="orderProp='empresaCliente.nombre'">Compartida con</a></th> -->
+					<th><a href="" ng-click="orderProp='rutum.nombre'">Nombre</a></th>
+					<th><a href="" ng-click="orderProp='rutum.origentxt'">Origen</a></th>
+					<th><a href="" ng-click="orderProp='rutum.destinotxt'">Destino</a></th>
+<!--					<th>-</th> -->
+				</tr>
+			</thead>
+			<tbody>			
+				<tr ng-repeat="ruta in rutas | filter:query | orderBy:orderProp">
+					<td>{{ruta.id}}</td>
+<!--					<td>{{ruta.empresa.nombre}}</td> -->
+					<td>{{ruta.empresaCliente.nombre}}</td>
+					<td>{{ruta.rutum.nombre}}</td>
+					<td>{{ruta.rutum.origentxt}}</td>
+					<td>{{ruta.rutum.destinotxt}}</td>
+					<!--
+					<td>
+						<a type="button" class="btn btn-danger" ng-click="deleteRutaCompartida(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>
+					</td>
+-->
+				</tr>
+			</tbody>
+		</table>		
+		
+	</div>
+
+	<!-- Modal - compartir rutas -->
+	<div class="modal fade modal-wide" id="compartirModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		    <div class="modal-content">
+
+		      	<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			        <h4 class="modal-title" id="myModalLabel">{{RutaSelected.nombre}}</h4>
+			        <br/>
+			        {{RutaSelected.companyowner.nombre}}	
+			        <br/>
+			        {{RutaSelected.origentxt}} - {{RutaSelected.destinotxt}}	
+		    	</div>
+
+		    	<div class="modal-body">
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th><a href="" ng-click="orderProp='id'">ID</a></th>
+									<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
+									<th><a href="" ng-click="orderProp='razonsocial'">Raz&oacute;n Social</a></th>
+									<th><a href="" ng-click="orderProp='rfc'">RFC</a></th>
+								</tr>
+							</thead>
+
+							<tbody>			
+								<tr ng-repeat="empresa in empresas | filter:query | orderBy:orderProp">
+									<td>{{empresa.id}}</td>
+									<td>{{empresa.nombre}}</td>
+									<td>{{empresa.razonsocial}}</td>
+									<td>{{empresa.rfc}}</td>
+									<td>
+										<a ng-show="(empresa.id != RutaSelected.companyowner.id)" type="button" class="btn btn-success" ng-click="compartirRuta(RutaSelected, empresa)">Compartir</a>
+									</td>
+								</tr>																
+							</tbody>
+						</table>
+					</div>				
+
+		    	</div>
+
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			        <!--
+			        <button type="button" class="btn btn-success">Salvar cambios</button>
+			    -->
+			    </div>
+			
+	    	</div>
+	  	</div>
+	</div>	<!-- End Modal -->	
 </div>

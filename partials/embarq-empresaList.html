@@ -8,6 +8,10 @@
 		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 		  <strong>Error!</strong> {{errMsg}}
 		</div>
+		<div class="alert alert-success alert-dismissable" ng-show="(sucMsg != null)&&(sucMsg != '')">
+		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+		  {{sucMsg}}
+		</div>
       	<div class="input-group">			
 			<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/embarqEmpresaPreregisterNew"><span class="glyphicon glyphicon-plus"></span></a></span>
 			<span class="input-group-addon">Buscar: </span>
