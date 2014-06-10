@@ -6,14 +6,17 @@ var muukControllers = angular.module('muukControllers', []);
 var DebugMode = true;
 
 function isValidToken(result, $window) {
-  console.log(result);
   if ((result.data != null)&&(result.data.error != null)&&(result.data.error == "The security token is invalid. [The AuthToken has expired. Log in again please. [ERR0001]]")) {
-    $window.alert("La sesión ha terminado. Favor de voler a firmarse.");
-    logout();
     return false;
   } else {
     return true;
   }
+}
+function ForceLogOut($window, $scope, $location, AuthenticationService) {
+  $window.alert("La sesión ha terminado. Favor de voler a firmarse." + $scope.user.authtoken);
+  AuthenticationService.logout();
+  $scope.user.authenticated = AuthenticationService.isLoggedIn();
+  $location.path('login');
 }
 
 muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'SessionService',
@@ -28,6 +31,7 @@ muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'Sessio
 
     $scope.gotoRegister = function() {
       // this should replace login with register form
+      console.log('VAMOS A REGISTRO...');
       $scope.mainSection = 'register';
     };    
 
@@ -38,26 +42,29 @@ muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'Sessio
 
     $scope.gotoLogin = function() {
       // this should replace login with register form
+      console.log('VAMOS A LOGIN...');
       $scope.mainSection = 'login';
       $location.path('login');
     };   
   }]);
-muukControllers.controller('LoginController', ['$scope', '$location', 'AuthenticationService', 'SessionService',
-  function ($scope, $location, AuthenticationService, SessionService) {
+muukControllers.controller('LoginController', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService',
+  function ($window, $scope, $location, AuthenticationService, SessionService) {
     $scope.message = "";
 
-    $scope.logincallbackSuccess = function( data ) {              
+    $scope.logincallbackSuccess = function( data ) {             
       if(data.error){
         $scope.message = data.message;
       }
       else{            
+//        $window.alert('Por hacer login...');
         $scope.user.authenticated = AuthenticationService.isLoggedIn();
         $scope.user.name = SessionService.currentUser.name;
         $scope.user.empresa = SessionService.currentUser.empresa;
-        $scope.user.token = SessionService.currentUser.token;
+        $scope.user.authtoken = SessionService.currentUser.authtoken;
         $scope.user.role = SessionService.currentUser.role;
         $scope.user.id = SessionService.currentUser.id;
-
+  //      console.log('LOGIN...');
+  //      console.log($scope.user.authtoken);
         $location.path('redirect');        
       }      
       $scope.$apply();
@@ -161,8 +168,8 @@ muukControllers.controller('LoginForgotPassCtrl', ['$window', '$scope', '$locati
   function($window, $scope, $location, AuthenticationService) {  
 
   }]);
-muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', 'EmpresaPreregister', '$location',
-  function($window, $scope, EmpresaPreregister, $location) {
+muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'EmpresaPreregister',
+  function($window, $scope, $location, AuthenticationService, EmpresaPreregister) {
     $scope.master = {};
     $scope.mainSection = 'register'; 
 
@@ -175,10 +182,55 @@ muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', 'Empre
     };
 
     $scope.save = function(empresa) { 
+      //$scope.gotoLogin;
+      //CreateEmpresa($window, $scope, $location, AuthenticationService, empresa, EmpresaPreregister, 'login');
       // validar nombre de empresa
       // validar correo de admin1
       // validar correo de admin2
+      
+      var ex = new EmpresaPreregister(empresa, function(res) {
+          if (res.success) {
+            $scope.errMsg = null;
+          } else {
+            $scope.errMsg = res.msg;
+            if (DebugMode) {
+              $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+            }
+          }
+        }, function(err) {
+          if (isValidToken(err, $window)) {
+            console.log(err);
+            $scope.errMsg = err.data.msg;
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
+          }
+        });   
+        console.log(ex); 
+        ex.$create({}, function(res){
+          if (res.success) {
+            $scope.errMsg = null;
+//            console.log('Se creo exitosamente y vamos a login...');
+            $window.alert('La empresa ' + empresa.nombre + ' fue creada exitosamente. Se le notificará por correo cuando su solicitud sea autorizada.')
+            console.log($scope);
+            $scope.gotoLogin();
+            console.log($scope);
+          } else {
+            $scope.errMsg = res.msg;
+            if (DebugMode) {
+              $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+            }
+          }
+        }, function(err) {
+          if (isValidToken(err, $window)) {
+            console.log(err);
+            $scope.errMsg = err.data.msg;
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
+          }
+        }); 
+        
 
+/*
       var ex = new EmpresaPreregister(empresa, function(res) {
         if (res.success) {
           $scope.errMsg = null;
@@ -193,6 +245,8 @@ muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', 'Empre
           console.log(err);
           $scope.empresas = null;
           $scope.errMsg = err.data.msg;
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });         
       console.log(ex);    
@@ -211,8 +265,11 @@ muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', 'Empre
         if (isValidToken(err, $window)) {
           console.log(err);
           $scope.errMsg = err.data.msg;
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
-      });       
+      });   
+      */    
     };
     
     $scope.cancel = function(){
@@ -223,8 +280,8 @@ muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', 'Empre
     $scope.reset();
   
   }]);
-muukControllers.controller('LoginConfirmarRegistroCtrl', ['$window', '$scope', '$routeParams', '$location', 'UsuarioRegistro', 'UsuarioAutorizar', 
-  function($window, $scope, $routeParams, $location, UsuarioRegistro, UsuarioAutorizar) {
+muukControllers.controller('LoginConfirmarRegistroCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'UsuarioRegistro', 'UsuarioAutorizar', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, UsuarioRegistro, UsuarioAutorizar) {
     $scope.gotoRegistro($routeParams.id);
     UsuarioRegistro.show({exId: $routeParams.id}, 
       function(res){
@@ -235,7 +292,7 @@ muukControllers.controller('LoginConfirmarRegistroCtrl', ['$window', '$scope', '
           console.log($scope.usuario.EstatusId);
           if ($scope.usuario.EstatusId != 1) {
             $scope.gotoLogin();
-          }
+          } 
         } else {
           $scope.errMsg = res.msg;
           if (DebugMode) {
@@ -248,6 +305,8 @@ muukControllers.controller('LoginConfirmarRegistroCtrl', ['$window', '$scope', '
           console.log(err);
           $scope.usuario = null;
           $scope.errMsg = err.data.msg;
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });
 
@@ -269,6 +328,8 @@ muukControllers.controller('LoginConfirmarRegistroCtrl', ['$window', '$scope', '
         if (isValidToken(err, $window)) {
           console.log(err);
           $scope.errMsg = err.data.msg;
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });
       console.log(ex);
@@ -292,6 +353,8 @@ muukControllers.controller('LoginConfirmarRegistroCtrl', ['$window', '$scope', '
                 if (isValidToken(err, $window)) {
                   console.log(err);
                   $scope.errMsg = err.data.msg;
+                } else {
+                  ForceLogOut($window, $scope, $location, AuthenticationService);
                 }
               }
             );             
@@ -305,6 +368,8 @@ muukControllers.controller('LoginConfirmarRegistroCtrl', ['$window', '$scope', '
           if (isValidToken(err, $window)) {
             console.log(err);
             $scope.errMsg = err.data.msg;
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
       });       
     };
@@ -315,7 +380,7 @@ muukControllers.controller('LoginConfirmarRegistroCtrl', ['$window', '$scope', '
 /* EmbarQ  */
 // *****************************************************
 /* EmbarQ - Empresa */
-function LoadEmpresasAutorizadas($window, EmpresasAutorizadas, $scope) {
+function LoadEmpresasAutorizadas($window, $scope, $location, AuthenticationService, EmpresasAutorizadas) {
   EmpresasAutorizadas.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -330,10 +395,12 @@ function LoadEmpresasAutorizadas($window, EmpresasAutorizadas, $scope) {
     if (isValidToken(err, $window)) {
       console.log(err);
       $scope.errMsg = err.data.msg;
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadEmpresasNuevas($window, EmpresasNuevas, $scope) {
+function LoadEmpresasNuevas($window, $scope, $location, AuthenticationService, EmpresasNuevas) {
   EmpresasNuevas.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -348,10 +415,12 @@ function LoadEmpresasNuevas($window, EmpresasNuevas, $scope) {
     if (isValidToken(err, $window)) {
       console.log(err);
       $scope.errMsg = err.data.msg;
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadEmpresasXCompartir($window, EmpresasXCompartir, rutaid, $scope) {
+function LoadEmpresasXCompartir($window, $scope, $location, AuthenticationService, EmpresasXCompartir, rutaid) {
   EmpresasXCompartir.query({exId: rutaid}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -366,10 +435,12 @@ function LoadEmpresasXCompartir($window, EmpresasXCompartir, rutaid, $scope) {
     if (isValidToken(err, $window)) {
       console.log(err);
       $scope.errMsg = err.data.msg;
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function CreateEmpresa($window, empresa, EmpresaPreregister, $scope, $location, locationTo) {
+function CreateEmpresa($window, $scope, $location, AuthenticationService, empresa, EmpresaPreregister, locationTo) {
   var ex = new EmpresaPreregister(empresa, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -383,6 +454,8 @@ function CreateEmpresa($window, empresa, EmpresaPreregister, $scope, $location, 
     if (isValidToken(err, $window)) {
       console.log(err);
       $scope.errMsg = err.data.msg;
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
   console.log(ex); 
@@ -400,10 +473,12 @@ function CreateEmpresa($window, empresa, EmpresaPreregister, $scope, $location, 
     if (isValidToken(err, $window)) {
       console.log(err);
       $scope.errMsg = err.data.msg;
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });
 }
-function ShowEmpresa($window, empresaid, Empresa, $scope) {
+function ShowEmpresa($window, $scope, $location, AuthenticationService, empresaid, Empresa) {
     $scope.empresa = null;
     Empresa.show({exId: empresaid}, function(res) {
       if (res.success) {
@@ -420,10 +495,12 @@ function ShowEmpresa($window, empresaid, Empresa, $scope) {
       if (isValidToken(err, $window)) {
         console.log(err);
         $scope.errMsg = err.data.msg;
+      } else {
+        ForceLogOut($window, $scope, $location, AuthenticationService);
       }
     });
 }
-function UpdateEmpresa($window, empresa, Empresa, $scope, $location, locationTo) {
+function UpdateEmpresa($window, $scope, $location, AuthenticationService, empresa, Empresa, locationTo) {
   var ex = new Empresa(empresa, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -437,6 +514,8 @@ function UpdateEmpresa($window, empresa, Empresa, $scope, $location, locationTo)
     if (isValidToken(err, $window)) {
       console.log(err);
       $scope.errMsg = err.data.msg;
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
 
@@ -455,12 +534,14 @@ function UpdateEmpresa($window, empresa, Empresa, $scope, $location, locationTo)
     if (isValidToken(err, $window)) {
       console.log(err);
       $scope.errMsg = err.data.msg;
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });       
 }
-muukControllers.controller('EmbarqEmpresaListCtrl', ['$window', '$scope', 'Empresa', 'EmpresasAutorizadas',
-  function($window, $scope, Empresa, EmpresasAutorizadas) {
-    LoadEmpresasAutorizadas($window, EmpresasAutorizadas, $scope);
+muukControllers.controller('EmbarqEmpresaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Empresa', 'EmpresasAutorizadas',
+  function($window, $scope, $location, AuthenticationService, Empresa, EmpresasAutorizadas) {
+    LoadEmpresasAutorizadas($window, $scope, $location, AuthenticationService, EmpresasAutorizadas);
     $scope.orderProp = 'nombre';
 
     $scope.deleteEmpresa = function (exId) {   
@@ -470,7 +551,7 @@ muukControllers.controller('EmbarqEmpresaListCtrl', ['$window', '$scope', 'Empre
             if (res.success) {   
               $scope.errMsg = null;
               $scope.sucMsg = res.msg;  
-              LoadEmpresasAutorizadas($window, EmpresasAutorizadas, $scope);
+              LoadEmpresasAutorizadas($window, $scope, $location, AuthenticationService, EmpresasAutorizadas);
             } else {
               $scope.errMsg = res.msg;
               $scope.sucMsg = null;  
@@ -484,6 +565,8 @@ muukControllers.controller('EmbarqEmpresaListCtrl', ['$window', '$scope', 'Empre
               $scope.empresas = null;
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -494,8 +577,8 @@ muukControllers.controller('EmbarqEmpresaListCtrl', ['$window', '$scope', 'Empre
     };  
 
   }]); 
-muukControllers.controller('EmbarqEmpresaPreregisterFormCtrl', ['$window', '$scope', 'EmpresaPreregister', '$location',
-  function($window, $scope, EmpresaPreregister, $location) {
+muukControllers.controller('EmbarqEmpresaPreregisterFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'EmpresaPreregister',
+  function($window, $scope, $location, AuthenticationService, EmpresaPreregister) {
     $scope.master = {};
 
     $scope.update = function(empresa) {
@@ -507,7 +590,7 @@ muukControllers.controller('EmbarqEmpresaPreregisterFormCtrl', ['$window', '$sco
     };
 
     $scope.save = function(empresa) {
-      CreateEmpresa($window, empresa, EmpresaPreregister, $scope, $location, 'embarqEmpresaList');
+      CreateEmpresa($window, $scope, $location, AuthenticationService, empresa, EmpresaPreregister, 'embarqEmpresaList');
     };
     
     $scope.cancel = function(){
@@ -517,8 +600,8 @@ muukControllers.controller('EmbarqEmpresaPreregisterFormCtrl', ['$window', '$sco
     $scope.reset();
   
   }]);
-muukControllers.controller('EmbarqEmpresaFormCtrl', ['$window', '$scope', 'EmpresaPreregister', '$location',
-  function($window, $scope, EmpresaPreregister, $location) {
+muukControllers.controller('EmbarqEmpresaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'EmpresaPreregister',
+  function($window, $scope, $location, AuthenticationService, EmpresaPreregister) {
     $scope.master = {};
 
     $scope.update = function(empresa) {
@@ -530,7 +613,7 @@ muukControllers.controller('EmbarqEmpresaFormCtrl', ['$window', '$scope', 'Empre
     };
 
     $scope.save = function(empresa) {
-      CreateEmpresa($window, empresa, EmpresaPreregister, $scope, $location, 'embarqEmpresaList');   
+      CreateEmpresa($window, $scope, $location, AuthenticationService, empresa, EmpresaPreregister, 'embarqEmpresaList');   
     };    
     
     $scope.cancel = function(){
@@ -540,20 +623,20 @@ muukControllers.controller('EmbarqEmpresaFormCtrl', ['$window', '$scope', 'Empre
     $scope.reset();
 
   }]);
-muukControllers.controller('EmbarqEmpresaDetailCtrl', ['$window', '$scope', '$routeParams', 'Empresa', '$location',
-  function($window, $scope, $routeParams, Empresa, $location) {    
-    ShowEmpresa($window, $routeParams.id, Empresa, $scope);
+muukControllers.controller('EmbarqEmpresaDetailCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Empresa', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Empresa) {    
+    ShowEmpresa($window, $scope, $location, AuthenticationService, $routeParams.id, Empresa);
     
     $scope.cancel = function(){
       $location.path('embarqEmpresaList');
     };    
   }]); 
-muukControllers.controller('EmbarqEmpresaUpdateCtrl', ['$window', '$scope', '$routeParams', 'Empresa', '$location',
-  function($window, $scope, $routeParams, Empresa, $location) {
-    ShowEmpresa($window, $routeParams.id, Empresa, $scope);
+muukControllers.controller('EmbarqEmpresaUpdateCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Empresa', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Empresa) {
+    ShowEmpresa($window, $scope, $location, AuthenticationService, $routeParams.id, Empresa);
 
     $scope.save = function(empresa) {
-      UpdateEmpresa($window, empresa, Empresa, $scope, $location, 'embarqEmpresaList');
+      UpdateEmpresa($window, $scope, $location, AuthenticationService, empresa, Empresa, 'embarqEmpresaList');
     };
     
     $scope.cancel = function(){
@@ -563,29 +646,29 @@ muukControllers.controller('EmbarqEmpresaUpdateCtrl', ['$window', '$scope', '$ro
 
 // -----------------------------------------------------
 /* EmbarQ - Solicitud de Empresa */
-muukControllers.controller('EmbarqSolicitudEmpresaShowCtrl', ['$window', '$scope', '$routeParams', 'Empresa', '$location',
-  function($window, $scope, $routeParams, Empresa, $location) {    
-    ShowEmpresa($window, $routeParams.id, Empresa, $scope);
+muukControllers.controller('EmbarqSolicitudEmpresaShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Empresa', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Empresa) {    
+    ShowEmpresa($window, $scope, $location, AuthenticationService, $routeParams.id, Empresa);
     
     $scope.cancel = function(){
       $location.path('embarqSolicitudEmpresaList');
     };    
   }]); 
-muukControllers.controller('EmbarqSolicitudEmpresaUpdateCtrl', ['$window', '$scope', '$routeParams', 'Empresa', '$location',
-  function($window, $scope, $routeParams, Empresa, $location) {
-    ShowEmpresa($window, $routeParams.id, Empresa, $scope);
+muukControllers.controller('EmbarqSolicitudEmpresaUpdateCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Empresa', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Empresa) {
+    ShowEmpresa($window, $scope, $location, AuthenticationService, $routeParams.id, Empresa);
 
     $scope.save = function(empresa) {
-      UpdateEmpresa($window, empresa, Empresa, $scope, $location, 'embarqSolicitudEmpresaList');
+      UpdateEmpresa($window, $scope, $location, AuthenticationService, empresa, Empresa, 'embarqSolicitudEmpresaList');
     };
     
     $scope.cancel = function(){
       $location.path('embarqSolicitudEmpresaList');
     };
   }]);
-muukControllers.controller('EmbarqSolicitudEmpresaListCtrl', ['$window', '$scope', 'EmpresasNuevas', 'EmpresaAutorizar', 'EmpresaRechazar',
-  function($window, $scope, EmpresasNuevas, EmpresaAutorizar, EmpresaRechazar) {
-    LoadEmpresasNuevas($window, EmpresasNuevas, $scope);
+muukControllers.controller('EmbarqSolicitudEmpresaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'EmpresasNuevas', 'EmpresaAutorizar', 'EmpresaRechazar',
+  function($window, $scope, $location, AuthenticationService, EmpresasNuevas, EmpresaAutorizar, EmpresaRechazar) {
+    LoadEmpresasNuevas($window, $scope, $location, AuthenticationService, EmpresasNuevas);
     $scope.orderProp = 'nombre';
 
   $scope.rechazarEmpresa = function (exId) {   
@@ -596,7 +679,7 @@ muukControllers.controller('EmbarqSolicitudEmpresaListCtrl', ['$window', '$scope
             $scope.errMsg = null;
             $scope.sucMsg = 'La empresa con id [' + exId + '] fue rechazada exitosamente';
             console.log(res);
-            LoadEmpresasNuevas($window, EmpresasNuevas, $scope);
+            LoadEmpresasNuevas($window, $scope, $location, AuthenticationService, EmpresasNuevas);
           } else {
             $scope.errMsg = res.msg;
             $scope.sucMsg = null;
@@ -609,6 +692,8 @@ muukControllers.controller('EmbarqSolicitudEmpresaListCtrl', ['$window', '$scope
             console.log(err);
             $scope.errMsg = err.data.msg;
             $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
         }
       );
@@ -622,7 +707,7 @@ muukControllers.controller('EmbarqSolicitudEmpresaListCtrl', ['$window', '$scope
             $scope.errMsg = null;
             console.log(res);
             $scope.sucMsg = 'La empresa con id [' + exId + '] fue aceptada exitosamente';
-            LoadEmpresasNuevas($window, EmpresasNuevas, $scope);
+            LoadEmpresasNuevas($window, $scope, $location, AuthenticationService, EmpresasNuevas);
           } else {
             $scope.errMsg = res.msg;
             $scope.sucMsg = null;
@@ -635,6 +720,8 @@ muukControllers.controller('EmbarqSolicitudEmpresaListCtrl', ['$window', '$scope
             console.log(err);
             $scope.errMsg = err.data.msg;
             $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
         }
       );
@@ -645,7 +732,7 @@ muukControllers.controller('EmbarqSolicitudEmpresaListCtrl', ['$window', '$scope
 
 // -----------------------------------------------------
 /* EmbarQ - Ruta */
-function LoadRutasAutorizadas($window, RutasAutorizadas, $scope) {
+function LoadRutasAutorizadas($window, $scope, $location, AuthenticationService, RutasAutorizadas) {
   RutasAutorizadas.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -661,10 +748,12 @@ function LoadRutasAutorizadas($window, RutasAutorizadas, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadRutasCompartidas($window, RutaCompartidaList, $scope) {
+function LoadRutasCompartidas($window, $scope, $location, AuthenticationService, RutaCompartidaList) {
   RutaCompartidaList.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -682,10 +771,12 @@ function LoadRutasCompartidas($window, RutaCompartidaList, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadRutasNuevas($window, RutasNuevas, $scope) {
+function LoadRutasNuevas($window, $scope, $location, AuthenticationService, RutasNuevas) {
   RutasNuevas.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -701,10 +792,12 @@ function LoadRutasNuevas($window, RutasNuevas, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadRuta($window, rutaid, Ruta, $scope) {
+function LoadRuta($window, $scope, $location, AuthenticationService, rutaid, Ruta) {
   Ruta.show({exId: rutaid}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -720,10 +813,12 @@ function LoadRuta($window, rutaid, Ruta, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function CreateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
+function CreateRuta($window, $scope, $location, AuthenticationService, ruta, Ruta, locationTo) {
   var ex = new Ruta(ruta, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -738,6 +833,8 @@ function CreateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
   console.log(ex); 
@@ -756,10 +853,12 @@ function CreateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });
 }
-function UpdateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
+function UpdateRuta($window, $scope, $location, AuthenticationService, ruta, Ruta, locationTo) {
   var ex = new Ruta(ruta, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -774,6 +873,8 @@ function UpdateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
 
@@ -793,12 +894,14 @@ function UpdateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });       
 }
-muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', 'Ruta', 'RutasAutorizadas', 'RutaCompartir', 'EmpresasAutorizadas', 'EmpresasXCompartir',
-  function($window, $scope, Ruta, RutasAutorizadas, RutaCompartir, EmpresasAutorizadas, EmpresasXCompartir) {
-    LoadRutasAutorizadas($window, RutasAutorizadas, $scope);
+muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Ruta', 'RutasAutorizadas', 'RutaCompartir', 'EmpresasAutorizadas', 'EmpresasXCompartir',
+  function($window, $scope, $location, AuthenticationService, Ruta, RutasAutorizadas, RutaCompartir, EmpresasAutorizadas, EmpresasXCompartir) {
+    LoadRutasAutorizadas($window, $scope, $location, AuthenticationService, RutasAutorizadas);
     $scope.orderProp = 'nombre';
     $scope.RutaSelected = null;
 
@@ -809,7 +912,7 @@ muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', 'Ruta', '
             if (res.success) {
               $scope.errMsg = null;
               $scope.sucMsg = "La ruta con id [" + exId + "] se removió exitosamente";
-              LoadRutasAutorizadas($window, RutasAutorizadas, $scope);
+              LoadRutasAutorizadas($window, $scope, $location, AuthenticationService, RutasAutorizadas);
             } else {
               $scope.errMsg = res.msg;
               $scope.sucMsg = null;
@@ -822,6 +925,8 @@ muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', 'Ruta', '
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -829,7 +934,7 @@ muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', 'Ruta', '
     };
     $scope.showCompartirRuta = function (ruta) {
       $scope.RutaSelected = ruta;
-      LoadEmpresasXCompartir($window, EmpresasXCompartir, ruta.id, $scope);
+      LoadEmpresasXCompartir($window, $scope, $location, AuthenticationService, EmpresasXCompartir, ruta.id);
       $('#compartirModal').modal({
         show: true
       });
@@ -846,7 +951,7 @@ muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', 'Ruta', '
             $scope.errMsg = null;
             $scope.sucMsg = res.msg;
             console.log(res);
-            LoadEmpresasXCompartir($window, EmpresasXCompartir, ruta.id, $scope);
+            LoadEmpresasXCompartir($window, $scope, $location, AuthenticationService, EmpresasXCompartir, ruta.id);
           } else {
             $scope.errMsg = res.msg;
             $scope.sucMsg = null;
@@ -859,14 +964,16 @@ muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', 'Ruta', '
             console.log(err);
             $scope.errMsg = err.data.msg;
             $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
         }       
       );
     };  
 
   }]);
-muukControllers.controller('EmbarqRutaFormCtrl', ['$window', '$scope', 'Ruta', '$location', 'SessionService',
-  function($window, $scope, Ruta, $location, SessionService) {
+muukControllers.controller('EmbarqRutaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Ruta', 'SessionService',
+  function($window, $scope, $location, AuthenticationService, Ruta, SessionService) {
   $scope.master = {};
 
   $scope.update = function(ruta) {
@@ -879,7 +986,7 @@ muukControllers.controller('EmbarqRutaFormCtrl', ['$window', '$scope', 'Ruta', '
   };
 
   $scope.save = function(ruta) {
-    CreateRuta($window, ruta, Ruta, $scope, $location, 'embarqRutaList');
+    CreateRuta($window, $scope, $location, AuthenticationService, ruta, Ruta, 'embarqRutaList');
   };
 
   $scope.cancel = function(){
@@ -889,21 +996,21 @@ muukControllers.controller('EmbarqRutaFormCtrl', ['$window', '$scope', 'Ruta', '
   $scope.reset();
 
   }]);
-muukControllers.controller('EmbarqRutaDetailCtrl', ['$window', '$scope', '$routeParams', 'Ruta', '$location',
-  function($window, $scope, $routeParams, Ruta, $location) {
-    LoadRuta($window, $routeParams.id, Ruta, $scope);
+muukControllers.controller('EmbarqRutaDetailCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Ruta) {
+    LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.cancel = function(){
       $location.path('embarqRutaList');
     };
   }]);
 // TODO EmbarqRutaUpdateCtrl
-muukControllers.controller('EmbarqRutaUpdateCtrl', ['$window', '$scope', '$routeParams', 'Ruta', '$location',
-  function($window, $scope, $routeParams, Ruta, $location) {
-    LoadRuta($window, $routeParams.id, Ruta, $scope);
+muukControllers.controller('EmbarqRutaUpdateCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Ruta) {
+    LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.save = function(ruta) {
-      UpdateRuta($window, ruta, Ruta, $scope, $location, 'embarqRutaList');
+      UpdateRuta($window, $scope, $location, AuthenticationService, ruta, Ruta, 'embarqRutaList');
     };
 
     $scope.cancel = function(){
@@ -913,9 +1020,9 @@ muukControllers.controller('EmbarqRutaUpdateCtrl', ['$window', '$scope', '$route
 
 // -----------------------------------------------------
 /* EmbarQ - Ruta */
-muukControllers.controller('EmbarqRutaCompartidaListCtrl', ['$window', '$scope', 'RutaCompartida', 'RutaCompartidaList',
-  function($window, $scope, RutaCompartida, RutaCompartidaList) {
-    LoadRutasCompartidas($window, RutaCompartidaList, $scope);
+muukControllers.controller('EmbarqRutaCompartidaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'RutaCompartida', 'RutaCompartidaList',
+  function($window, $scope, $location, AuthenticationService, RutaCompartida, RutaCompartidaList) {
+    LoadRutasCompartidas($window, $scope, $location, AuthenticationService, RutaCompartidaList);
     $scope.orderProp = 'nombre';
 
     $scope.deleteRutaCompartida = function (exId) {
@@ -925,7 +1032,7 @@ muukControllers.controller('EmbarqRutaCompartidaListCtrl', ['$window', '$scope',
             if (res.success) {
               $scope.errMsg = null;
               $scope.sucMsg = "Se eliminará la ruta compartida con id [" + exId + "], ¿Desea continuar?";
-              LoadRutasCompartidas($window, RutaCompartidaList, $scope);
+              LoadRutasCompartidas($window, $scope, $location, AuthenticationService, RutaCompartidaList);
             } else {
               $scope.errMsg = res.msg;
               $scope.sucMsg = null;
@@ -938,6 +1045,8 @@ muukControllers.controller('EmbarqRutaCompartidaListCtrl', ['$window', '$scope',
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );        
@@ -947,9 +1056,10 @@ muukControllers.controller('EmbarqRutaCompartidaListCtrl', ['$window', '$scope',
   }]);
   // -----------------------------------------------------
 /* EmbarQ - Corrida */
-function LoadCorridasXRuta($window, CorridaXRuta, rutaid, $scope) {
-  CorridaXRuta.query({exId: rutaid}, function(res){
+function LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, rutaid) {
+  CorridaXRuta.query({rutaid: rutaid}, function(res){
     if (res.success) {
+      console.log(res);
       $scope.errMsg = null;
       $scope.corridas = res.resultObject;
     } else {
@@ -963,14 +1073,17 @@ function LoadCorridasXRuta($window, CorridaXRuta, rutaid, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadCorrida($window, Corrida, rutaid, $scope) {
+function LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, rutaid) {
   Corrida.show({exId: rutaid}, function(res){
     console.log(res);
     if (res.success) {
       $scope.errMsg = null;
+      console.log(res);
       $scope.corrida = res.resultObject;
       $scope.rutaid = res.resultObject.RutaId;
     } else {
@@ -984,10 +1097,12 @@ function LoadCorrida($window, Corrida, rutaid, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function UpdateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
+function UpdateRuta($window, $scope, $location, AuthenticationService, ruta, Ruta, locationTo) {
   var ex = new Ruta(ruta, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -1002,6 +1117,8 @@ function UpdateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
 
@@ -1021,13 +1138,15 @@ function UpdateRuta($window, ruta, Ruta, $scope, $location, locationTo) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });       
 }
-muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$routeParams', '$location', 'Corrida', 'CorridaXRuta',
-  function($window, $scope, $routeParams, $location, Corrida, CorridaXRuta) {
+muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta) {
     $scope.rutaid = $routeParams.id;
-    LoadCorridasXRuta($window, CorridaXRuta, $routeParams.id, $scope);
+    LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
     $scope.orderProp = 'nombre';
 
     $scope.deleteCorrida = function (exId) {
@@ -1036,7 +1155,7 @@ muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$rout
           function(res){
             if (res.success) {
               $scope.errMsg = null;
-              LoadCorridasXRuta($window, CorridaXRuta, $routeParams.id, $scope);
+              LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -1048,6 +1167,8 @@ muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$rout
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );        
@@ -1058,11 +1179,11 @@ muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$rout
     };
     
   }]);
-muukControllers.controller('EmbarqCorridaDetailCtrl', ['$window', '$scope', '$routeParams', 'Corrida', '$location',
-  function($window, $scope, $routeParams, Corrida, $location) {
+muukControllers.controller('EmbarqCorridaDetailCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida) {
     $scope.rutaid = $routeParams.id;
     console.log($scope.rutaid);
-    LoadCorrida($window, Corrida, $routeParams.id, $scope);
+    LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, $routeParams.id);
 
     $scope.cancel = function(){
       $location.path('embarqCorridaList/' + $scope.rutaid);
@@ -1071,10 +1192,10 @@ muukControllers.controller('EmbarqCorridaDetailCtrl', ['$window', '$scope', '$ro
 
 // -----------------------------------------------------
 /* EmbarQ - Solicitud Corrida */
-muukControllers.controller('EmbarqSolicitudCorridaListCtrl', ['$window', '$scope', '$routeParams', '$location', 'Corrida', 'CorridaXRuta',
-  function($window, $scope, $routeParams, $location, Corrida, CorridaXRuta) {
+muukControllers.controller('EmbarqSolicitudCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta) {
     $scope.rutaid = $routeParams.id;
-    LoadCorridasXRuta($window, CorridaXRuta, $routeParams.id, $scope);
+    LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
     $scope.orderProp = 'nombre';
 
     $scope.deleteCorrida = function (exId) {
@@ -1083,7 +1204,7 @@ muukControllers.controller('EmbarqSolicitudCorridaListCtrl', ['$window', '$scope
           function(res){
             if (res.success) {
               $scope.errMsg = null;
-              LoadCorridasXRuta($window, CorridaXRuta, $routeParams.id, $scope);
+              LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -1095,6 +1216,8 @@ muukControllers.controller('EmbarqSolicitudCorridaListCtrl', ['$window', '$scope
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );        
@@ -1104,9 +1227,9 @@ muukControllers.controller('EmbarqSolicitudCorridaListCtrl', ['$window', '$scope
       $location.path('embarqSolicitudRutaList');
     };
   }]);
-muukControllers.controller('EmbarqSolicitudCorridaDetailCtrl', ['$window', '$scope', '$routeParams', 'Corrida', '$location',
-  function($window, $scope, $routeParams, Corrida, $location) {
-    LoadCorrida($window, Corrida, $routeParams.id, $scope);
+muukControllers.controller('EmbarqSolicitudCorridaDetailCtrl',['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida) {
+    LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, $routeParams.id);
 
     $scope.cancel = function(){
       $location.path('embarqSolicitudCorridaList/' + $scope.rutaid);
@@ -1114,17 +1237,17 @@ muukControllers.controller('EmbarqSolicitudCorridaDetailCtrl', ['$window', '$sco
   }]);
 // -----------------------------------------------------
 /* EmbarQ - Solicitud de Ruta */
-muukControllers.controller('EmbarqSolicitudRutaShowCtrl', ['$window', '$scope', '$routeParams', 'Ruta', '$location',
-  function($window, $scope, $routeParams, Ruta, $location) {
-    LoadRuta($window, $routeParams.id, Ruta, $scope);
+muukControllers.controller('EmbarqSolicitudRutaShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Ruta) {
+    LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.cancel = function(){
       $location.path('embarqSolicitudRutaList');
     };
   }]);
-muukControllers.controller('EmbarqSolicitudRutaUpdateCtrl', ['$window', '$scope', '$routeParams', 'Ruta', '$location',
-  function($window, $scope, $routeParams, Ruta, $location) {
-    LoadRuta($window, $routeParams.id, Ruta, $scope);
+muukControllers.controller('EmbarqSolicitudRutaUpdateCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Ruta) {
+    LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.save = function(ruta) {
       UpdateRuta($window, ruta, Ruta, $scope, $location, 'embarqSolicitudRutaList');
@@ -1134,9 +1257,9 @@ muukControllers.controller('EmbarqSolicitudRutaUpdateCtrl', ['$window', '$scope'
       $location.path('embarqSolicitudRutaList');
     };
   }]);
-muukControllers.controller('EmbarqSolicitudRutaListCtrl', ['$window', '$scope', 'RutasNuevas', 'RutaAutorizar', 'RutaRechazar',
-  function($window, $scope, RutasNuevas, RutaAutorizar, RutaRechazar) {
-    LoadRutasNuevas($window, RutasNuevas, $scope);
+muukControllers.controller('EmbarqSolicitudRutaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'RutasNuevas', 'RutaAutorizar', 'RutaRechazar',
+  function($window, $scope, $location, AuthenticationService, RutasNuevas, RutaAutorizar, RutaRechazar) {
+    LoadRutasNuevas($window, $scope, $location, AuthenticationService, RutasNuevas);
     $scope.orderProp = 'nombre';
 
     $scope.rechazarRuta = function (exId) {   
@@ -1145,7 +1268,7 @@ muukControllers.controller('EmbarqSolicitudRutaListCtrl', ['$window', '$scope', 
           function(res){
             if (res.success) {
               $scope.errMsg = null;
-              LoadRutasNuevas($window, RutasNuevas, $scope);
+              LoadRutasNuevas($window, $scope, $location, AuthenticationService, RutasNuevas);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -1157,6 +1280,8 @@ muukControllers.controller('EmbarqSolicitudRutaListCtrl', ['$window', '$scope', 
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         ); 
@@ -1168,7 +1293,7 @@ muukControllers.controller('EmbarqSolicitudRutaListCtrl', ['$window', '$scope', 
           function(res){
             if (res.success) {
               $scope.errMsg = null;
-              LoadRutasNuevas($window, RutasNuevas, $scope);
+              LoadRutasNuevas($window, $scope, $location, AuthenticationService, RutasNuevas);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -1180,6 +1305,8 @@ muukControllers.controller('EmbarqSolicitudRutaListCtrl', ['$window', '$scope', 
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );  
@@ -1189,14 +1316,84 @@ muukControllers.controller('EmbarqSolicitudRutaListCtrl', ['$window', '$scope', 
 
 // -----------------------------------------------------
 /* EmbarQ - Estadisticas */
-muukControllers.controller('EmbarqEstadisticasCtrl', ['$window', '$scope', '$location', 'AuthenticationService',
-  function($window, $scope, $location, AuthenticationService) {  
+muukControllers.controller('EmbarqEstadisticasCtrl', ['$scope', '$location', 'AuthenticationService', 'Estadisticas',
+  function($scope, $location, AuthenticationService, Estadisticas) {  
+    // ***********************Reservaciones por estatus**********************************
+    // Actuales
+    var rowsReservacionesXEstatus=[];
+    Estadisticas.reservacionesXEstatus({}, function(res){
+      if(res.success == true){
+        res.resultObject.forEach(function(entry) {
+          rowsReservacionesXEstatus.push({c: [{v: entry.estatus}, {v: entry.count}]});  
+        });
+      }
+    });
+ 
+    $scope.chartReservacionXEstatus = {};
+    $scope.chartReservacionXEstatus.data = {"cols": [
+        {id: "t", label: "Estatus", type: "string"},
+        {id: "s", label: "Reservaciones", type: "number"}
+    ], "rows": rowsReservacionesXEstatus};
+    $scope.chartReservacionXEstatus.type = "PieChart";//BarChart or PieChart or ColumnChart...
+    $scope.chartReservacionXEstatus.options = {
+        'title': 'Reservaciones por estatus'
+    }
+
+    // Históricos
+    var rowsReservacionesXEstatusHist=[];
+    Estadisticas.reservacionesXEstatusHistorico({}, function(res){
+      if(res.success == true){
+        res.resultObject.forEach(function(entry) {
+          rowsReservacionesXEstatusHist.push({c: [{v: entry.estatus}, {v: entry.count}]});  
+        });
+      }
+    });
+ 
+    $scope.chartReservacionXEstatusHist = {};
+    $scope.chartReservacionXEstatusHist.data = {"cols": [
+        {id: "t", label: "Estatus", type: "string"},
+        {id: "s", label: "Reservaciones", type: "number"}
+    ], "rows": rowsReservacionesXEstatusHist};
+    $scope.chartReservacionXEstatusHist.type = "PieChart";//BarChart or PieChart or ColumnChart...
+    $scope.chartReservacionXEstatusHist.options = {
+        'title': 'Histórico de reservaciones por estatus'
+    }    
+
+    // ***********************Reservaciones de la última semana**********************************
+    var rowsReservacionesXUltimaSemana=[];
+    Estadisticas.reservacionesXUltimaSemana({}, function(res){
+      if(res.success == true){
+        res.resultObject.forEach(function(entry) {
+          rowsReservacionesXUltimaSemana.push({c: [{v: entry.fechaReservacion}, {v: entry.count}]});  
+        });
+      }
+    });
+ 
+    $scope.chartReservacionXUltimaSemana = {};
+    $scope.chartReservacionXUltimaSemana.data = {"cols": [
+        {id: "t", label: "Fecha", type: "string"},
+        {id: "s", label: "Reservaciones", type: "number"}
+    ], "rows": rowsReservacionesXUltimaSemana};
+    $scope.chartReservacionXUltimaSemana.type = "ColumnChart";//BarChart or PieChart or ColumnChart...
+    $scope.chartReservacionXUltimaSemana.options = {
+        'title': 'Reservaciones de los últimos 7 días'
+    }
+
+    // ***********************Números Globales**********************************
+    $scope.rowsNumerosGlobales={};
+    Estadisticas.numerosGlobales({}, function(res){
+      if(res.success == true){        
+        $scope.rowsNumerosGlobales = res.resultObject;
+        console.log($scope.rowsNumerosGlobales)
+      }
+    });
+
+
 
   }]);
-
 // -----------------------------------------------------
 /* EmbarQ - Comentarios */
-function LoadComentarios($window, Comentarios, $scope) {
+function LoadComentarios($window, $scope, $location, AuthenticationService, Comentarios) {
   Comentarios.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -1215,12 +1412,14 @@ function LoadComentarios($window, Comentarios, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
 muukControllers.controller('EmbarqComentariosListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Comentarios',
   function($window, $scope, $location, AuthenticationService, Comentarios) {  
-    LoadComentarios($window, Comentarios, $scope);
+    LoadComentarios($window, $scope, $location, AuthenticationService, Comentarios);
   }]);
 
 // -----------------------------------------------------
@@ -1234,7 +1433,7 @@ muukControllers.controller('EmbarqAdminEmpresasCtrl', ['$window', '$scope', '$lo
 /* Empresa  */
 // *****************************************************
 /* Empresa - Perfil */
-function LoadEmpresa($window, Empresa, empresaid, $scope) {
+function LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, empresaid) {
   Empresa.query({exId: empresaid}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -1246,24 +1445,28 @@ function LoadEmpresa($window, Empresa, empresaid, $scope) {
       }
     }
   }, function(err) {
+    console.log(err);
     if (isValidToken(err, $window)) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-muukControllers.controller('EmpresaPerfilShowCtrl', ['$window', '$scope', '$location', 'SessionService', 'AuthenticationService', 'Empresa',
-  function($window, $scope, $location, SessionService, AuthenticationService, Empresa) {
-    LoadEmpresa($window, Empresa, SessionService.currentUser.empresa, $scope);
+muukControllers.controller('EmpresaPerfilShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'Empresa',
+  function($window, $scope, $location, AuthenticationService, SessionService, Empresa) {
+    console.log(SessionService.currentUser.authtoken);
+    LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, SessionService.currentUser.empresa);
 
   }]);
-muukControllers.controller('EmpresaPerfilEditCtrl', ['$window', '$scope', '$location', 'SessionService', 'AuthenticationService', 'Empresa',
-  function($window, $scope, $location, SessionService, AuthenticationService, Empresa) {
-    LoadEmpresa($window, Empresa, SessionService.currentUser.empresa, $scope);
+muukControllers.controller('EmpresaPerfilEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'Empresa',
+  function($window, $scope, $location, AuthenticationService, SessionService, Empresa) {
+    LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, SessionService.currentUser.empresa);
 
     $scope.save = function(empresa) {
-      UpdateEmpresa($window, empresa, Empresa, $scope, $location, 'empresaPerfilShow');
+      UpdateEmpresa($window, $scope, $location, AuthenticationService, empresa, Empresa, 'empresaPerfilShow');
     };
 
     $scope.cancel = function(){
@@ -1274,7 +1477,7 @@ muukControllers.controller('EmpresaPerfilEditCtrl', ['$window', '$scope', '$loca
 
 // -----------------------------------------------------
 /* Empresa - Usuarios */
-function LoadUsuariosAutorizadosXEmpresa($window, UsuariosAutorizadosXEmpresa, $scope) {
+function LoadUsuariosAutorizadosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosAutorizadosXEmpresa) {
   UsuariosAutorizadosXEmpresa.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -1290,10 +1493,12 @@ function LoadUsuariosAutorizadosXEmpresa($window, UsuariosAutorizadosXEmpresa, $
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadUsuariosNuevosXEmpresa($window, UsuariosNuevosXEmpresa, $scope) {
+function LoadUsuariosNuevosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosNuevosXEmpresa) {
   UsuariosNuevosXEmpresa.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -1309,10 +1514,12 @@ function LoadUsuariosNuevosXEmpresa($window, UsuariosNuevosXEmpresa, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadUsuario($window, usuarioid, Usuario, $scope) {
+function LoadUsuario($window, $scope, $location, AuthenticationService, usuarioid, Usuario) {
   Usuario.show({exId: usuarioid}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -1332,10 +1539,12 @@ function LoadUsuario($window, usuarioid, Usuario, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });  
 }
-function CreateUsuarioPreregister($window, usuario, UsuarioPreregister, $scope, $location, locationTo) {
+function CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, locationTo) {
   var ex = new UsuarioPreregister(usuario, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -1350,6 +1559,8 @@ function CreateUsuarioPreregister($window, usuario, UsuarioPreregister, $scope, 
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
   console.log(ex); 
@@ -1368,10 +1579,12 @@ function CreateUsuarioPreregister($window, usuario, UsuarioPreregister, $scope, 
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });
 }
-function UpdateUsuario($window, usuario, Usuario, $scope, $location, locationTo) {
+function UpdateUsuario($window, $scope, $location, AuthenticationService, usuario, Usuario, locationTo) {
   var ex = new Usuario(usuario, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -1386,6 +1599,8 @@ function UpdateUsuario($window, usuario, Usuario, $scope, $location, locationTo)
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
 
@@ -1405,12 +1620,14 @@ function UpdateUsuario($window, usuario, Usuario, $scope, $location, locationTo)
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });       
 }
-muukControllers.controller('EmpresaUsuarioListCtrl', ['$window', '$scope', 'Usuario', 'UsuariosAutorizadosXEmpresa',
-  function($window, $scope, Usuario, UsuariosAutorizadosXEmpresa) {
-    LoadUsuariosAutorizadosXEmpresa($window, UsuariosAutorizadosXEmpresa, $scope);
+muukControllers.controller('EmpresaUsuarioListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Usuario', 'UsuariosAutorizadosXEmpresa',
+  function($window, $scope, $location, AuthenticationService, Usuario, UsuariosAutorizadosXEmpresa) {
+    LoadUsuariosAutorizadosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosAutorizadosXEmpresa);
     $scope.orderProp = 'nombre';
 
     $scope.deleteUsuario = function (exId) {
@@ -1419,7 +1636,7 @@ muukControllers.controller('EmpresaUsuarioListCtrl', ['$window', '$scope', 'Usua
           function(res){
             if (res.success) {
               $scope.errMsg = null;
-              LoadUsuariosAutorizadosXEmpresa($window, UsuariosAutorizadosXEmpresa, $scope);
+              LoadUsuariosAutorizadosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosAutorizadosXEmpresa);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -1431,6 +1648,8 @@ muukControllers.controller('EmpresaUsuarioListCtrl', ['$window', '$scope', 'Usua
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         ); 
@@ -1438,8 +1657,8 @@ muukControllers.controller('EmpresaUsuarioListCtrl', ['$window', '$scope', 'Usua
     };
 
   }]);
-muukControllers.controller('EmpresaUsuarioFormCtrl', ['$window', '$scope', 'UsuarioPreregister', '$location',
-  function($window, $scope, UsuarioPreregister, $location) {
+muukControllers.controller('EmpresaUsuarioFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'UsuarioPreregister', 
+  function($window, $scope, $location, AuthenticationService, UsuarioPreregister) {
     $scope.master = {};
 
     $scope.update = function(usuario) {
@@ -1451,7 +1670,7 @@ muukControllers.controller('EmpresaUsuarioFormCtrl', ['$window', '$scope', 'Usua
     };
 
     $scope.save = function(usuario) {
-      CreateUsuarioPreregister($window, usuario, UsuarioPreregister, $scope, $location, 'empresaUsuarioList');
+      CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, 'empresaUsuarioList');
     };
 
     $scope.cancel = function(){
@@ -1461,20 +1680,20 @@ muukControllers.controller('EmpresaUsuarioFormCtrl', ['$window', '$scope', 'Usua
     $scope.reset();
 
   }]);
-muukControllers.controller('EmpresaUsuarioShowCtrl', ['$window', '$scope', '$routeParams', 'Usuario', '$location',
-  function($window, $scope, $routeParams, Usuario, $location) {
-    LoadUsuario($window, $routeParams.id, Usuario, $scope);
+muukControllers.controller('EmpresaUsuarioShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario) {
+    LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
     
     $scope.cancel = function(){
       $location.path('empresaUsuarioList');
     };
   }]);
-muukControllers.controller('EmpresaUsuarioEditCtrl', ['$window', '$scope', '$routeParams', 'Usuario', '$location',
-  function($window, $scope, $routeParams, Usuario, $location) {
-    LoadUsuario($window, $routeParams.id, Usuario, $scope);
+muukControllers.controller('EmpresaUsuarioEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario) {
+    LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
 
     $scope.save = function(usuario) {
-      UpdateUsuario($window, usuario, Usuario, $scope, $location, 'empresaUsuarioList');      
+      UpdateUsuario($window, $scope, $location, AuthenticationService, usuario, Usuario, 'empresaUsuarioList');      
     };
     
     $scope.cancel = function(){
@@ -1482,8 +1701,8 @@ muukControllers.controller('EmpresaUsuarioEditCtrl', ['$window', '$scope', '$rou
     };
   }]);
 
-muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', 'UsuarioPreregister', '$location', 'SessionService',
-  function($window, $scope, UsuarioPreregister, $location, SessionService) {
+muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'UsuarioPreregister', 'SessionService',
+  function($window, $scope, $location, AuthenticationService, UsuarioPreregister, SessionService) {
 
     $scope.master = "";
 
@@ -1513,7 +1732,7 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', '
           } else {
             // add user
             var usuario = {nombre: name, email: mail, password: "", EmpresaId: SessionService.currentUser.empresa};
-            CreateUsuarioPreregister($window, usuario, UsuarioPreregister, $scope, $location, ''); 
+            CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, ''); 
             created = created + 1;
           }
         }
@@ -1545,9 +1764,9 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', '
 
 // -----------------------------------------------------
 /* Empresa - Solicitud de usuarios */
-muukControllers.controller('EmpresaSolicitudUsuarioListCtrl', ['$window', '$scope', 'Usuario', 'UsuariosNuevosXEmpresa',
-  function($window, $scope, Usuario, UsuariosNuevosXEmpresa) {
-    LoadUsuariosNuevosXEmpresa($window, UsuariosNuevosXEmpresa, $scope);
+muukControllers.controller('EmpresaSolicitudUsuarioListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Usuario', 'UsuariosNuevosXEmpresa',
+  function($window, $scope, $location, AuthenticationService, Usuario, UsuariosNuevosXEmpresa) {
+    LoadUsuariosNuevosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosNuevosXEmpresa);
     $scope.orderProp = 'nombre';
 
     $scope.deleteUsuario = function (exId) {
@@ -1556,7 +1775,7 @@ muukControllers.controller('EmpresaSolicitudUsuarioListCtrl', ['$window', '$scop
           function(res){
             if (res.success) {
               $scope.errMsg = null;
-              LoadUsuariosNuevosXEmpresa($window, UsuariosNuevosXEmpresa, $scope);
+              LoadUsuariosNuevosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosNuevosXEmpresa);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -1568,6 +1787,8 @@ muukControllers.controller('EmpresaSolicitudUsuarioListCtrl', ['$window', '$scop
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -1575,20 +1796,20 @@ muukControllers.controller('EmpresaSolicitudUsuarioListCtrl', ['$window', '$scop
     };  
 
   }]);
-muukControllers.controller('EmpresaSolicitudUsuarioShowCtrl', ['$window', '$scope', '$routeParams', 'Usuario', '$location',
-  function($window, $scope, $routeParams, Usuario, $location) {    
-    LoadUsuario($window, $routeParams.id, Usuario, $scope);
+muukControllers.controller('EmpresaSolicitudUsuarioShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario) {    
+    LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
     
     $scope.cancel = function(){
       $location.path('empresaSolicitudUsuarioList');
     };
   }]);
-muukControllers.controller('EmpresaSolicitudUsuarioEditCtrl', ['$window', '$scope', '$routeParams', 'Usuario', '$location',
-  function($window, $scope, $routeParams, Usuario, $location) {
-    LoadUsuario($window, $routeParams.id, Usuario, $scope);
+muukControllers.controller('EmpresaSolicitudUsuarioEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario) {
+    LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
 
     $scope.save = function(usuario) {
-      UpdateUsuario($window, usuario, Usuario, $scope, $location, 'empresaSolicitudUsuarioList'); 
+      UpdateUsuario($window, $scope, $location, AuthenticationService, usuario, Usuario, 'empresaSolicitudUsuarioList'); 
     };
 
     $scope.cancel = function(){
@@ -1598,7 +1819,7 @@ muukControllers.controller('EmpresaSolicitudUsuarioEditCtrl', ['$window', '$scop
 
 // -----------------------------------------------------
 /* Empresa - Rutas */
-function LoadRutasXEmpresa($window, RutaXEmpresa, $scope) {
+function LoadRutasXEmpresa($window, $scope, $location, AuthenticationService, RutaXEmpresa) {
   RutaXEmpresa.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -1614,12 +1835,14 @@ function LoadRutasXEmpresa($window, RutaXEmpresa, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-muukControllers.controller('EmpresaRutaListCtrl', ['$window', '$scope', 'Ruta', 'RutaXEmpresa', 
-  function($window, $scope, Ruta, RutaXEmpresa) {
-    LoadRutasXEmpresa($window, RutaXEmpresa, $scope);
+muukControllers.controller('EmpresaRutaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Ruta', 'RutaXEmpresa', 
+  function($window, $scope, $location, AuthenticationService, Ruta, RutaXEmpresa) {
+    LoadRutasXEmpresa($window, $scope, $location, AuthenticationService, RutaXEmpresa);
     $scope.orderProp = 'nombre';
 
     $scope.deleteRuta = function (exId) {
@@ -1629,7 +1852,7 @@ muukControllers.controller('EmpresaRutaListCtrl', ['$window', '$scope', 'Ruta', 
             if (res.success) {
               $scope.errMsg = null;
               $scope.sucMsg = "Se eliminó exitosamente la ruta con id [" + exId + "]";
-              LoadRutasXEmpresa($window, RutaXEmpresa, $scope);
+              LoadRutasXEmpresa($window, $scope, $location, AuthenticationService, RutaXEmpresa);
             } else {
               $scope.errMsg = res.msg;
               $scope.sucMsg = null;
@@ -1642,6 +1865,8 @@ muukControllers.controller('EmpresaRutaListCtrl', ['$window', '$scope', 'Ruta', 
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -1649,8 +1874,8 @@ muukControllers.controller('EmpresaRutaListCtrl', ['$window', '$scope', 'Ruta', 
     };
 
   }]);
-muukControllers.controller('EmpresaRutaFormCtrl', ['$window', '$scope', 'Ruta', '$location', 'SessionService',
-  function($window, $scope, Ruta, $location, SessionService) {
+muukControllers.controller('EmpresaRutaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Ruta', 'SessionService',
+  function($window, $scope, $location, AuthenticationService, Ruta, SessionService) {
     $scope.master = {};
     $scope.user.empresa = SessionService.currentUser.empresa;
 
@@ -1665,7 +1890,24 @@ muukControllers.controller('EmpresaRutaFormCtrl', ['$window', '$scope', 'Ruta', 
     };
 
     $scope.save = function(ruta) {
-      CreateRuta($window, ruta, Ruta, $scope, $location, 'empresaRutaList');
+//      CreateRuta($window, $scope, $location, AuthenticationService, ruta, Ruta, 'empresaRutaList');
+      console.log('AAAAAAAAAAAAAAAA');
+      var ex = new Ruta(ruta);
+      console.log(ex);
+    
+      //ex.$save();
+      ex.$create({}, function(){
+        var lista = Ruta.query();
+        lista.$promise.then(function(result){
+        for (var i = 0; i < result.resultObject.length; i++) {
+          if(result.resultObject[i].nombre == ruta.nombre ){
+            console.log("ya cargo ---< " + result.resultObject[i].id);
+            $location.path('mapaview/'+result.resultObject[i].id);
+          }
+        }
+      });
+  //      $location.path('empresaRutaList');
+      });
     };
 
     $scope.cancel = function(){
@@ -1674,17 +1916,17 @@ muukControllers.controller('EmpresaRutaFormCtrl', ['$window', '$scope', 'Ruta', 
 
     $scope.reset();
   }]);
-muukControllers.controller('EmpresaRutaShowCtrl', ['$window', '$scope', '$routeParams', 'Ruta', '$location',
-  function($window, $scope, $routeParams, Ruta, $location) {
-    LoadRuta($window, $routeParams.id, Ruta, $scope);
+muukControllers.controller('EmpresaRutaShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Ruta) {
+    LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.cancel = function(){
       $location.path('empresaRutaList');
     };
   }]);
-muukControllers.controller('EmpresaRutaEditCtrl', ['$window', '$scope', '$routeParams', 'Ruta', '$location',
-  function($window, $scope, $routeParams, Ruta, $location) {
-    LoadRuta($window, $routeParams.id, Ruta, $scope);
+muukControllers.controller('EmpresaRutaEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Ruta) {
+    LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.save = function(ruta) {
       UpdateRuta($window, ruta, Ruta, $scope, $location, 'empresaRutaList');
@@ -1697,7 +1939,7 @@ muukControllers.controller('EmpresaRutaEditCtrl', ['$window', '$scope', '$routeP
 
 // -----------------------------------------------------
 /* Empresa - Corrida */
-function CreateCorrida($window, corrida, Corrida, $scope, $location, locationTo) {
+function CreateCorrida($window, $scope, $location, AuthenticationService, corrida, Corrida, locationTo) {
   var ex = new Corrida(corrida, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -1712,6 +1954,8 @@ function CreateCorrida($window, corrida, Corrida, $scope, $location, locationTo)
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
   console.log(ex); 
@@ -1730,10 +1974,12 @@ function CreateCorrida($window, corrida, Corrida, $scope, $location, locationTo)
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });
 }
-function UpdateCorrida($window, corrida, Corrida, $scope, $location, locationTo) {
+function UpdateCorrida($window, $scope, $location, AuthenticationService, corrida, Corrida, locationTo) {
   var ex = new Corrida(corrida, function(res) {
     if (res.success) {
       $scope.errMsg = null;
@@ -1748,6 +1994,8 @@ function UpdateCorrida($window, corrida, Corrida, $scope, $location, locationTo)
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });   
 
@@ -1767,13 +2015,15 @@ function UpdateCorrida($window, corrida, Corrida, $scope, $location, locationTo)
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   });       
 }
-muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$location', '$routeParams', 'Corrida', 'CorridaXRuta', 'OfertaGenerar',
-  function($window, $scope, $location, $routeParams, Corrida, CorridaXRuta, OfertaGenerar) {
+muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta', 'OfertaGenerar',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta, OfertaGenerar) {
     $scope.rutaid = $routeParams.id;
-    LoadCorridasXRuta($window, CorridaXRuta, $routeParams.id, $scope);
+    LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
     $scope.orderProp = 'nombre';
 
     $scope.deleteCorrida = function (exId) {
@@ -1782,7 +2032,7 @@ muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$loc
           function(res){
             if (res.success) {
               $scope.errMsg = null;
-              LoadCorridasXRuta($window, CorridaXRuta, $routeParams.id, $scope);
+              LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -1794,6 +2044,8 @@ muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$loc
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         ); 
@@ -1819,14 +2071,16 @@ muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$loc
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
     };
 
   }]);
-muukControllers.controller('EmpresaCorridaFormCtrl', ['$window', '$scope', 'Corrida', '$location', '$routeParams',
-  function($window, $scope, Corrida, $location, $routeParams) {
+muukControllers.controller('EmpresaCorridaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Corrida', '$routeParams',
+  function($window, $scope, $location, AuthenticationService, Corrida, $routeParams) {
     $scope.master = {};
 
     $scope.update = function(corrida) {
@@ -1846,7 +2100,7 @@ muukControllers.controller('EmpresaCorridaFormCtrl', ['$window', '$scope', 'Corr
     };
 
     $scope.save = function(corrida) {
-      CreateCorrida($window, corrida, Corrida, $scope, $location, 'empresaCorridaList/' + $scope.corrida.RutaId);
+      CreateCorrida($window, $scope, $location, AuthenticationService, corrida, Corrida, 'empresaCorridaList/' + $scope.corrida.RutaId);
       /*
       var ex = new Corrida(corrida);
       console.log(ex);
@@ -1877,20 +2131,21 @@ muukControllers.controller('EmpresaCorridaFormCtrl', ['$window', '$scope', 'Corr
 
     $scope.reset();
   }]);
-muukControllers.controller('EmpresaCorridaShowCtrl', ['$window', '$scope', '$routeParams', 'Corrida', '$location',
-  function($window, $scope, $routeParams, Corrida, $location) {
-    LoadCorrida($window, Corrida, $routeParams.id, $scope);
+muukControllers.controller('EmpresaCorridaShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida) {
+    LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, $routeParams.id);
 
     $scope.cancel = function(){
       $location.path('empresaCorridaList/' + $scope.corrida.RutaId);
     };
   }]);
-muukControllers.controller('EmpresaCorridaEditCtrl', ['$window', '$scope', '$routeParams', 'Corrida', '$location',
-  function($window, $scope, $routeParams, Corrida, $location) {
-    LoadCorrida($window, Corrida, $routeParams.id, $scope);
+muukControllers.controller('EmpresaCorridaEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida) {
+    $scope.corrida = {dia1: false,dia2: false,dia3: false,dia4: false,dia5: false,dia6: false,dia7: false};
+    LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, $routeParams.id);
 
     $scope.save = function(corrida) {
-      UpdateCorrida($window, corrida, Corrida, $scope, $location, 'empresaCorridaList/' + $scope.corrida.RutaId);
+      UpdateCorrida($window, $scope, $location, AuthenticationService, corrida, Corrida, 'empresaCorridaList/' + $scope.corrida.RutaId);
       /*
       var ex = new Corrida(corrida);
       console.log(ex);
@@ -1915,7 +2170,7 @@ muukControllers.controller('EmpresaCorridaEditCtrl', ['$window', '$scope', '$rou
 /* Empresa - Rutas compartidas */
 muukControllers.controller('EmpresaRutasCompartidasCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'RutaCompartidaList', 'RutaCompartida',
   function($window, $scope, $location, AuthenticationService, RutaCompartidaList, RutaCompartida) {
-    LoadRutasCompartidas($window, RutaCompartidaList, $scope);
+    LoadRutasCompartidas($window, $scope, $location, AuthenticationService, RutaCompartidaList);
     $scope.orderProp = 'nombre';
 
     $scope.deleteRutaCompartida = function (exId) {
@@ -1925,7 +2180,7 @@ muukControllers.controller('EmpresaRutasCompartidasCtrl', ['$window', '$scope', 
             if (res.success) {
               $scope.errMsg = null;
               $scope.sucMsg = "Se eliminó exitosamente la ruta compartida con id [" + exId + "]";
-              LoadRutasCompartidas($window, RutaCompartidaList, $scope);
+              LoadRutasCompartidas($window, $scope, $location, AuthenticationService, RutaCompartidaList);
             } else {
               $scope.errMsg = res.msg;
               $scope.sucMsg = null;
@@ -1938,6 +2193,8 @@ muukControllers.controller('EmpresaRutasCompartidasCtrl', ['$window', '$scope', 
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );        
@@ -1950,7 +2207,7 @@ muukControllers.controller('EmpresaRutasCompartidasCtrl', ['$window', '$scope', 
 /* Empresa - Comentarios */
 muukControllers.controller('EmpresaComentariosCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Comentarios',
   function($window, $scope, $location, AuthenticationService, Comentarios) {
-    LoadComentarios($window, Comentarios, $scope);
+    LoadComentarios($window, $scope, $location, AuthenticationService, Comentarios);
 
     $scope.showComentario = function() {
       $('#comentarioModal').modal({
@@ -1973,6 +2230,8 @@ muukControllers.controller('EmpresaComentariosCtrl', ['$window', '$scope', '$loc
             console.log(err);
             $scope.errMsg = err.data.msg;
             $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
         }
       );   
@@ -1982,7 +2241,7 @@ muukControllers.controller('EmpresaComentariosCtrl', ['$window', '$scope', '$loc
           $scope.errMsg = null;
           $scope.sucMsg = "El comentario se envió exitosamente"; 
           $scope.comentario = '';
-          LoadComentarios($window, Comentarios, $scope);
+          LoadComentarios($window, $scope, $location, AuthenticationService, Comentarios);
         } else {
           $scope.errMsg = res.msg;
           $scope.sucMsg = null;
@@ -1995,6 +2254,8 @@ muukControllers.controller('EmpresaComentariosCtrl', ['$window', '$scope', '$loc
           console.log(err);
           $scope.errMsg = err.data.msg;
           $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });
     }    
@@ -2002,8 +2263,8 @@ muukControllers.controller('EmpresaComentariosCtrl', ['$window', '$scope', '$loc
 
 // -----------------------------------------------------
 /* Empresa - Estadisticas */
-muukControllers.controller('EmpresaEstadisticasCtrl', ['$window', '$scope', '$location',
-  function($window, $scope, $location) {
+muukControllers.controller('EmpresaEstadisticasCtrl', ['$window', '$scope', '$location', 'AuthenticationService',
+  function($window, $scope, $location, AuthenticationService) {
 
   }]);
 
@@ -2011,16 +2272,16 @@ muukControllers.controller('EmpresaEstadisticasCtrl', ['$window', '$scope', '$lo
 /* Usuario  */
 // *****************************************************
 /* Usuario - Perfil */
-muukControllers.controller('UsuarioPerfilShowCtrl', ['$window', '$scope', '$location', 'SessionService', 'AuthenticationService', 'Usuario',
-  function($window, $scope, $location, SessionService, AuthenticationService, Usuario) {
-    LoadUsuario($window, SessionService.currentUser.id, Usuario, $scope);
+muukControllers.controller('UsuarioPerfilShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'Usuario',
+  function($window, $scope, $location, AuthenticationService, SessionService, Usuario) {
+    LoadUsuario($window, $scope, $location, AuthenticationService, SessionService.currentUser.id, Usuario);
   }]);
-muukControllers.controller('UsuarioPerfilEditCtrl', ['$window', '$scope', '$location', 'SessionService', 'AuthenticationService', 'Usuario',
-  function($window, $scope, $location, SessionService, AuthenticationService, Usuario) {
-    LoadUsuario($window, SessionService.currentUser.id, Usuario, $scope);
+muukControllers.controller('UsuarioPerfilEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'Usuario',
+  function($window, $scope, $location, AuthenticationService, SessionService, Usuario) {
+    LoadUsuario($window, $scope, $location, AuthenticationService, SessionService.currentUser.id, Usuario);
 
     $scope.save = function(usuario) {
-      UpdateUsuario($window, usuario, Usuario, $scope, $location, 'usuarioPerfilShow');
+      UpdateUsuario($window, $scope, $location, AuthenticationService, usuario, Usuario, 'usuarioPerfilShow');
     };
 
     $scope.cancel = function(){
@@ -2030,7 +2291,7 @@ muukControllers.controller('UsuarioPerfilEditCtrl', ['$window', '$scope', '$loca
 
 // -----------------------------------------------------
 /* Usuario - Consultas */
-function LoadReservaciones($window, Reservaciones, estatus, vigente, $scope) {
+function LoadReservaciones($window, $scope, $location, AuthenticationService, Reservaciones, estatus, vigente) {
   Reservaciones.query({estatus: estatus, vigente: vigente}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -2058,10 +2319,12 @@ function LoadReservaciones($window, Reservaciones, estatus, vigente, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadEsperas($window, Esperas, $scope) {
+function LoadEsperas($window, $scope, $location, AuthenticationService, Esperas) {
   Esperas.query({ }, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -2087,10 +2350,12 @@ function LoadEsperas($window, Esperas, $scope) {
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function LoadRutasXUsuario($window, UsuarioRuta, RutaFavorita, usuarioid, $scope) {
+function LoadRutasXUsuario($window, $scope, $location, AuthenticationService, UsuarioRuta, RutaFavorita, usuarioid) {
   UsuarioRuta.query({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
@@ -2126,6 +2391,8 @@ function LoadRutasXUsuario($window, UsuarioRuta, RutaFavorita, usuarioid, $scope
           console.log(err);
           $scope.errMsg = err.data.msg;
           $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });
     } else {
@@ -2139,21 +2406,26 @@ function LoadRutasXUsuario($window, UsuarioRuta, RutaFavorita, usuarioid, $scope
       console.log(err);
       $scope.errMsg = err.data.msg;
       $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
     }
   }); 
 }
-function ShowMapa($window, rutaid, Mapa, $scope) {
+function ShowMapa($window, $scope, $location, AuthenticationService, rutaid, Mapa) {
   var consulta = Mapa.query({exId: rutaid});
   $scope.rutaid = rutaid;
 
   consulta.$promise.then(
     function(res){
       console.log("ya cargo ---< " + res.resultObject.length);
+      console.log(res);
       if(res.resultObject.length > 0){
         $scope.pMapa = res.resultObject;
         $scope.orderProp = 'id';
         console.log($scope.pMapa);
         consultapuntos();
+      } else {
+        creapuntos();
       }
       console.log($scope.pMapa); 
 
@@ -2162,11 +2434,13 @@ function ShowMapa($window, rutaid, Mapa, $scope) {
         console.log(err);
         $scope.errMsg = err.data.msg;
         $scope.sucMsg = null;  
+      } else {
+        ForceLogOut($window, $scope, $location, AuthenticationService);
       }
     }
   );      
 }
-function SaveMapa($window, mapa, Mapa, $scope, $location, locationTo) {
+function SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, locationTo) {
   console.log("Objeto de cordenadas---> ");
   console.log(mapa);
   var ex = new Mapa(mapa);   
@@ -2188,6 +2462,8 @@ function SaveMapa($window, mapa, Mapa, $scope, $location, locationTo) {
         console.log(err);
         $scope.errMsg = err.data.msg;
         $scope.sucMsg = null;  
+      } else {
+        ForceLogOut($window, $scope, $location, AuthenticationService);
       }
     }
   );
@@ -2204,11 +2480,11 @@ muukControllers.controller('UsuarioRutasCtrl', ['$window', '$scope', '$location'
   function($window, $scope, $location, AuthenticationService) {
 
   }]);
-muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$location', 'Reservaciones', 'CancelarReservacion', 'ConfirmarReservacion',
-  function($window, $scope, $location, Reservaciones, CancelarReservacion, ConfirmarReservacion) {
+muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Reservaciones', 'CancelarReservacion', 'ConfirmarReservacion',
+  function($window, $scope, $location, AuthenticationService, Reservaciones, CancelarReservacion, ConfirmarReservacion) {
 
     $scope.loadReservaciones = function(estatus, vigente) {
-      LoadReservaciones($window, Reservaciones, estatus, vigente, $scope);
+      LoadReservaciones($window, $scope, $location, AuthenticationService, Reservaciones, estatus, vigente);
     }
 
     $scope.init = function(estatus, vigente) {
@@ -2262,6 +2538,8 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
           console.log(err);
           $scope.errMsg = err.data.msg;
           $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });      
     }
@@ -2272,7 +2550,7 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
           function(res) {
             if (res.success) {
               $scope.errMsg = null;
-              $scope.loadReservaciones($window, $scope.tabSelected, $scope.tabHideOlder);
+              $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -2284,6 +2562,8 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -2296,7 +2576,7 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
           function(res) {
             if (res.success) {
               $scope.errMsg = null;
-              $scope.loadReservaciones($window, $scope.tabSelected, $scope.tabHideOlder);
+              $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
             } else {
               $scope.errMsg = res.msg;
               if (DebugMode) {
@@ -2308,6 +2588,8 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );        
@@ -2326,7 +2608,7 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
         $scope.tabSelected = "canceled";
       }
       $scope.reservaciones = null;
-      $scope.loadReservaciones($window, $scope.tabSelected, $scope.tabHideOlder);
+      $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
     }
 
     $scope.tabActive = ["active","",""];
@@ -2335,11 +2617,11 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
 
     $scope.init($scope.tabSelected, $scope.tabHideOlder);    
   }]);
-muukControllers.controller('UsuarioEsperaCtrl', ['$window', '$scope', '$location', 'Esperas', 'CancelarEspera',
-  function($window, $scope, $location, Esperas, CancelarEspera) {
+muukControllers.controller('UsuarioEsperaCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Esperas', 'CancelarEspera',
+  function($window, $scope, $location, AuthenticationService, Esperas, CancelarEspera) {
 
     $scope.loadEsperas = function() {
-      LoadEsperas($window, Esperas, $scope);
+      LoadEsperas($window, $scope, $location, AuthenticationService, Esperas);
     }
 
     $scope.cancel = function(espera) {
@@ -2358,16 +2640,18 @@ muukControllers.controller('UsuarioEsperaCtrl', ['$window', '$scope', '$location
           console.log(err);
           $scope.errMsg = err.data.msg;
           $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });      
     }
 
     $scope.loadEsperas();
   }]);
-muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$location', 'SessionService', 'UsuarioRuta', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove',
-  function($window, $scope, $location, SessionService, UsuarioRuta, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove) {
+muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'UsuarioRuta', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove',
+  function($window, $scope, $location, AuthenticationService, SessionService, UsuarioRuta, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove) {
     $scope.showFavoritos = false;
-    LoadRutasXUsuario($window, UsuarioRuta, RutaFavorita, SessionService.currentUser.id, $scope);
+    LoadRutasXUsuario($window, $scope, $location, AuthenticationService, UsuarioRuta, RutaFavorita, SessionService.currentUser.id);
     /*
     $scope.rutas = UsuarioRuta.query(function(results){
       var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
@@ -2403,6 +2687,8 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$locat
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -2424,6 +2710,8 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$locat
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -2440,7 +2728,7 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$locat
         $scope.showFavoritos = false;
       }
       $scope.showFavoritos = !$scope.showFavoritos;
-      LoadRutasXUsuario($window, UsuarioRuta, RutaFavorita, SessionService.currentUser.id, $scope);
+      LoadRutasXUsuario($window, $scope, $location, AuthenticationService, UsuarioRuta, RutaFavorita, SessionService.currentUser.id);
       /*
       UsuarioRuta.query(function(results){
           var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
@@ -2473,8 +2761,8 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$locat
 
 // -----------------------------------------------------
 /* Usuario - Rutas */
-muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$location', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'Mapa',
-  function($window, $scope, $location, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove, Mapa) {
+muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'Mapa',
+  function($window, $scope, $location, AuthenticationService, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove, Mapa) {
     //$scope.PointCount = 0;
     $scope.mostrarSugerencias = false;
     $scope.puntoALat = 0;
@@ -2589,6 +2877,8 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
           console.log(err);
           $scope.errMsg = err.data.msg;
           $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });       
     };    
@@ -2619,6 +2909,8 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
                 console.log(err);
                 $scope.errMsg = err.data.msg;
                 $scope.sucMsg = null;  
+              } else {
+                ForceLogOut($window, $scope, $location, AuthenticationService);
               }
             });         
           } else {
@@ -2630,6 +2922,8 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
             console.log(err);
             $scope.errMsg = err.data.msg;
             $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
         }); 
       }
@@ -2659,6 +2953,8 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
                 console.log(err);
                 $scope.errMsg = err.data.msg;
                 $scope.sucMsg = null;  
+              } else {
+                ForceLogOut($window, $scope, $location, AuthenticationService);
               }
             });          
                    
@@ -2673,6 +2969,8 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
             console.log(err);
             $scope.errMsg = err.data.msg;
             $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
         }); 
       } 
@@ -2697,6 +2995,8 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -2718,6 +3018,8 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
               console.log(err);
               $scope.errMsg = err.data.msg;
               $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
             }
           }
         );
@@ -2765,13 +3067,15 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
             console.log(err);
             $scope.errMsg = err.data.msg;
             $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
         }
       );
     };    
 
     $scope.showMapa = function(ruta){
-      ShowMapa(ruta.id, Mapa, $scope);
+      ShowMapa($window, $scope, $location, AuthenticationService, ruta.id, Mapa);
     };
 
   }]);
@@ -2786,7 +3090,7 @@ muukControllers.controller('UsuarioEstadisticasCtrl', ['$window', '$scope', '$lo
 /* Empresa - Comentarios */
 muukControllers.controller('UsuarioComentariosCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Comentarios',
   function($window, $scope, $location, AuthenticationService, Comentarios) {
-    LoadComentarios($window, Comentarios, $scope);
+    LoadComentarios($window, $scope, $location, AuthenticationService, Comentarios);
 
     $scope.comentar = function(comentario) {
       //var comment = {comentario: comentario};
@@ -2805,6 +3109,8 @@ muukControllers.controller('UsuarioComentariosCtrl', ['$window', '$scope', '$loc
             console.log(err);
             $scope.errMsg = err.data.msg;
             $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
           }
         }
       );   
@@ -2832,6 +3138,8 @@ muukControllers.controller('UsuarioComentariosCtrl', ['$window', '$scope', '$loc
           console.log(err);
           $scope.errMsg = err.data.msg;
           $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });
 
@@ -2841,16 +3149,16 @@ muukControllers.controller('UsuarioComentariosCtrl', ['$window', '$scope', '$loc
 // -----------------------------------------------------
 /* MAPA */
 var idm;
-muukControllers.controller('MapaFormCtrl', ['$window', '$scope', '$routeParams', 'Mapa', '$location',
-  function($window, $scope, $routeParams, Mapa, $location) {
+muukControllers.controller('MapaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Mapa',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Mapa) {
     idm = $routeParams.id;
-    ShowMapa($window, idm, Mapa, $scope); 
+    ShowMapa($window, $scope, $location, AuthenticationService, idm, Mapa); 
 
     $scope.save = function(mapa) {  
       if($scope.user.role == 'EMPRESA'){
-        SaveMapa($window, mapa, Mapa, $scope, $location, 'empresaRutaList'); 
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'empresaRutaList'); 
       }else if($scope.user.role == 'ADMIN'){
-        SaveMapa($window, mapa, Mapa, $scope, $location, 'embarqRutaList'); 
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqRutaList'); 
       }       
     }; 
 
@@ -2858,16 +3166,16 @@ muukControllers.controller('MapaFormCtrl', ['$window', '$scope', '$routeParams',
       $location.path('embarqRutaList');
     };  
   }]);
-muukControllers.controller('EmbarqSolicitudMapaFormCtrl', ['$window', '$scope', '$routeParams', 'Mapa', '$location',
-  function($window, $scope, $routeParams, Mapa, $location) {
+muukControllers.controller('EmbarqSolicitudMapaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Mapa', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Mapa) {
     idm = $routeParams.id;
-    ShowMapa($window, idm, Mapa, $scope);
+    ShowMapa($window, $scope, $location, AuthenticationService, idm, Mapa);
 
     $scope.save = function(mapa) {
       if($scope.user.role == 'EMPRESA'){
-        SaveMapa($window, mapa, Mapa, $scope, $location, 'empresaRutaList'); 
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'empresaRutaList'); 
       }else if($scope.user.role == 'ADMIN'){
-        SaveMapa($window, mapa, Mapa, $scope, $location, 'embarqRutaList'); 
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqRutaList'); 
       }  
     }; 
 
@@ -2875,16 +3183,16 @@ muukControllers.controller('EmbarqSolicitudMapaFormCtrl', ['$window', '$scope', 
       $location.path('embarqSolicitudRutaList');
     };  
   }]);
-muukControllers.controller('EmpresaMapaFormCtrl', ['$window', '$scope', '$routeParams', 'Mapa', '$location',
-  function($window, $scope, $routeParams, Mapa, $location) {
+muukControllers.controller('EmpresaMapaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Mapa',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Mapa) {
     idm = $routeParams.id;
-    ShowMapa($window, idm, Mapa, $scope);
+    ShowMapa($window, $scope, $location, AuthenticationService, idm, Mapa);
 
     $scope.save = function(mapa) {
       if($scope.user.role == 'EMPRESA'){
-        SaveMapa($window, mapa, Mapa, $scope, $location, 'empresaRutaList'); 
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'empresaRutaList'); 
       }else if($scope.user.role == 'ADMIN'){
-        SaveMapa($window, mapa, Mapa, $scope, $location, 'embarqRutaList'); 
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqRutaList'); 
       }  
     }; 
 

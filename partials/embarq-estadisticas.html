@@ -1,6 +1,43 @@
 <div class="container-fluid">
+	<br/>
+	<br/>
 	<script src="js/holder/holder.js"></script>
-			
-    <h1 class="page-header">Estadísticas</h1>
 
+    <h1 class="page-header" align="center">Estad&iacute;sticas</h1>
+	<link href="css/panels.css" rel="stylesheet">
+	<div class="form-1200">
+		<div class="row placeholders">             
+			<div class="col-xs-12 col-sm-6 col-sm-6 placeholder" align= "center">
+
+				<div class="panel panel-default" style="width: 60%; ">
+				  <!-- Default panel contents -->
+				  <div class="panel-heading">N&uacute;mero globales</div>
+				  
+				  <table class="table">
+				  	<thead>			  		
+						<tr><th>Dato</th><th>#</th></tr>
+				  	</thead>
+				  	<tbody style="text-align: left;">			  		
+						<tr><td>Empresas</td><td>{{rowsNumerosGlobales.empresas}}</td></tr>
+						<tr><td>Rutas</td><td>{{rowsNumerosGlobales.rutas}}</td></tr>
+						<tr><td>Rutas compartidas</td><td>{{rowsNumerosGlobales.rutascompartidas}}</td></tr>
+						<tr><td>Usuarios</td><td>{{rowsNumerosGlobales.usuarios}}</td></tr>
+						<tr><td>Reservaciones</td><td>{{rowsNumerosGlobales.reservaciones}}</td></tr>
+						<tr><td>Cancelaciones</td><td>{{rowsNumerosGlobales.cancelaciones}}</td></tr>
+						<tr><td>En lista de espera</td><td>{{rowsNumerosGlobales.esperas}}</td></tr>
+				  	</tbody>
+				  </table>
+				</div>			
+			</div>	
+			<div class="col-xs-12 col-sm-6 col-sm-6 placeholder">		
+				<div google-chart chart="chartReservacionXEstatus" style="height:400px; width:100%;"></div>
+			</div>		
+			<div class="col-xs-12 col-sm-6 col-sm-6 placeholder">
+				<div google-chart chart="chartReservacionXEstatusHist" style="height:400px; width:100%;"></div>            
+			</div>
+			<div class="col-xs-12 col-sm-6 col-sm-6 placeholder">
+				<div google-chart chart="chartReservacionXUltimaSemana" style="height:400px; width:100%;"></div>            
+			</div>		
+		</div>
+	</div>
 </div>

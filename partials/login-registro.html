@@ -21,7 +21,7 @@
 		     	<input type="hidden" id="email" name="email" ng-model="usuario.email"/>
 				<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
 					<label for="exName">Nombre</label><br/>
-					<input type="text" class="form-control" placeholder="Nombre corto del usuario" id="exName" name="exName" ng-model="usuario.nombre" ng-minlength="4" ng-maxlength="60" required/>
+					<input type="text" class="form-control" placeholder="Nombre corto del usuario" id="exName" name="exName" ng-model="usuario.nombre" ng-minlength="2" ng-maxlength="60" required/>
 					<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Se requiere el nombre del usuario.</p>
 					<p ng-show="exForm.exName.$error.minlength" class="help-block">Nombre demasiado corto.</p>
 					<p ng-show="exForm.exName.$error.maxlength" class="help-block">Nombre demasiado largo.</p>   			

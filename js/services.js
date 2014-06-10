@@ -38,7 +38,7 @@ muukServices.factory('AuthenticationService', ['$http', '$location', 'SessionSer
               if(data.error){
                 callbackSuccess(data);
               }
-              else{              
+              else{       
                 rs = data;
                 var user = {name: rs.nombre, username: usr, role: rs.role, authtoken: rs.token, empresa: rs.empresa, id: rs.id};
                 console.log(user);
@@ -61,19 +61,27 @@ muukServices.factory('AuthenticationService', ['$http', '$location', 'SessionSer
       }
     };
   }]);
-muukServices.factory('SessionService', ['$cookieStore', 
+muukServices.factory('SessionService', ['$cookieStore',
   function ($cookieStore) {  
     var session = {
       currentUser: null,
       saveSession: function() {
          $cookieStore.put('session', session.currentUser);
+         console.log(session);
       },
       endSession: function() {
+         console.log('End sesion ' + session.currentUser.authtoken);
          $cookieStore.remove('session');
+         console.log(session);
          session.currentUser = null;
       },    
       loadSession: function() { 
+        console.log('1Load sesion ');
+        console.log(session.currentUser);
+
         session.currentUser = $cookieStore.get('session');
+        console.log('2Load sesion ');
+        console.log(session.currentUser);
       }
     };
     session.loadSession();
@@ -212,8 +220,8 @@ muukServices.factory('Corrida', ['$resource', 'SessionService', '$routeParams',
 
 muukServices.factory('CorridaXRuta', ['$resource', 'SessionService',
   function($resource, SessionService){
-    return $resource(servicesUrl + '/rutacorrida?rutaid=:exId', {}, {
-      query: { method:'GET', params:{}, isArray:false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }},
+    return $resource(servicesUrl + '/rutacorrida', {}, {
+      query: { method:'GET', params:{rutaid: '@exId'}, isArray:false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }},
     });
   }]);
 // -----------------------------------------------------
@@ -557,3 +565,26 @@ muukServices.factory('RutaSugerida',['$resource', 'SessionService',
     //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
   }]);
 */
+muukServices.factory('Estadisticas',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/estadistica', {}, {
+      reservacionesXEstatus: { method: 'GET', 
+        params: {tipo: 'ReservacionesXEstatus'}, 
+        isArray: false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      },
+      reservacionesXEstatusHistorico: { method: 'GET', 
+        params: {tipo: 'ReservacionesXEstatusHistorico'}, 
+        isArray: false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      },
+      reservacionesXUltimaSemana: { method: 'GET', 
+        params: {tipo: 'reservacionesXUltimaSemana'}, 
+        isArray: false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      },
+      numerosGlobales: { method: 'GET', 
+        params: {tipo: 'numerosGlobales'}, 
+        isArray: false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }      
+      
+    });
+
+  }]);
