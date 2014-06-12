@@ -35,7 +35,7 @@ exports.login = function(req, res, next){
   			}
 
   			//user has authenticated correctly thus we create a JWT token			
-  			var expires = Date.now() + ( 1 * 3600 * 1000 );
+  			var expires = Date.now() + ( 12 * 3600 * 1000 );
   			var pretoken = 	{iss: user.email, exp: expires};
   			var token = jwt.encode(pretoken , app.get('jwtTokenSecret'));
   			res.json({ token : token, role: user.role, empresa: user.EmpresaId, nombre: user.nombre, id: user.id });
@@ -154,6 +154,7 @@ exports.listOne = function() {
 exports.add = function() {
   return function(req, res) {
     req.body.EstatusId = 1; // inicia con estatus nueva y despues se autoriza
+    if(req.body.role == 'ADMIN') req.body.EmpresaId = 0; // los usuarios ADMIN no pertenecen a ninguna empresa
     var usuario = db.Usuario.build(req.body);
     usuario.save().complete(function (err, usuario) {      
       	if(err == null) {

@@ -1,5 +1,6 @@
 // horas {almacenadas en minutos 0 = 00:00, 1440 = 24:00}
 // se puede asignar valor entero directamente a la propiedad horaLlegada u horaSalida, o valor con formato a las correspondientes horaSalidaFmt
+// las reservaciones recurrentes deben de tomarse de capacidad reservada por lo tanto se valida que no sea mayor a este.
 module.exports = function(sequelize, DataTypes) {
   var RutaCorrida = sequelize.define('RutaCorrida', {
     horaSalida: {type: DataTypes.INTEGER, allowNull: false, validate: { min: 0, max: 1440 }}, 
@@ -16,7 +17,9 @@ module.exports = function(sequelize, DataTypes) {
     dia4: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     dia5: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: true },
     dia6: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
-    dia7: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false }
+    dia7: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    reservacionesRecurrentes: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
+    caducaCapacidadReservada: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 60}
   }, {
     timestamps: false,
     associate: function(models) {
@@ -24,9 +27,12 @@ module.exports = function(sequelize, DataTypes) {
     },
     validate: {
       validateCapacidad: function(){
-        if( (this.capacidadReservada + this.capacidadOfertada) > this.capacidadTotal ){
-          throw new Error('La suma de capacidad reservada y ofertada no puede ser mayor a la total.');
+        if( (this.capacidadReservada + this.capacidadOfertada) != this.capacidadTotal ){
+          throw new Error('La suma de capacidad reservada y ofertada debe ser igual a la total.');
         }
+        if( (this.capacidadReservada ) < this.reservacionesRecurrentes ){
+          throw new Error('No se pueden generar más reservaciones recurrentes que la capacidad reservada.');
+        }        
       },
       validateHoras: function(){
         if( this.horaSalida >= this.horaLlegada ){

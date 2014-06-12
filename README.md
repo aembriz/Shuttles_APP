@@ -590,6 +590,80 @@ Comandos RESTFul:
 * PUT /rutacompartida/{id} = (Update al registro con el id especificado)  
 * DELETE /rutacompartida/{id} = (Elimina registro marcado con el id)  
 
+------------
+
+Servicio "Reservaciones recurrentes" 
+-------------------------
+Crea reservaciones recurrentes para una corrida la cual debe de ser de la misma empresa a la que el usuario pertenece
+
+[URL...]/rutacompartir
+
+Comandos RESTFul:   
+* GET /reservacionrecurrente = (Consulta todos.)  
+* GET /reservacionrecurrente/{id} = (Consulta registro con el id especificado  
+* POST /reservacionrecurrente = (Creación de registro nuevo)  
+* DELETE /reservacionrecurrente/{id} = (Elimina registro marcado con el id)  
+
+Ejemplo de post para creación de reservación:
+
+    {
+      "RutaCorridaId": 1
+    }
+
+Ejemplo de regreso de consulta:
+
+    [
+        {
+          "id": 6,
+          "estatus": 2,
+          "complementarykey": "9-1",
+          "createdAt": "2014-06-11T00:00:00.000Z",
+          "updatedAt": "2014-06-11T00:00:00.000Z",
+          "RutaId": 1,
+          "RutaCorridaId": 1,
+          "UsuarioId": 9,
+          "rutum": {
+            "id": 1,
+            "nombre": "Ruta 1",
+            "descripcion": "Descripcion 1",
+            "distanciaaprox": 20,
+            "tiempoaprox": 30,
+            "origentxt": "Barranca del muerto",
+            "destinotxt": "Indios verdes",
+            "diasofertafuturo": 5,
+            "CompanyownerID": 1,
+            "EstatusId": 3
+          },
+          "rutaCorrida": {
+            "horaSalidaFmt": "21:30",
+            "horaLlegadaFmt": "23:20",
+            "id": 1,
+            "horaSalida": 1290,
+            "horaLlegada": 1400,
+            "capacidadTotal": 5,
+            "capacidadReservada": 2,
+            "capacidadOfertada": 3,
+            "tarifa": 23,
+            "idTransporte": "NA",
+            "idChofer": "NA",
+            "dia1": false,
+            "dia2": true,
+            "dia3": false,
+            "dia4": true,
+            "dia5": true,
+            "dia6": false,
+            "dia7": false,
+            "reservacionesRecurrentes": 1,
+            "caducaCapacidadReservada": 60,
+            "RutaId": 1
+          },
+          "usuario": {
+            "nombre": "Adolfo embriz",
+            "email": "william.lithgow@nubeet.com",
+            "id": 9
+          }
+        }
+      ]
 
 ------------
 

@@ -129,7 +129,7 @@ exports.delete = function() {
           }        
           return ruta.destroy().success(function (err){
             //res.send((!err) ? { msg: '' } : { msg:'error: ' + err });
-            if(err!=null){
+            if(err==null){
               res.send(util.formatResponse('Se eliminó correctamente la ruta', null, true, 'ErrRutX012', constErrorTypes, null));
             }
             else{

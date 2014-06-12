@@ -5,6 +5,8 @@ var constErrorTypes = {'ErrOfeX000': '', 'ErrOfeX000':''};
 
 var constDiaSem = ['dia7', 'dia1', 'dia2', 'dia3', 'dia4', 'dia5', 'dia6'];
 
+var ReservacionRecurrente = require('./reservacionrecurrente');
+
 exports.list = function() { 
   return function(req, res){
     db.Oferta.findAll().success(function(oferta) {
@@ -221,11 +223,18 @@ var generaOfertaRuta = function(ruta, hoy){
         for (var j = 0; j < ruta.corridas.length; j++) {
           var corrida = ruta.corridas[j];
           if( corrida != null && corrida[constDiaSem[fechaoper.getDay()]] == true){ // si la corrida aplica en el día de la semana
-            var oferta = {fechaOferta: utcCerosToDB(fechaoper), oferta: corrida.capacidadOfertada, RutaId: ruta.id, RutaCorridaId: corrida.id };            
+            var oferta = {fechaOferta: utcCerosToDB(fechaoper), oferta: corrida.capacidadTotal, 
+              reserva: (corrida.capacidadReservada - corrida.reservacionesRecurrentes) , RutaId: ruta.id, RutaCorridaId: corrida.id };            
             var ofertadb = db.Oferta.build(oferta);
             console.log(ofertadb.values.fechaOferta);
             ofertadb.save().complete(function (err, oferta) {
-              if(err!=null){console.log(err)}
+              if(err!=null){
+                console.log(err)
+              }
+              else{
+                // genera las reservaciones recurrentes activas para la oferta que se acaba de crear
+                ReservacionRecurrente.generaRecurrentesXOferta(oferta);
+              }
             });
           }
         };

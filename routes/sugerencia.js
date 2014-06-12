@@ -30,7 +30,8 @@ exports.list = function() {
     if(req.user.role != 'ADMIN') paramWhere.EmpresaId = req.user.EmpresaId;
 
     db.Sugerencia.findAll({ where: paramWhere, include: [
-        {model: db.Usuario }
+        {model: db.Usuario, attributes: ['nombre', 'email'] },
+        {model: db.Empresa, attributes: ['nombre'] }
       ]
     }).success(function(sugerencia) {
       res.send(util.formatResponse('', null, true, 'ErrSugX001', constErrorTypes, sugerencia));

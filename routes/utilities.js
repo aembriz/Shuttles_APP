@@ -7,5 +7,6 @@ module.exports.errorTypes = constErrorTypes;
 * msg = String, error = Object, success = [true/false]
 */
 exports.formatResponse = function(msg, error, success, errorCode, errorTypes, resultObject) {
+	if(!success) msg = msg + " [" + errorCode + "]"; // debugging
 	return({msg: msg, err: error, success: success, msgCode: errorCode, resultObject: resultObject});
 };

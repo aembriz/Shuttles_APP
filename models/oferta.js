@@ -7,6 +7,7 @@ module.exports = function(sequelize, DataTypes) {
   var Oferta = sequelize.define('Oferta', {
     fechaOferta: {type: DataTypes.DATE, allowNull: false, isDate: true, unique: 'ofertaunica'},
     oferta: {type: DataTypes.INTEGER, allowNull: false},
+    reserva: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
     complementarykey: {type: DataTypes.INTEGER, allowNull: false, unique: 'ofertaunica'}
   }, {
     timestamps: false,
@@ -15,6 +16,11 @@ module.exports = function(sequelize, DataTypes) {
       Oferta.belongsTo(models.RutaCorrida, {foreignKey: 'RutaCorridaId'})
     },
     validate: {
+      validateOferta: function(){
+        if(this.oferta < this.reservada){
+          throw new Error('La cantidad reservada no puede ser mayor a la ofertada.');
+        }
+      },
       validateFecha: function(){
         var today = new Date();
         this.setDataValue('complementarykey', this.RutaCorridaId)

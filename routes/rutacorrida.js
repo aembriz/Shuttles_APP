@@ -11,7 +11,12 @@ exports.list = function() {
     }
     db.RutaCorrida.findAll(queryParams).success(function(rutacorrida) {
       //res.send(rutacorrida);
-      res.send(util.formatResponse('', null, true, 'ErrRucY001', constErrorTypes, rutacorrida));
+      if(rutacorrida!=null){
+        res.send(util.formatResponse('', null, true, 'ErrRucY001', constErrorTypes, rutacorrida));
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al acceder a las corridas', null, false, 'ErrRucY015', constErrorTypes, null));   
+      }
     }).error(function(err){
       res.send(util.formatResponse('Ocurrieron errores al acceder a las corridas', err, false, 'ErrRucY002', constErrorTypes, null));
     });    
@@ -26,7 +31,12 @@ exports.listOne = function() {
     var idToFind = req.params.id;
     db.RutaCorrida.find(idToFind).success(function(rutacorrida) {      
       //res.send(rutacorrida);    
-      res.send(util.formatResponse('', null, true, 'ErrRucY003', constErrorTypes, rutacorrida));
+      if(rutacorrida!=null){
+        res.send(util.formatResponse('', null, true, 'ErrRucY003', constErrorTypes, rutacorrida));
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al acceder a la corrida', null, false, 'ErrRucY014', constErrorTypes, null));
+      }
     }).error(function(err){
       res.send(util.formatResponse('Ocurrieron errores al acceder a la corrida', err, false, 'ErrRucY004', constErrorTypes, null));
     });

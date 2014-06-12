@@ -209,7 +209,7 @@ app.put('/oferta/:id/minus', usuario.authenticate, usuario.needsRole(['ADMIN']),
 
 // --------------- Ruta Compartida ----------------
 var rutacompartida = require('./routes/rutacompartida');
-app.get('/rutacompartida', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.list());
+app.get('/rutacompartida', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutacompartida.list());
 app.get('/rutacompartida/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.listOne());
 app.get('/rutacompartida/:rutaid/empresasxcompartir', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.listEmpresaToShare());
 app.post('/rutacompartida', usuario.authenticate, usuario.needsRole(['ADMIN']), rutacompartida.add());
@@ -227,11 +227,21 @@ app.get('/sugerencia/:id', usuario.authenticate, sugerencia.listOne());
 app.post('/sugerencia', usuario.authenticate, sugerencia.add());
 
 
+// --------------- Estadísticas ----------------
+var estadisticas = require('./routes/estadisticas');
+app.get('/estadistica', estadisticas.getStatistics());
+
+// --------------- Reservaciones recurrentes ----------------
+var reservacionrecurrente = require('./routes/reservacionrecurrente');
+app.get('/reservacionrecurrente', usuario.authenticate, reservacionrecurrente.list());
+app.get('/reservacionrecurrente/:id', usuario.authenticate, reservacionrecurrente.listOne());
+app.post('/reservacionrecurrente', usuario.authenticate, reservacionrecurrente.add());
+app.delete('/reservacionrecurrente/:id', usuario.authenticate, reservacionrecurrente.delete());
+
 
 // --------------- Pruebas ----------------
-var mail = require('./routes/mailing');
-mail.initialize(app);
-app.get('/prueba', usuario.authenticate, mail.prueba());
+//var mail = require('./routes/mailing');
+//app.get('/prueba', usuario.authenticate, mail.prueba());
 
 
 // ------------------INI Schedulers-------------------------

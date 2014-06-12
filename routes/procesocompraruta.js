@@ -2,7 +2,7 @@ var db = require('../models')
 var mail = require('./mailing'); // used for sending mails
 var constant = require('../config/constant.js');
 
-var rutacompartida = require('./rutacompartida'); // used for sending mails
+//var rutacompartida = require('./rutacompartida'); // used for sending mails
 
 var util = require('./utilities');
 var constErrorTypes = {'ErrPcrX000': '', 'ErrPcrX000':''};
@@ -158,10 +158,14 @@ var getDistance = function(p1, p2) {
 /*
 * Lista la oferta disponible para la ruta y la fecha especificada, si no se indica fecha regresa todas las ofertas futuras de la ruta
 * /[rutaid]/oferta/?fecha=[fecha buscada]
+* En caso de una ruta de la misma empresa del usuario consultante, se incluye oferta total en caso de un usuario visitante se resta
+* la reserva hasta X horas antes de la hora de la fecha ofertada
 */
 exports.listOferta = function() { 
   return function(req, res){
     var usrid = req.user.id;
+    var usr = req.user;
+    var ahora = new Date()
     var result = {msg: 'No se pudo obtener la disponibilidad'};
     var queryParams = {};
     queryParams.where = {};
@@ -183,14 +187,18 @@ exports.listOferta = function() {
     }
     else{
       var hoy = new Date();
-      hoy = hoy.toISOString().slice(0, 10); + ' 00:00:00';
+      hoy = hoy.getFullYear() + "-" + ("0"+(hoy.getMonth()+1)).slice(-2) + "-" + ("0"+hoy.getDate()).slice(-2);
+      //hoy = new Date(hoy.toISOString().slice(0, 10) + 'T00:00:00.000-05:00');
+
+console.log("hoy-->" + hoy );// + " UTC-->" + hoy.toUTCString());
       //hoy = hoy.getFullYear() + '-' + (hoy.getMonth() + 1) + '-' + hoy.getDate() +  ' 00:00:00';
       queryParams.where.fechaOferta = {gte: hoy};
     }
 
     // incluye el objeto corrida dentro de la oferta
     queryParams.include = [
-        {model: db.RutaCorrida}
+        {model: db.RutaCorrida},
+        {model: db.Ruta, attributes: ['id', 'nombre', 'CompanyownerID']}
     ];    
 
     // lista todas las disponibilidades de las corridas de la ruta especificada
@@ -239,9 +247,25 @@ exports.listOferta = function() {
                 }
               };
             }
-          }          
+          }        
+
+          // manejo de reservas de acuerdo a usuario consultante (a usuarios no de la empresa se descuentan lugares reservados)
+          for (var i = 0; i < result.length; i++) {
+            var fecOf = result[i].fechaOferta.toISOString().slice(0, 10) + 'T' + result[i].rutaCorrida.horaSalidaFmt + ':00.000-05:00';
+console.log('Fecha Oferta Txt--->' + fecOf);
+            //fecOf = new Date(fecOf.getUTCFullYear(), fecOf.getUTCMonth(), fecOf.getUTCDate())
+            fecOf = new Date(fecOf)
+
+            var minsToOferta = ((fecOf.getTime() - ahora.getTime())/60000 );
+console.log("Diff::" + minsToOferta  + " Fecha oferta-->" + fecOf + " fechaHoy-->" + ahora)
+
+            if(usr.EmpresaId!=result[i].rutum.CompanyownerID && minsToOferta > result[i].rutaCorrida.caducaCapacidadReservada){
+              result[i].oferta = result[i].oferta - result[i].reserva;
+            }
+          };
+
           //res.send(result);
-          res.send(util.formatResponse('', null, true, 'ErrPcrX009', constErrorTypes, result));
+          res.send(util.formatResponse('', null, true, 'ErrPcrX009', constErrorTypes, result));          
           return;
         }).error(function(err){
           console.log('Error al obtener la lista de espera asociada a la consulta de oferta.')
@@ -289,6 +313,7 @@ exports.reservationCreate = function() {
             //  { msg: 'Existieron errores al registrar su reservación. Por favor vuelva a intentarlo.',  err: err }
             //);
             if(err==null){
+              mail.notifyReservationChange(reservacion);
               res.send(util.formatResponse('Su reservación fue registrada correctamente.', null, true, 'ErrPcrX014', constErrorTypes, reservacion));
             }
             else{
@@ -387,6 +412,7 @@ exports.reservationConfirm = function() {
         // cancela la reservación
         reservacion.updateAttributes({estatus: constant.estatus.Reservacion.confirmed}).success(function(reservacion) {
           //res.send({msg: 'Reservacion confirmada', reservacion: reservacion});      
+          mail.notifyReservationChange(reservacion);
           res.send(util.formatResponse('Se confirmó correctamente la reservación', null, false, 'ErrPcrX024', constErrorTypes, reservacion));
         }).error(function(err){
           //res.send({msg: 'Existieron errores al confirmar la reservación.', err: err});
@@ -419,6 +445,7 @@ exports.reservationCancel = function() {
           // procesa lista de espera y actualización de la oferta
           processWaitingList(reservacion);
           //res.send({msg: 'Reservación ha sido cancelada exitosamente.', reservacion: reservacion})
+          mail.notifyReservationChange(reservacion);
           res.send(util.formatResponse('Se canceló correctamente la reservación', null, true, 'ErrPcrX029', constErrorTypes, reservacion));
         }).error(function(err){
           //res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
@@ -609,7 +636,7 @@ var processWaitingList = function(canceledReservation){
             console.error('No se pudo acceder y actualizar la lista de espera [' + e.id + ']');
           });
 
-          mail.notifyWaitingListAssigned(reservacion);
+          mail.notifyReservationChange(reservacion);
         }
         else{
           // TODO: Log de proceso lista de espera fallida. Notificar a EmbarQ
