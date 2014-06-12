@@ -10,6 +10,8 @@ var db = require('./models');
 var http = require('http');
 var path = require('path');
 
+var sysconfig = require('./config/systemconfig.js');
+
 // Database
 /* Using MongoSkin as mongodb handler
 var mongo = require('mongoskin');
@@ -37,7 +39,7 @@ require('./config/passport')(app, passport); // configure strategies for passpor
 
 
 // all environments
-app.set('port', process.env.PORT || 8082);
+app.set('port', process.env.PORT || sysconfig.server.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.favicon());
@@ -234,6 +236,7 @@ app.get('/estadistica', estadisticas.getStatistics());
 // --------------- Reservaciones recurrentes ----------------
 var reservacionrecurrente = require('./routes/reservacionrecurrente');
 app.get('/reservacionrecurrente', usuario.authenticate, reservacionrecurrente.list());
+app.get('/reservacionrecurrente/ruta/:rutaid/corrida', usuario.authenticate, reservacionrecurrente.listCorridas());
 app.get('/reservacionrecurrente/:id', usuario.authenticate, reservacionrecurrente.listOne());
 app.post('/reservacionrecurrente', usuario.authenticate, reservacionrecurrente.add());
 app.delete('/reservacionrecurrente/:id', usuario.authenticate, reservacionrecurrente.delete());

@@ -194,3 +194,40 @@ exports.generaRecurrentesXOferta = function(oferta){
 	});
 
 };
+
+/************************************************************************/
+/************************************************************************/
+
+exports.listCorridas = function() { 
+  return function(req, res){
+
+    var rutaid = req.params.rutaid;
+    var usrid = req.user.id
+
+    db.RutaCorrida.findAll({ where: {RutaId: rutaid} }).success(function(rutacorrida) {
+      if(rutacorrida!=null){
+
+      	db.ReservacionRecurrente.findAll({ where: {RutaId: rutaid, UsuarioId: usrid } }).complete(function (err, rsvrecs){  		
+      		if(err==null && rsvrecs!=null){      			
+				for (var i = 0; i < rutacorrida.length; i++) {
+console.log(rutacorrida[i].values);
+					for (var j = 0; j < rsvrecs.length; j++) {
+console.log(rsvrecs[j].values);
+						if(rsvrecs[j].RutaCorridaId == rutacorrida[i].id){
+console.log("UUUUUUUUUUUUU")							
+							rutacorrida[i].dataValues.recurrente = rsvrecs[j].values;
+						}
+					};					
+				};
+      		}
+      		res.send(util.formatResponse('', null, true, 'ErrRsrX020', constErrorTypes, rutacorrida));      	
+      	});        
+      }
+      else{
+        res.send(util.formatResponse('Ocurrieron errores al acceder a las corridas', null, false, 'ErrRsrX021', constErrorTypes, null));   
+      }
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al acceder a las corridas', err, false, 'ErrRsrX022', constErrorTypes, null));
+    });    
+  }
+};

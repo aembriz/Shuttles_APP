@@ -1,10 +1,20 @@
+var sysconfig = require('../config/systemconfig.js');
+
+/*
 var fs        = require('fs')
   , path      = require('path')
   , Sequelize = require('sequelize')
   , lodash    = require('lodash')
   , sequelize = new Sequelize('shuttle', 'root', 'mixtli12', {dialect: 'mysql', port: 3306})
   , db        = {}
- 
+*/
+var fs        = require('fs')
+  , path      = require('path')
+  , Sequelize = require('sequelize')
+  , lodash    = require('lodash')
+  , sequelize = new Sequelize(sysconfig.db.name, sysconfig.db.user, sysconfig.db.password, {dialect: sysconfig.db.dialect, port: sysconfig.db.port})
+  , db        = {} 
+
 fs
   .readdirSync(__dirname)
   .filter(function(file) {

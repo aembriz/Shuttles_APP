@@ -600,6 +600,7 @@ Crea reservaciones recurrentes para una corrida la cual debe de ser de la misma 
 
 Comandos RESTFul:   
 * GET /reservacionrecurrente = (Consulta todos.)  
+* GET /reservacionrecurrente/ruta/{rutaid}/corrida = (Consulta las corridas de la ruta incluyendo las reservaciones recurrentes que el usuario haya generado para cada corrida.)  
 * GET /reservacionrecurrente/{id} = (Consulta registro con el id especificado  
 * POST /reservacionrecurrente = (Creación de registro nuevo)  
 * DELETE /reservacionrecurrente/{id} = (Elimina registro marcado con el id)  
@@ -661,6 +662,45 @@ Ejemplo de regreso de consulta:
             "nombre": "Adolfo embriz",
             "email": "william.lithgow@nubeet.com",
             "id": 9
+          }
+        }
+      ]
+
+Ejemplo de consulta de corridas:
+**Nota:** Mientras *reservacionesRecurrentes* sea menor a *capacidadReservada* se pueden generar reservaciones recurrentes.
+
+    [
+        {
+          "horaSalidaFmt": "21:30",
+          "horaLlegadaFmt": "23:20",
+          "id": 1,
+          "horaSalida": 1290,
+          "horaLlegada": 1400,
+          "capacidadTotal": 5,
+          "capacidadReservada": 2,
+          "capacidadOfertada": 3,
+          "tarifa": 23,
+          "idTransporte": "NA",
+          "idChofer": "NA",
+          "dia1": false,
+          "dia2": true,
+          "dia3": false,
+          "dia4": true,
+          "dia5": true,
+          "dia6": false,
+          "dia7": false,
+          "RutaId": 1,
+          "reservacionesRecurrentes": 1,
+          "caducaCapacidadReservada": 60,
+          "recurrente": {
+            "id": 6,
+            "estatus": 2,
+            "complementarykey": "9-1",
+            "createdAt": "2014-06-11T00:00:00.000Z",
+            "updatedAt": "2014-06-11T00:00:00.000Z",
+            "RutaId": 1,
+            "RutaCorridaId": 1,
+            "UsuarioId": 9
           }
         }
       ]
