@@ -122,7 +122,11 @@ exports.listSuggestions = function() {
           delete ruta.rutaPuntos; // no incluye todos los puntos de la ruta en la sugerencia
           var suggest = {lejania: (pCercanoIni.distancia + pCercanoFin.distancia), ruta: ruta, 
             ascensoSugerido: pCercanoIni, descensoSugerido: pCercanoFin};
-          suggests.push(suggest);
+
+          // Sólo inclye las rutas en que la ruta sugerida vaya en el mismo sentido que el expresado por el usuario
+          if(suggest.ascensoSugerido.rutaPunto.indice < suggest.descensoSugerido.rutaPunto.indice){
+            suggests.push(suggest);
+          }
 
         } // for rutas
 
@@ -201,6 +205,8 @@ console.log("hoy-->" + hoy );// + " UTC-->" + hoy.toUTCString());
         {model: db.Ruta, attributes: ['id', 'nombre', 'CompanyownerID']}
     ];    
 
+    queryParams.order = 'fechaOferta';
+
     // lista todas las disponibilidades de las corridas de la ruta especificada
     db.Oferta.findAll(queryParams).success(function(rutacorridaoferta) {
       //res.send(rutacorridaoferta);
@@ -250,18 +256,28 @@ console.log("hoy-->" + hoy );// + " UTC-->" + hoy.toUTCString());
           }        
 
           // manejo de reservas de acuerdo a usuario consultante (a usuarios no de la empresa se descuentan lugares reservados)
+          var fechaAnt = null;
           for (var i = 0; i < result.length; i++) {
             var fecOf = result[i].fechaOferta.toISOString().slice(0, 10) + 'T' + result[i].rutaCorrida.horaSalidaFmt + ':00.000-05:00';
-console.log('Fecha Oferta Txt--->' + fecOf);
             //fecOf = new Date(fecOf.getUTCFullYear(), fecOf.getUTCMonth(), fecOf.getUTCDate())
             fecOf = new Date(fecOf)
 
             var minsToOferta = ((fecOf.getTime() - ahora.getTime())/60000 );
-console.log("Diff::" + minsToOferta  + " Fecha oferta-->" + fecOf + " fechaHoy-->" + ahora)
-
             if(usr.EmpresaId!=result[i].rutum.CompanyownerID && minsToOferta > result[i].rutaCorrida.caducaCapacidadReservada){
               result[i].oferta = result[i].oferta - result[i].reserva;
             }
+
+            // se asigna atributo para que canal web pueda seccionar ofertas
+            if(result[i].values){
+              result[i].dataValues.cambiaFecha = (result[i].fechaOferta != fechaAnt);
+            }
+            else{
+              result[i].cambiaFecha = (result[i].fechaOferta != fechaAnt);
+            }
+            fechaAnt = result[i].fechaOferta;
+            // --------------------
+
+
           };
 
           //res.send(result);

@@ -68,6 +68,7 @@ addOne = function(req, res) {
 };
 
 addBulk = function(req, res) {
+  console.log(req.body.puntos);
     db.RutaPunto.bulkCreate(req.body.puntos).success(function(created) {
       //res.send({ msg: created.length  + ' created'})
       res.send(util.formatResponse('Se crearon correctamente ' + created.length + ' puntos geográficos', null, true, 'ErrRupX009', constErrorTypes, created));
@@ -125,3 +126,78 @@ exports.delete = function() {
     });
   }
 };
+
+/**********************************************************/
+/**********************************************************/
+
+exports.puntosXOferta = function(idOferta, soloParadas, callback){
+
+    db.Oferta.find({ where: {id: idOferta}, include: [{model: db.Ruta}, {model: db.RutaCorrida}]  }).complete(function (err, oferta){
+      if(err!=null || oferta==null){
+        callback(util.formatResponse('Ocurrieron errores al consultar los puntos geográficos [oferta]', err, false, 'ErrRupX017', constErrorTypes, null));
+        return;
+      }
+      exports.puntosXCorrida(oferta.rutaCorrida, soloParadas, callback);
+    });
+};
+
+exports.puntosXCorrida = function(corrida, soloParadas, callback){
+
+    var paramsWhere = {};
+    paramsWhere.RutaId = corrida.RutaId;
+    if(soloParadas) paramsWhere.tipo = {lt: 4};
+
+    var corridaTrayecto = corrida.horaLlegada - corrida.horaSalida;
+
+    db.RutaPunto.findAll( {where: paramsWhere, order: 'indice' } ).complete(function (err, puntos){
+      if(err!=null || puntos==null){
+        callback(util.formatResponse('Ocurrieron errores al consultar los puntos geográficos [puntos]', err, false, 'ErrRupX017', constErrorTypes, null));
+        return;
+      }        
+      // genera hora estimada en parada
+      var sumaTrayectos = 0;
+      for (var i = 0; i < puntos.length; i++) {
+        sumaTrayectos += puntos[i].minutosparallegar;
+      };
+      var horaEst = corrida.horaSalida;
+      for (var i = 0; i < puntos.length; i++) {
+        var trayectoAjustado = (puntos[i].minutosparallegar / sumaTrayectos) * corridaTrayecto;
+        horaEst += trayectoAjustado;
+        puntos[i].dataValues.minutosparallegar = Math.floor(trayectoAjustado);
+        puntos[i].dataValues.horaEstimada = ("0" + Math.floor(horaEst/60)).slice(-2) + ":" + ("0" + Math.floor(horaEst % 60)).slice(-2);
+      };      
+
+      callback(util.formatResponse('', null, true, 'ErrRupX005', constErrorTypes, puntos));
+    });
+
+};
+
+
+exports.puntosXOfertaServ = function() {
+  return function(req, res) {
+    var soloParadas = false;
+    if(req.query.paradas && req.query.paradas == 'true') soloParadas = true;
+
+    exports.puntosXOferta(req.params.ofertaid, soloParadas, function(result){
+      res.send(result);
+    });    
+  }
+}
+
+exports.puntosXCorridaServ = function() {
+  return function(req, res) {
+    var soloParadas = false;
+    if(req.query.paradas && req.query.paradas == 'true') soloParadas = true;
+
+    db.RutaCorrida.find(req.params.corridaid).complete(function (err, corrida){    
+      if(err!=null || corrida==null){
+        callback(util.formatResponse('Ocurrieron errores al consultar los puntos geográficos [corrida]', err, false, 'ErrRupX017', constErrorTypes, null));
+        return;
+      }      
+      exports.puntosXCorrida(corrida, soloParadas, function(result){
+        res.send(result);
+      });    
+    });
+  }
+}
+

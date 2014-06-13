@@ -160,6 +160,9 @@ app.post('/rutapunto', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRES
 app.put('/rutapunto/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutapunto.update());
 app.delete('/rutapunto/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutapunto.delete());
 
+app.get('/rutapunto/xoferta/:ofertaid', usuario.authenticate, rutapunto.puntosXOfertaServ());
+app.get('/rutapunto/xcorrida/:corridaid', usuario.authenticate, rutapunto.puntosXCorridaServ());
+
 // --------------- RutaCorrida ----------------  TODO: Incluir seguridad por rutas compartidas
 var rutacorrida = require('./routes/rutacorrida');
 app.get('/rutacorrida', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutacorrida.list());
