@@ -79,7 +79,9 @@ Ejemplo de post de creación:
 
 Comandos RESTFul:   
 * GET /rutapunto = (Consulta todos los puntos dados de alta)  
-* GET /rutapunto/{id} = (Consulta los puntos de la ruta con el id especificado)  
+* GET /rutapunto/{id} = (Consulta los puntos de la ruta con el id especificado)
+* GET /rutapunto/xoferta/{ofertaid} = ( regresa la lista de puntos incluyendo los horarios estimados por parada, se puede incluir ?paradas=true para filtrar solo paradas, no esquinas)
+* GET /rutapunto/xcorrida/{corridaid} = ( regresa la lista de puntos incluyendo los horarios estimados por parada, se puede incluir ?paradas=true para filtrar solo paradas, no esquinas)
 * POST /rutapunto = (Creación de registro nuevo)  
 * POST /rutapunto?type=bulk = (Creación de todos los registros especificados en una sola operación. PREFERIDA por performance)  
 * PUT /rutapunto/{id} = (Update al registro con el id especificado)  
