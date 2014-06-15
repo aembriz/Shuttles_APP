@@ -40,8 +40,15 @@
 								<th><a href="" ng-click="orderProp='id'">ID</a></th>
 								<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
 								<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
+								<th><a href="" ng-click="orderProp='!dia1'">Lun</a></th>
+								<th><a href="" ng-click="orderProp='!dia2'">Mar</a></th>
+								<th><a href="" ng-click="orderProp='!dia3'">M&iacute;e</a></th>
+								<th><a href="" ng-click="orderProp='!dia4'">Jue</a></th>
+								<th><a href="" ng-click="orderProp='!dia5'">Vie</a></th>
+								<th><a href="" ng-click="orderProp='!dia6'">Sab</a></th>
+								<th><a href="" ng-click="orderProp='!dia7'">Dom</a></th>
 								<th><a href="" ng-click="orderProp='capacidadOfertada'">Capacidad ofertada</a></th>
-								<th><a href="" ng-click="orderProp='tarifa'">Tarifa</a></th>
+								<th><a href="" ng-click="orderProp='tarifa'">Tarifa (MX$)</a></th>
 								<th>-</th>
 							</tr>
 						</thead>
@@ -50,6 +57,13 @@
 								<td>{{corrida.id}}</td>
 								<td><a href="#/empresaCorridaShow/{{corrida.id}}">{{corrida.horaSalidaFmt}}</a></td>
 								<td>{{corrida.horaLlegadaFmt}}</td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia1==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia2==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia3==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia4==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia5==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia6==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia7==true"></span></td>
 								<td>{{corrida.capacidadOfertada}}</td>
 								<td>{{corrida.tarifa}}</td>
 								<td>

@@ -1,29 +1,26 @@
 <div class="container-fluid">
-	<br/>
-	<br/>
 	<script src="js/holder/holder.js"></script>	
+	<link href="css/mapa.css" rel="stylesheet">
+	<script src="js/mapa-crear.js"></script>
 	<h1 class="page-header" align="center">Mi Ruta</h1>
 	<link href="css/panels.css" rel="stylesheet">
 
-    <form name="exForm" novalidate class="form-400">
-	   	<div class="panel panel-success">
-
+    <form name="exForm" novalidate class="form-500" ng-show="step==1">
+		<div class="alert alert-info alert-dismissable">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	     	Para crear una nueva ruta, favor de llenar los <b>datos generales</b> y presionar continuar para configurar los <b>puntos geogr&aacute;ficos</b> de la misma.
+	    </div>
+		<ol class="breadcrumb">
+			<li class="active"><font color="#777777"><b>1.Datos generales</b></font></li>
+			<li class="active">2.Puntos geogr&aacute;ficos</li>
+		</ol> 
+		<div class="panel panel-success">
 	   		<div class="panel-heading" align="center">
-				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Siguente</button>
-				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+	   			<p>Paso 1: <b>Datos generales de la ruta</b></p>
     		</div>
-
-    		<div class="panel-body" >	
+    		<div class="panel-body">	
 		     	<input type="hidden" id="id" name="id" ng-model="ruta.id"/>
 		     	<input type="hidden" id="CompanyownerID" name="CompanyownerID" ng-model="ruta.CompanyownerID"/>
-		     	<!--
-				<div class="form-group">
-					<label for="diasofertafuturo"><font color="gray">D&iacute;as de oferta anticipada:</font></label><br/>
-					<div class="panel panel-default"><div class="panel-body">
-						<font color="gray">{{ruta.diasofertafuturo}}</font>
-					</div></div>
-				</div>				
-				-->
 				<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
 					<label for="exName">Nombre</label><br/>
 					<input type="text" class="form-control" placeholder="Nombre corto de la ruta" id="exName" name="exName" ng-model="ruta.nombre" ng-minlength="3" ng-maxlength="60" required/>
@@ -59,11 +56,100 @@
 			</div>	
 
 			<div class="panel-heading" align="center">
-				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(ruta)">Siguente</button>
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="saveRuta(ruta)">Siguente</button>
 				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
 			</div>
     	</div>
     </form>
+    <form name="exForm2" novalidate class="form-1200" ng-show="step==2">
+		<div class="alert alert-info alert-dismissable">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	     	Para crear los <b>puntos geogr&aacute;ficos</b> por los que pasar&aacute; la ruta favor de escribir una direcci&oacute;n y presionar <b>Agregar</b>. Si lo prefiere puede selecionar las ubicaciones directamente en el mapa. Seleccione los <b>puntos geogr&aacute;ficos</b> creados para editar sus propiedades.  
+	    </div>
+		<ol class="breadcrumb">
+			<li class="active">1.Datos generales</li>
+			<li class="active"><font color="#777777"><b>2.Puntos geogr&aacute;ficos</b></font></li>
+		</ol>	 
+		<div class="panel panel-success">
+	   		<div class="panel-heading" align="center">
+	   			<p>Paso 2: <b>Puntos geogr&aacute;ficos de la ruta</b></p>
+    		</div>
+    		<!--
+			<div class="panel-body">
+				<div class="form-group" ng-class="{ 'has-error' : exForm2.nuevoPunto.$invalid && !exForm2.nuevoPunto.$pristine }">
+					<img src="imgs/Destino.png" alt="Nuevo punto"/>
+					<label for="nuevoPunto">Nuevo punto</label>
+					<input type="text" class="form-control" placeholder="Direcci&oacute;n del inicio de la ruta" id="nuevoPunto" name="nuevoPunto" ng-model="nuevoPunto" required/>
+					<p ng-show="exForm2.nuevoPunto.$invalid && !exForm2.nuevoPunto.$pristine" class="help-block">Se requiere la direcci&oacute;n del nuevo punto.</p>
+				</div>
+			</div>		
+			-->
+			<div class="panel-body" align="center">
+				<div class="box efecto3" id="map_canvas" style="width: 90%; height: 100%"></div>
+			</div>  
+
+			<div class="panel-heading" align="center">
+				<button type="submit" class="btn btn-success" ng-disabled="markers.lenght>2" ng-click="saveMapa(ruta)">Finalizar</button>
+				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+			</div>
+    	</div>
+    </form>
+
+	<!-- Modal - Propiedades de marker -->
+	<div class="modal fade modal-wide" id="MarkerOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		    <!--<div class="modal-content">-->
+			<form name="exFormMarker" novalidate class="modal-content">
+		      	<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			        <h4 class="modal-title" id="myModalLabel">Propiedades de la ubicaci&oacute;n</h4>
+		    	</div>
+		    	<div class="modal-header" ng-show="((errMsg != null)&&(errMsg != ''))||(sucMsg != null)&&(sucMsg != '')">
+					<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
+					  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					  <strong>Error!</strong> {{errMsg}}
+					</div>
+					<div class="alert alert-success alert-dismissable" ng-show="(sucMsg != null)&&(sucMsg != '')">
+					  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					  {{sucMsg}}
+					</div>
+				</div>
+
+		    	<div class="modal-body">
+					<div class="form-group" ng-class="{ 'has-error' : exFormMarker.title.$invalid && !exFormMarker.title.$pristine }">
+						<label for="title">T&iacute;tulo</label><br/>
+						<input type="text" class="form-control" placeholder="T&iacute;tulo significativo del punto" id="title" name="title" ng-model="selectedMarker.title" ng-maxlength="60"/> 
+					</div>
+					<!-- Single button -->
+					<div class="btn-group">
+						<label for="tipo">T&iacute;po</label><br/>
+					  	<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+					    <img ng-show="selectedMarker.icon=='imgs/1.png'" src="imgs/1.png" alt="Inicio"/> 
+					    <img ng-show="selectedMarker.icon=='imgs/Destino.png'" src="imgs/Destino.png" alt="Vuelta"/>
+					    <img ng-show="selectedMarker.icon=='imgs/3.png'" src="imgs/3.png" alt="Parada"/> 
+					    <!--<img ng-show="selectedMarker.icon=='imgs/2.png'" src="imgs/2.png" alt="Final"/>-->
+					    <span class="caret"></span>
+					  	</button>
+					  	<ul class="dropdown-menu" role="menu">
+					    	<li><a ng-click="selectedMarker.icon='imgs/1.png'"><img src="imgs/1.png" alt="Inicio"/>Inicio</a></li>
+					    	<li><a ng-click="selectedMarker.icon='imgs/Destino.png'"><img src="imgs/Destino.png" alt="Vuelta"/>Vuelta</a></li>
+					    	<li><a ng-click="selectedMarker.icon='imgs/3.png'"><img src="imgs/3.png" alt="Parada"/>Parada</a></li>
+					    	<!--<li><a ng-click="selectedMarker.icon='imgs/2.png'"><img src="imgs/2.png" alt="Final"/>Final</a></li>-->
+					  	</ul>
+
+					  	
+					</div>
+		    	</div>
+
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+			        <button type="button" class="btn btn-success" ng-click="savePunto(selectedMarker)" data-dismiss="modal">Salvar cambios</button>
+			    </div>
+			
+	    	</form>
+	  	</div>
+	</div>	<!-- End Modal -->
+
 	<br/>
 	  				  		
 </div>

@@ -27,10 +27,10 @@
           <link href="css/login.css" rel="stylesheet">
           <div class="container-fluid" ng-controller="LoginController">            
             <div align="center"> <img src="imgs/logo_preliminar.png" width="180px"></div>
-            <form class="form-signin">              
+            <form class="form-signin" autocomplete="on">              
               <div align="center">
                 <!-- <h2 class="form-signin-heading">Iniciar sesión</h2> -->  
-                <input id="usr" type="text" class="input-block-level" placeholder="Correo electr&oacute;nico" ng-model="usr">
+                <input id="usr" type="text" class="input-block-level" placeholder="Correo electr&oacute;nico" ng-model="usr" autofill="autofill">
                 <input id="pwd" type="password" class="input-block-level" placeholder="Contraseña" ng-model="pwd">
                 <br/>
                 <a href="#/loginForgotPass">¿Olvidaste tu contraseña?</a> 

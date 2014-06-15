@@ -5,6 +5,8 @@
 var muukControllers = angular.module('muukControllers', []);
 var DebugMode = true;
 
+var msgConfirmarCancelarRutaNueva = 'Se cancelará la ruta y se perderán los cambios hechos, ¿Deseas continuar?';
+
 function isValidToken(result, $window) {
   if ((result.data != null)&&(result.data.error != null)&&(result.data.error == "The security token is invalid. [The AuthToken has expired. Log in again please. [ERR0001]]")) {
     return false;
@@ -16,6 +18,7 @@ function ForceLogOut($window, $scope, $location, AuthenticationService) {
   $window.alert("La sesión ha terminado. Favor de voler a firmarse." + $scope.user.authtoken);
   AuthenticationService.logout();
   $scope.user.authenticated = AuthenticationService.isLoggedIn();
+  console.log('ForceLogOut - goto(Login)');
   $location.path('login');
 }
 
@@ -44,6 +47,7 @@ muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'Sessio
       // this should replace login with register form
       console.log('VAMOS A LOGIN...');
       $scope.mainSection = 'login';
+      console.log('AppCtrl.gotoLogin - goto(Login)');
       $location.path('login');
     };   
   }]);
@@ -56,15 +60,7 @@ muukControllers.controller('LoginController', ['$window', '$scope', '$location',
         $scope.message = data.message;
       }
       else{            
-//        $window.alert('Por hacer login...');
-        $scope.user.authenticated = AuthenticationService.isLoggedIn();
-        $scope.user.name = SessionService.currentUser.name;
-        $scope.user.empresa = SessionService.currentUser.empresa;
-        $scope.user.authtoken = SessionService.currentUser.authtoken;
-        $scope.user.role = SessionService.currentUser.role;
-        $scope.user.id = SessionService.currentUser.id;
-  //      console.log('LOGIN...');
-  //      console.log($scope.user.authtoken);
+        console.log('LoginController.logincallbackSuccess - goto(redirect)');
         $location.path('redirect');        
       }      
       $scope.$apply();
@@ -109,6 +105,7 @@ muukControllers.controller('MainCtrl', ['$scope', '$location', 'AuthenticationSe
     $scope.logout = function(){
       AuthenticationService.logout();
       $scope.user.authenticated = AuthenticationService.isLoggedIn();
+      console.log('MainCtrl.logout - goto(Login)');
       $location.path('login');
     };
   }]);
@@ -274,6 +271,7 @@ muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', '$loca
     
     $scope.cancel = function(){
       $scope.mainSection = 'login';
+      console.log('LoginRegisterUserCtrl.cancel - goto(Login)');
       $location.path('login');
     };
     
@@ -462,6 +460,7 @@ function CreateEmpresa($window, $scope, $location, AuthenticationService, empres
   ex.$create({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
+      console.log('CreateEmpresa - goto(' + locationTo + ')');
       $location.path(locationTo);
     } else {
       $scope.errMsg = res.msg;
@@ -523,6 +522,7 @@ function UpdateEmpresa($window, $scope, $location, AuthenticationService, empres
   ex.$update({ exId: empresa.id }, function(res) {
     if (res.success) {
       $scope.errMsg = null;
+      console.log('UpdateEmpresa - goto(' + locationTo + ')');
       $location.path(locationTo);
     } else {
       $scope.errMsg = res.msg;
@@ -594,6 +594,7 @@ muukControllers.controller('EmbarqEmpresaPreregisterFormCtrl', ['$window', '$sco
     };
     
     $scope.cancel = function(){
+      console.log('EmbarqEmpresaPreregisterFormCtrl.cancel - goto(embarqEmpresaList)');
       $location.path('embarqEmpresaList');
     };
     
@@ -617,6 +618,7 @@ muukControllers.controller('EmbarqEmpresaFormCtrl', ['$window', '$scope', '$loca
     };    
     
     $scope.cancel = function(){
+      console.log('EmbarqEmpresaFormCtrl.cancel - goto(embarqEmpresaList)');
       $location.path('embarqEmpresaList');
     };
     
@@ -628,6 +630,7 @@ muukControllers.controller('EmbarqEmpresaDetailCtrl', ['$window', '$scope', '$lo
     ShowEmpresa($window, $scope, $location, AuthenticationService, $routeParams.id, Empresa);
     
     $scope.cancel = function(){
+      console.log('EmbarqEmpresaDetailCtrl.cancel - goto(embarqEmpresaList)');
       $location.path('embarqEmpresaList');
     };    
   }]); 
@@ -640,6 +643,7 @@ muukControllers.controller('EmbarqEmpresaUpdateCtrl', ['$window', '$scope', '$lo
     };
     
     $scope.cancel = function(){
+      console.log('EmbarqEmpresaUpdateCtrl.cancel - goto(embarqEmpresaList)');
       $location.path('embarqEmpresaList');
     };
   }]);
@@ -651,6 +655,7 @@ muukControllers.controller('EmbarqSolicitudEmpresaShowCtrl', ['$window', '$scope
     ShowEmpresa($window, $scope, $location, AuthenticationService, $routeParams.id, Empresa);
     
     $scope.cancel = function(){
+      console.log('EmbarqSolicitudEmpresaShowCtrl.cancel - goto(embarqSolicitudEmpresaList)');
       $location.path('embarqSolicitudEmpresaList');
     };    
   }]); 
@@ -663,6 +668,7 @@ muukControllers.controller('EmbarqSolicitudEmpresaUpdateCtrl', ['$window', '$sco
     };
     
     $scope.cancel = function(){
+      console.log('EmbarqSolicitudEmpresaUpdateCtrl.cancel - goto(embarqSolicitudEmpresaList)');
       $location.path('embarqSolicitudEmpresaList');
     };
   }]);
@@ -841,6 +847,7 @@ function CreateRuta($window, $scope, $location, AuthenticationService, ruta, Rut
   ex.$create({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
+      console.log('CreateRuta - goto(' + locationTo + ')');
       $location.path(locationTo);
     } else {
       $scope.errMsg = res.msg;
@@ -882,6 +889,7 @@ function UpdateRuta($window, $scope, $location, AuthenticationService, ruta, Rut
   ex.$update({ exId: ruta.id }, function(res) {
     if (res.success) {
       $scope.errMsg = null;
+      console.log('UpdateRuta - goto(' + locationTo + ')');
       $location.path(locationTo);
     } else {
       $scope.errMsg = res.msg;
@@ -990,6 +998,7 @@ muukControllers.controller('EmbarqRutaFormCtrl', ['$window', '$scope', '$locatio
   };
 
   $scope.cancel = function(){
+    console.log('EmbarqRutaFormCtrl.cancel - goto(embarqRutaList)');
     $location.path('embarqRutaList');
   };
 
@@ -1001,6 +1010,7 @@ muukControllers.controller('EmbarqRutaDetailCtrl', ['$window', '$scope', '$locat
     LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.cancel = function(){
+      console.log('EmbarqRutaDetailCtrl.cancel - goto(embarqRutaList)');
       $location.path('embarqRutaList');
     };
   }]);
@@ -1014,6 +1024,7 @@ muukControllers.controller('EmbarqRutaUpdateCtrl', ['$window', '$scope', '$locat
     };
 
     $scope.cancel = function(){
+      console.log('EmbarqRutaUpdateCtrl.cancel - goto(embarqRutaList)');
       $location.path('embarqRutaList');
     };
   }]);
@@ -1126,6 +1137,7 @@ function UpdateRuta($window, $scope, $location, AuthenticationService, ruta, Rut
   ex.$update({ exId: ruta.id }, function(res) {
     if (res.success) {
       $scope.errMsg = null;
+      console.log('UpdateRuta - goto(' + locationTo + ')');
       $location.path(locationTo);
     } else {
       $scope.errMsg = res.msg;
@@ -1175,6 +1187,7 @@ muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$loca
       }
     };
     $scope.cancel = function(){
+      console.log('EmbarqCorridaListCtrl.cancel - goto(embarqRutaList)');
       $location.path('embarqRutaList');
     };
     
@@ -1186,6 +1199,7 @@ muukControllers.controller('EmbarqCorridaDetailCtrl', ['$window', '$scope', '$lo
     LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, $routeParams.id);
 
     $scope.cancel = function(){
+      console.log('EmbarqCorridaDetailCtrl.cancel - goto(embarqCorridaList/' + $scope.rutaid);
       $location.path('embarqCorridaList/' + $scope.rutaid);
     };
   }]);
@@ -1224,6 +1238,7 @@ muukControllers.controller('EmbarqSolicitudCorridaListCtrl', ['$window', '$scope
       }
     };
     $scope.cancel = function(){
+      console.log('EmbarqSolicitudCorridaListCtrl.cancel - goto(embarqSolicitudRutaList)');
       $location.path('embarqSolicitudRutaList');
     };
   }]);
@@ -1232,6 +1247,7 @@ muukControllers.controller('EmbarqSolicitudCorridaDetailCtrl',['$window', '$scop
     LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, $routeParams.id);
 
     $scope.cancel = function(){
+      console.log('EmbarqSolicitudCorridaDetailCtrl.cancel - goto(embarqSolicitudCorridaList/' + $scope.rutaid);
       $location.path('embarqSolicitudCorridaList/' + $scope.rutaid);
     };
   }]);
@@ -1242,6 +1258,7 @@ muukControllers.controller('EmbarqSolicitudRutaShowCtrl', ['$window', '$scope', 
     LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.cancel = function(){
+      console.log('EmbarqSolicitudRutaShowCtrl.cancel - goto(embarqSolicitudRutaList)');
       $location.path('embarqSolicitudRutaList');
     };
   }]);
@@ -1254,6 +1271,7 @@ muukControllers.controller('EmbarqSolicitudRutaUpdateCtrl', ['$window', '$scope'
     };
 
     $scope.cancel = function(){
+      console.log('EmbarqSolicitudRutaUpdateCtrl - goto(embarqSolicitudRutaList)');
       $location.path('embarqSolicitudRutaList');
     };
   }]);
@@ -1470,6 +1488,7 @@ muukControllers.controller('EmpresaPerfilEditCtrl', ['$window', '$scope', '$loca
     };
 
     $scope.cancel = function(){
+      console.log('EmpresaPerfilEditCtrl.cancel - goto(empresaPerfilShow)');
       $location.path('empresaPerfilShow');
     };
 
@@ -1567,7 +1586,10 @@ function CreateUsuarioPreregister($window, $scope, $location, AuthenticationServ
   ex.$create({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
-      $location.path(locationTo);
+      if (locationTo != '') {
+        console.log('CreateUsuarioPreregister - goto(' + locationTo + ')');
+        $location.path(locationTo);
+      }
     } else {
       $scope.errMsg = res.msg;
       if (DebugMode) {
@@ -1608,6 +1630,7 @@ function UpdateUsuario($window, $scope, $location, AuthenticationService, usuari
   ex.$update({ exId: usuario.id }, function(res) {
     if (res.success) {
       $scope.errMsg = null;
+      console.log('UpdateUsuario - goto(' + locationTo + ')');
       $location.path(locationTo);
     } else {
       $scope.errMsg = res.msg;
@@ -1674,6 +1697,7 @@ muukControllers.controller('EmpresaUsuarioFormCtrl', ['$window', '$scope', '$loc
     };
 
     $scope.cancel = function(){
+      console.log('EmpresaUsuarioFormCtrl.cancel - goto(empresaUsuarioList)');
       $location.path('empresaUsuarioList');
     };
 
@@ -1685,6 +1709,7 @@ muukControllers.controller('EmpresaUsuarioShowCtrl', ['$window', '$scope', '$loc
     LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
     
     $scope.cancel = function(){
+      console.log('EmpresaUsuarioShowCtrl.cancel - goto(empresaUsuarioList)');
       $location.path('empresaUsuarioList');
     };
   }]);
@@ -1697,6 +1722,7 @@ muukControllers.controller('EmpresaUsuarioEditCtrl', ['$window', '$scope', '$loc
     };
     
     $scope.cancel = function(){
+      console.log('EmpresaUsuarioEditCtrl.cancel - goto(empresaUsuarioList)');
       $location.path('empresaUsuarioList');
     };
   }]);
@@ -1715,7 +1741,7 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', '
     };
 
     $scope.save = function(usuarios) {
-      var message = "";
+      var message = "";      
       var created = 0;
       var userList = usuarios.split("\n");
       for (var index in userList) {
@@ -1739,17 +1765,24 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', '
       }  // end for
       
       if (message == "") {
+        console.log('VAMOS a empresaUsuarioList');
         $window.alert("Se invitaron a " + created.toString() + "/" + UserObj.length + " usuarios." );
+//        $scope.cancel();
+        console.log('EmpresaMultiUsuarioNewCtrl.save - goto(empresaUsuarioList)');
         $location.path('empresaUsuarioList');
+        return true;
       } else {
         $scope.usuarios = message;
         $window.alert("Se invitaron a " + created.toString() + "/" + UserObj.length + " usuarios. Favor de verificar los datos de usuarios sobrantes." );
+        console.log('ForceLogOut - goto(' + locationTo + ')');
+        console.log('EmpresaMultiUsuarioNewCtrl.save - goto(empresaMultiUsuarioNew)');
         $location.path('empresaMultiUsuarioNew');
       }
 
     };
 
     $scope.cancel = function(){
+      console.log('EmpresaMultiUsuarioNewCtrl.cancel - goto(empresaUsuarioList)');
       $location.path('empresaUsuarioList');
     };
 
@@ -1801,6 +1834,7 @@ muukControllers.controller('EmpresaSolicitudUsuarioShowCtrl', ['$window', '$scop
     LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
     
     $scope.cancel = function(){
+      console.log('EmpresaSolicitudUsuarioShowCtrl.cancel - goto(empresaSolicitudUsuarioList)');
       $location.path('empresaSolicitudUsuarioList');
     };
   }]);
@@ -1813,6 +1847,7 @@ muukControllers.controller('EmpresaSolicitudUsuarioEditCtrl', ['$window', '$scop
     };
 
     $scope.cancel = function(){
+      console.log('EmpresaSolicitudUsuarioEditCtrl.cancel - goto(empresaSolicitudUsuarioList)');
       $location.path('empresaSolicitudUsuarioList');
     };
   }]);
@@ -1874,10 +1909,13 @@ muukControllers.controller('EmpresaRutaListCtrl', ['$window', '$scope', '$locati
     };
 
   }]);
-muukControllers.controller('EmpresaRutaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Ruta', 'SessionService',
-  function($window, $scope, $location, AuthenticationService, Ruta, SessionService) {
+muukControllers.controller('EmpresaRutaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Ruta', 'SessionService', 'Mapa',
+  function($window, $scope, $location, AuthenticationService, Ruta, SessionService, Mapa) {
     $scope.master = {};
     $scope.user.empresa = SessionService.currentUser.empresa;
+    $scope.step = 1;
+    $scope.selectedMarker = null;
+    $scope.selectedMarkerIndex = -1;
 
     $scope.update = function(ruta) {
       $scope.master = angular.copy(ruta);
@@ -1889,29 +1927,45 @@ muukControllers.controller('EmpresaRutaFormCtrl', ['$window', '$scope', '$locati
       $scope.ruta.diasofertafuturo = 7; // TODO: aceptar cambio de dias futuros
     };
 
-    $scope.save = function(ruta) {
-//      CreateRuta($window, $scope, $location, AuthenticationService, ruta, Ruta, 'empresaRutaList');
-      console.log('AAAAAAAAAAAAAAAA');
+    $scope.saveRuta = function(ruta) {
       var ex = new Ruta(ruta);
       console.log(ex);
     
-      //ex.$save();
       ex.$create({}, function(){
         var lista = Ruta.query();
         lista.$promise.then(function(result){
         for (var i = 0; i < result.resultObject.length; i++) {
           if(result.resultObject[i].nombre == ruta.nombre ){
             console.log("ya cargo ---< " + result.resultObject[i].id);
-            $location.path('mapaview/'+result.resultObject[i].id);
+            $scope.step = 2;
+            creapuntos();
+            //ShowMapa($window, $scope, $location, AuthenticationService, idm, Mapa);
+//            console.log('EmpresaRutaFormCtrl.save - goto(mapaview/'+result.resultObject[i].id);
+//            $location.path('mapaview/'+result.resultObject[i].id);
           }
         }
       });
   //      $location.path('empresaRutaList');
       });
+    }; 
+/*
+    $scope.savePunto = function(selectedMarker) {
+      $scope.selectedMarker = selectedMarker;
     };
+*/
+    $scope.saveMapa = function(mapa) {  
+      if($scope.user.role == 'EMPRESA'){
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'empresaRutaList'); 
+      }else if($scope.user.role == 'ADMIN'){
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqRutaList'); 
+      }       
+    }; 
 
     $scope.cancel = function(){
-      $location.path('empresaRutaList');
+      if ($window.confirm(msgConfirmarCancelarRutaNueva)) {
+        console.log('EmpresaRutaFormCtrl.cancel - goto(empresaRutaList)');
+        $location.path('empresaRutaList');
+      }
     };
 
     $scope.reset();
@@ -1921,6 +1975,7 @@ muukControllers.controller('EmpresaRutaShowCtrl', ['$window', '$scope', '$locati
     LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
 
     $scope.cancel = function(){
+      console.log('EmpresaRutaShowCtrl.cancel - goto(empresaRutaList)');
       $location.path('empresaRutaList');
     };
   }]);
@@ -1933,6 +1988,7 @@ muukControllers.controller('EmpresaRutaEditCtrl', ['$window', '$scope', '$locati
     };
 
     $scope.cancel = function(){
+      console.log('EmpresaRutaEditCtrl.cancel - goto(empresaRutaList)');
       $location.path('empresaRutaList');
     };
   }]);
@@ -1962,6 +2018,7 @@ function CreateCorrida($window, $scope, $location, AuthenticationService, corrid
   ex.$create({}, function(res){
     if (res.success) {
       $scope.errMsg = null;
+      console.log('CreateCorrida - goto(' + locationTo + ')');
       $location.path(locationTo);
     } else {
       $scope.errMsg = res.msg;
@@ -2003,6 +2060,7 @@ function UpdateCorrida($window, $scope, $location, AuthenticationService, corrid
   ex.$update({ exId: corrida.id }, function(res) {
     if (res.success) {
       $scope.errMsg = null;
+      console.log('UpdateCorrida - goto(' + locationTo + ')');
       $location.path(locationTo);
     } else {
       $scope.errMsg = res.msg;
@@ -2052,6 +2110,7 @@ muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$loc
       }
     };
     $scope.cancel = function(){
+      console.log('EmpresaCorridaListCtrl.cancel - goto(empresaRutaList)');
       $location.path('empresaRutaList');
     };
     $scope.generarOferta = function(exId) {
@@ -2118,6 +2177,7 @@ muukControllers.controller('EmpresaCorridaFormCtrl', ['$window', '$scope', '$loc
     };
 
     $scope.cancel = function(){
+      console.log('EmpresaCorridaFormCtrl.cancel - goto(empresaCorridaList/' + $scope.corrida.RutaId);
       $location.path('empresaCorridaList/' + $scope.corrida.RutaId);
     };
 
@@ -2136,6 +2196,7 @@ muukControllers.controller('EmpresaCorridaShowCtrl', ['$window', '$scope', '$loc
     LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, $routeParams.id);
 
     $scope.cancel = function(){
+      console.log('EmpresaCorridaShowCtrl.cancel - goto(empresaCorridaList/' + $scope.corrida.RutaId);
       $location.path('empresaCorridaList/' + $scope.corrida.RutaId);
     };
   }]);
@@ -2153,6 +2214,7 @@ muukControllers.controller('EmpresaCorridaEditCtrl', ['$window', '$scope', '$loc
     };
 
     $scope.cancel = function(){
+      console.log('EmpresaCorridaEditCtrl.cancel - goto(empresaCorridaList/' + $scope.corrida.RutaId);
       $location.path('empresaCorridaList/' + $scope.corrida.RutaId);
     };
 
@@ -2285,6 +2347,7 @@ muukControllers.controller('UsuarioPerfilEditCtrl', ['$window', '$scope', '$loca
     };
 
     $scope.cancel = function(){
+      console.log('UsuarioPerfilEditCtrl.cancel - goto(usuarioPerfilShow)');
       $location.path('usuarioPerfilShow');
     };
   }]);
@@ -2450,6 +2513,7 @@ function SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa,
     function(res) {
       if (res.success) {
         $scope.errMsg = null;
+        console.log('SaveMapa - goto(' + locationTo + ')');
         $location.path(locationTo);
       } else {
         $scope.errMsg = res.msg;
@@ -2792,6 +2856,7 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
             results[i].espera.folio = '0' + results[i].espera.folio;
           }
         }
+        
         var myDate = new Date(results[i].fechaOferta);
         var diaSemana = myDate.getDay();
         if (diaSemana == 1) {
@@ -2811,6 +2876,9 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
         }
         results[i].fecha = results[i].fecha + '[' + myDate.getDate() + '/' + myDate.getMonth() + '/' + myDate.getFullYear() + ']';
       }
+//      console.log(results);
+      return results;
+      /*
       // inicializamos variables para comparar fechas
       var daymilisec = 24 * 60 * 60 * 1000;
       var hoy = new Date();
@@ -2823,6 +2891,7 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
       var d7  = new Date(hoy.getTime() + 7 * daymilisec);
       var d8  = new Date(hoy.getTime() + 8 * daymilisec);
 
+      $scope.dias = [][];
       $scope.dias0 = [];
       $scope.dias1 = [];
       $scope.dias2 = [];
@@ -2855,14 +2924,16 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
         } else if ((fechaOferta > d1)&&(fechaOferta < d8)) {
           $scope.dias7.push(results[i]);
         }
-      }        
+      }    
+      */    
     };
 
-    $scope.showCorridaList = function(ruta){
+    $scope.showCompraList = function(ruta){
       RutaOferta.query({exId: ruta.id}, function(res){
         if (res.success) {
           $scope.errMsg = null;
           $scope.corridas = $scope.prepareResults(res.resultObject);
+          console.log($scope.corridas);
           $('#myModal').modal({
             show: true
           });          
@@ -3163,6 +3234,7 @@ muukControllers.controller('MapaFormCtrl', ['$window', '$scope', '$location', 'A
     }; 
 
     $scope.cancel = function(){
+      console.log('MapaFormCtrl.cancel - goto(embarqRutaList)');
       $location.path('embarqRutaList');
     };  
   }]);
@@ -3180,6 +3252,7 @@ muukControllers.controller('EmbarqSolicitudMapaFormCtrl', ['$window', '$scope', 
     }; 
 
     $scope.cancel = function(){
+      console.log('EmbarqSolicitudMapaFormCtrl.cancel - goto(embarqSolicitudRutaList)');
       $location.path('embarqSolicitudRutaList');
     };  
   }]);
@@ -3197,6 +3270,7 @@ muukControllers.controller('EmpresaMapaFormCtrl', ['$window', '$scope', '$locati
     }; 
 
     $scope.cancel = function(){
+      console.log('EmpresaMapaFormCtrl.cancel - goto(empresaRutaList)');
       $location.path('empresaRutaList');
     };  
   }]);

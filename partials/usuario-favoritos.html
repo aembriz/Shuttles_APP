@@ -27,7 +27,6 @@
 					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
 					<th><a href="" ng-click="orderProp='origentxt'">Origen</a></th>
 					<th><a href="" ng-click="orderProp='destinotxt'">Destino</a></th>
-					<th>Estatus</th>
 					<th>-</th>
 				</tr>
 			</thead>
@@ -47,8 +46,13 @@
 					<td>{{ruta.nombre}}</td>
 					<td>{{ruta.origentxt}}</td>
 					<td>{{ruta.destinotxt}}</td>
-					<td>{{ruta.estatu.stsNombre}}</td>
 					<td>
+						<a type="button" class="btn btn-info" href="#/usuarioRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
+						<a type="button" class="btn btn-info" href="#/usuarioMapaShow/{{ruta.id}}"><span class="glyphicon glyphicon-map-marker"></span></a>						
+						<a type="button" class="btn btn-info" href="#/usuarioCorridaList/{{ruta.id}}"><span class="glyphicon glyphicon-calendar"></span></a>
+						<a type="button" class="btn btn-info" ng-click="showCorridaList(ruta)"><span class="glyphicon glyphicon-usd"></span></a>
+
+	
 						<!--
 						<a type="button" class="btn btn-info" href="#/empresaRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
 						<a type="button" class="btn btn-info" href="#/empresaMapaShow/{{ruta.id}}"><span class="glyphicon glyphicon-map-marker"></span></a>						

@@ -4,7 +4,7 @@
 
 var muukServices = angular.module('muukServices', ['ngResource']);
 //var servicesUrl = "http://localhost:8082";
-var servicesUrl = "http://54.201.26.22:8082";
+var servicesUrl = "http://54.201.26.22:8083";
 
 muukServices.factory('RoleService', ['$http',
   function ($http) {
