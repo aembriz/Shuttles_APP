@@ -75,6 +75,40 @@ Ejemplo de post de creación:
         "CompanyownerID": 2
       }
 
+Ejemplo del listado Get de la ruta:
+
+    [
+    {
+      "id": 1,
+      "nombre": "Ruta 1",
+      "descripcion": "Descripcion 1",
+      "distanciaaprox": 20,
+      "tiempoaprox": 30,
+      "origentxt": "Barranca del muerto",
+      "destinotxt": "Indios verdes",
+      "diasofertafuturo": 5,
+      "CompanyownerID": 1,
+      "EstatusId": 3,
+      "companyowner": {
+        "id": 1,
+        "nombre": "MetLife",
+        "razonsocial": "MetLife México KA",
+        "rfc": "MET93994BA",
+        "EstatusId": 3
+      },
+      "estatu": {
+        "id": 3,
+        "stsNombre": "Autorizado"
+      },
+      "capacidadTotal": 5,
+      "capacidadReservada": 2,
+      "capacidadOfertada": 3,
+      "capacidadReservadaUtilizada": 1,
+      "recorridoParadas": 3,
+      "recorridoTiempo": "01:05"
+    }
+    ]
+
 [URL...]/rutapunto
 
 Comandos RESTFul:   
@@ -601,7 +635,7 @@ Crea reservaciones recurrentes para una corrida la cual debe de ser de la misma 
 [URL...]/rutacompartir
 
 Comandos RESTFul:   
-* GET /reservacionrecurrente = (Consulta todos.)  
+* GET /reservacionrecurrente = (Consulta todos. Se puede incluir filtro ?ruta={rutaid} para mostrar las reservaciones recurrentes de una ruta)  
 * GET /reservacionrecurrente/ruta/{rutaid}/corrida = (Consulta las corridas de la ruta incluyendo las reservaciones recurrentes que el usuario haya generado para cada corrida.)  
 * GET /reservacionrecurrente/{id} = (Consulta registro con el id especificado  
 * POST /reservacionrecurrente = (Creación de registro nuevo)  

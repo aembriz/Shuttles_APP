@@ -3,7 +3,7 @@ var constant = require('../config/constant.js');
 var util = require('./utilities');
 var constErrorTypes = {'ErrRutX000': '', 'ErrRutX000':''};
 
-exports.list = function() { 
+exports.list_bak = function() { 
   return function(req, res){
     var sts = 0;
     var params = {};
@@ -33,6 +33,76 @@ exports.list = function() {
     });
   }
 };
+
+exports.list = function() { 
+  return function(req, res){
+    var sts = 0;
+    var params = {};
+
+    if('estatus' in req.query){
+      sts = constant.estatus.Ruta[req.query.estatus];
+      if(!params.where) params.where = {};
+      params.where.EstatusId = sts;      
+    }
+    if('empresa' in req.query){
+      if(!params.where) params.where = {};
+      params.where.CompanyownerID = req.query.empresa;
+    }
+
+    if(req.user.role != 'ADMIN') { if(!params.where) params.where = {}; params.where.CompanyownerID = req.user.EmpresaId; } // SEC: solo puede ver rutas de su empresa TODO: incluir rutas compartidas
+
+
+
+    params.include = [
+        {model: db.Empresa, as: 'companyowner'},
+        {model: db.Estatus, as: 'Estatus', attributes: ['id', 'stsNombre']},
+        {model: db.RutaCorrida, as: 'Corridas', attributes: ['id', 'capacidadTotal', 'capacidadReservada', 'capacidadOfertada', 'reservacionesRecurrentes']},
+        {model: db.RutaPunto, as: 'RutaPuntos', where: db.Sequelize.or({'tipo' : 2},{'tipo': 3}), attributes: ['id', 'minutosparallegar'] }
+      ];
+
+    db.Ruta.findAll(params).success(function(rutas) {
+            
+      if(rutas!= null){
+        for (var i = 0; i < rutas.length; i++) {
+          // contabiliza capacidades de corridas
+          var capTot = 0; var capRsv = 0; var capOfe = 0; var rsvRec = 0;
+          if(rutas[i].corridas && rutas[i].corridas!=null){        
+            for (var j = 0; j < rutas[i].corridas.length; j++) {
+              var corrida = rutas[i].corridas[j];
+              capTot += corrida.capacidadTotal;
+              capRsv += corrida.capacidadReservada;
+              capOfe += corrida.capacidadOfertada;
+              rsvRec += corrida.reservacionesRecurrentes;
+            }
+          }
+          rutas[i].dataValues.capacidadTotal = capTot;
+          rutas[i].dataValues.capacidadReservada = capRsv;
+          rutas[i].dataValues.capacidadOfertada = capOfe;
+          rutas[i].dataValues.capacidadReservadaUtilizada = rsvRec;
+
+
+          // contabiliza  puntos de la ruta      
+          var numParadas = 0; var tiempoTotal = 0;
+          if(rutas[i].rutaPuntos && rutas[i].rutaPuntos!=null){
+            numParadas = rutas[i].rutaPuntos.length;
+            for (var j = 0; j < rutas[i].rutaPuntos.length; j++) {
+              var punto = rutas[i].rutaPuntos[j];
+              tiempoTotal += punto.minutosparallegar;
+            }
+          }
+          rutas[i].dataValues.recorridoParadas = numParadas;
+          rutas[i].dataValues.recorridoTiempo = ("0" + Math.floor(tiempoTotal/60)).slice(-2) + ":" + ("0" + Math.floor(tiempoTotal % 60)).slice(-2) ;
+        };
+      
+      }
+
+      res.send(util.formatResponse('', null, true, 'ErrRutX001', constErrorTypes, rutas));
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al acceder a las rutas', err, false, 'ErrRutX002', constErrorTypes, null));
+    });
+  }
+};
+
 
 /*
  * GET ONE 

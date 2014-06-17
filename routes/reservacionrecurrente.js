@@ -9,6 +9,10 @@ exports.list = function() {
   	var usr = req.user;
   	var paramsWhere = {};
 
+    if('ruta' in req.query){      
+      params.where.RutaId = req.query.ruta;
+    }
+
   	if(usr.role != 'ADMIN') paramsWhere.UsuarioId = usr.id;
 
   	db.ReservacionRecurrente.findAll({ where: paramsWhere, include: [
