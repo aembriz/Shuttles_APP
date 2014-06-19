@@ -1351,6 +1351,48 @@ function UpdateRuta($window, $scope, $location, AuthenticationService, ruta, Rut
     }
   });       
 }
+function LoadRutaUsuariosXRuta($window, $scope, $location, AuthenticationService, rutaid, RutaUsuariosXRuta) {
+  RutaUsuariosXRuta.query({ruta: rutaid}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      $scope.usuarios = res.resultObject;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  }); 
+}
+function LoadRutaUsuariosXCorrida($window, $scope, $location, AuthenticationService, rutaid, corridaid, RutaUsuariosXCorrida) {
+  RutaUsuariosXCorrida.query({rutaid: rutaid, corridaid: corridaid}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      $scope.usuarios = res.resultObject;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  }); 
+}
 muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Ruta', 'RutasAutorizadas', 'RutaCompartir', 'EmpresasAutorizadas', 'EmpresasXCompartir',
   function($window, $scope, $location, AuthenticationService, Ruta, RutasAutorizadas, RutaCompartir, EmpresasAutorizadas, EmpresasXCompartir) {
     LoadRutasAutorizadas($window, $scope, $location, AuthenticationService, RutasAutorizadas);
@@ -1424,8 +1466,6 @@ muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', '$locatio
     };  
 
   }]);
-
-                                                  
 muukControllers.controller('EmbarqRutaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta', 'SessionService', 'Mapa', 'Empresa',
   function($window, $scope, $location, AuthenticationService, $routeParams, Ruta, SessionService, Mapa, Empresa) {
     var EmpresaSelected = $routeParams.id;
@@ -1557,7 +1597,25 @@ muukControllers.controller('EmbarqRutaUpdateCtrl', ['$window', '$scope', '$locat
       $location.path('embarqRutaList');
     };
   }]);
+muukControllers.controller('EmbarqRutaUsuariosListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario', 'RutaUsuariosXRuta',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario, RutaUsuariosXRuta) {
+    console.log($routeParams);
+    $scope.rutaid = $routeParams.id;
+    LoadRutaUsuariosXRuta($window, $scope, $location, AuthenticationService, $scope.rutaid, RutaUsuariosXRuta);
+    $scope.orderProp = 'nombre';
 
+    $scope.deleteUsuario = function (exId) {
+      if( $window.confirm("Se eliminará el usuario con id [" + exId + "] ¿Continuar?")) {
+        
+      }
+    };
+
+    $scope.cancel = function(){
+      console.log('EmbarqRutaUsuariosListCtrl.cancel - goto(embarqRutaList)');
+      $location.path('embarqRutaList');
+    };    
+
+  }]);
 // -----------------------------------------------------
 /* EmbarQ - Ruta */
 muukControllers.controller('EmbarqRutaCompartidaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'RutaCompartida', 'RutaCompartidaList',
@@ -1684,8 +1742,8 @@ function UpdateRuta($window, $scope, $location, AuthenticationService, ruta, Rut
     }
   });       
 }
-muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta', 'OfertaGenerar',
-  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta, OfertaGenerar) {
+muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta', 'OfertaGenerar', 'RutaUsuariosXCorrida',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta, OfertaGenerar, RutaUsuariosXCorrida) {
     $scope.rutaid = $routeParams.id;
     LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
     $scope.orderProp = 'nombre';
@@ -1742,6 +1800,12 @@ muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$loca
             }
           }
         );
+    };
+    $scope.showUsuarios = function(corridaid) {
+      LoadRutaUsuariosXCorrida($window, $scope, $location, AuthenticationService, $scope.rutaid, corridaid, RutaUsuariosXCorrida);
+      $('#usuariosModal').modal({
+        show: true
+      }); 
     };
    
   }]);
@@ -1808,6 +1872,33 @@ muukControllers.controller('EmbarqCorridaFormCtrl', ['$window', '$scope', '$loca
     };
 
     $scope.reset();
+  }]);
+muukControllers.controller('EmbarqCorridaEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida) {
+    $scope.corrida = {dia1: false,dia2: false,dia3: false,dia4: false,dia5: false,dia6: false,dia7: false};
+    LoadCorrida($window, $scope, $location, AuthenticationService, Corrida, $routeParams.id);
+
+    $scope.save = function(corrida) {
+      UpdateCorrida($window, $scope, $location, AuthenticationService, corrida, Corrida, 'empresaCorridaList/' + $scope.corrida.RutaId);
+      /*
+      var ex = new Corrida(corrida);
+      console.log(ex);
+      ex.$update({ exId: corrida.id }, function(){$location.path('empresaCorridaList/' + $scope.corrida.RutaId);});*/
+    };
+
+    $scope.cancel = function(){
+      console.log('EmbarqCorridaEditCtrl.cancel - goto(embarqCorridaList/' + $scope.corrida.RutaId);
+      $location.path('embarqCorridaList/' + $scope.corrida.RutaId);
+    };
+
+    $scope.validateChecks = function() {
+      if (($scope.corrida.dia1 == null) || ($scope.corrida.dia2 == null) || ($scope.corrida.dia3 == null) || ($scope.corrida.dia4 == null) || ($scope.corrida.dia5 == null) || ($scope.corrida.dia6 == null) || ($scope.corrida.dia7 == null)) {
+        return false;
+      } else {
+        return ($scope.corrida.dia1 || $scope.corrida.dia2 || $scope.corrida.dia3 || $scope.corrida.dia4 || $scope.corrida.dia5 || $scope.corrida.dia6 || $scope.corrida.dia7);
+      }
+    };
+
   }]);
 // -----------------------------------------------------
 /* EmbarQ - Solicitud Corrida */
@@ -2451,6 +2542,25 @@ muukControllers.controller('EmpresaRutaEditCtrl', ['$window', '$scope', '$locati
       $location.path('empresaRutaList');
     };
   }]);
+muukControllers.controller('EmpresaRutaUsuariosListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario', 'RutaUsuariosXRuta',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario, RutaUsuariosXRuta) {
+    console.log($routeParams);
+    $scope.rutaid = $routeParams.id;
+    LoadRutaUsuariosXRuta($window, $scope, $location, AuthenticationService, $scope.rutaid, RutaUsuariosXRuta);
+    $scope.orderProp = 'nombre';
+
+    $scope.deleteUsuario = function (exId) {
+      if( $window.confirm("Se eliminará el usuario con id [" + exId + "] ¿Continuar?")) {
+        
+      }
+    };
+
+    $scope.cancel = function(){
+      console.log('EmpresaRutaUsuariosListCtrl.cancel - goto(empresaRutaList)');
+      $location.path('empresaRutaList');
+    };    
+
+  }]);
 
 // -----------------------------------------------------
 /* Empresa - Corrida */
@@ -2537,8 +2647,8 @@ function UpdateCorrida($window, $scope, $location, AuthenticationService, corrid
     }
   });       
 }
-muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta', 'OfertaGenerar',
-  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta, OfertaGenerar) {
+muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta', 'RutaUsuariosXCorrida', 'OfertaGenerar',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta, RutaUsuariosXCorrida, OfertaGenerar) {
     $scope.rutaid = $routeParams.id;
     LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
     $scope.orderProp = 'nombre';
@@ -2595,7 +2705,12 @@ muukControllers.controller('EmpresaCorridaListCtrl', ['$window', '$scope', '$loc
           }
         );
     };
-
+    $scope.showUsuarios = function(corridaid) {
+      LoadRutaUsuariosXCorrida($window, $scope, $location, AuthenticationService, $scope.rutaid, corridaid, RutaUsuariosXCorrida);
+      $('#usuariosModal').modal({
+        show: true
+      }); 
+    };
   }]);
 muukControllers.controller('EmpresaCorridaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Corrida', '$routeParams',
   function($window, $scope, $location, AuthenticationService, Corrida, $routeParams) {
@@ -3213,12 +3328,52 @@ muukControllers.controller('UsuarioEsperaCtrl', ['$window', '$scope', '$location
 
     $scope.loadEsperas();
   }]);
-muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'UsuarioRuta', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove',
-  function($window, $scope, $location, AuthenticationService, SessionService, UsuarioRuta, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove) {
+muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'UsuarioRuta', 'RutaFavorita', 'RutaOferta', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'RutaReservar', 'RutaReservarRecurrente', 'RutaEsperar', 'Mapa',
+  function($window, $scope, $location, AuthenticationService, SessionService, UsuarioRuta, RutaFavorita, RutaOferta, RutaFavoritaAdd, RutaFavoritaRemove, RutaReservar, RutaReservarRecurrente, RutaEsperar, Mapa) {
     $scope.showFavoritos = false;
     LoadRutasXUsuario($window, $scope, $location, AuthenticationService, UsuarioRuta, RutaFavorita, SessionService.currentUser.id);
     $scope.orderProp = 'nombre';
 
+    $scope.prepareResults = function(results) {
+      // add folio
+      for (var i = 0; i < results.length; i++) {
+        // asignar folio si tiene reservacion o se encuentra en espera
+        if (results[i].reservacion != null) {
+          // con reservacion
+          results[i].reservacion.folio = results[i].reservacion.id.toString();
+          while (results[i].reservacion.folio.length < 6) {
+            results[i].reservacion.folio = '0' + results[i].reservacion.folio;
+          }
+        } else if (results[i].espera != null) {
+          // en espera
+          results[i].espera.folio = results[i].espera.id.toString();
+          while (results[i].espera.folio.length < 6) {
+            results[i].espera.folio = '0' + results[i].espera.folio;
+          }
+        }
+        
+        var myDate = new Date(results[i].fechaOferta);
+        var diaSemana = myDate.getDay();
+        if (diaSemana == 1) {
+          results[i].fecha = 'Lunes ';
+        } else if (diaSemana == 2) {
+          results[i].fecha = 'Martes ';
+        } else if (diaSemana == 3) {
+          results[i].fecha = 'Miércoles ';
+        } else if (diaSemana == 4) {
+          results[i].fecha = 'Jueves ';
+        } else if (diaSemana == 5) {
+          results[i].fecha = 'Viernes ';
+        } else if (diaSemana == 6) {
+          results[i].fecha = 'Sabado ';
+        } else if (diaSemana == 0) {
+          results[i].fecha = 'Domingo ';
+        }
+        results[i].fecha = results[i].fecha + '[' + myDate.getDate() + '/' + myDate.getMonth() + '/' + myDate.getFullYear() + ']';
+      }
+
+      return results;
+    };
     $scope.favorito = function(ruta){
       if (ruta.isFavorite) {
         RutaFavoritaRemove.query({usrid: SessionService.currentUser.id, rutaid: ruta.id}, 
@@ -3273,7 +3428,6 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$locat
         });*/
       }   
     };
-
     $scope.filtraFavoritos = function() {
       if ($scope.showFavoritos == null) {
         $scope.showFavoritos = false;
@@ -3307,71 +3461,12 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$locat
         });
 
       });   */   
-    }
-  }]);
-
-// -----------------------------------------------------
-/* Usuario - Rutas */
-muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaReservarRecurrente', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'Mapa',
-  function($window, $scope, $location, AuthenticationService, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaReservarRecurrente, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove, Mapa) {
-    //$scope.PointCount = 0;
-    $scope.mostrarSugerencias = false;
-    $scope.puntoALat = 0;
-    $scope.puntoALng = 0;
-    $scope.puntoBLat = 0;
-    $scope.puntoBLng = 0;
-    $scope.rutasuggest = null;
-    $scope.cargandorutas = false;
-    creapuntos();
-    $scope.rutas = null;
-    $scope.orderProp = 'nombre';
-
-    $scope.prepareResults = function(results) {
-      // add folio
-      for (var i = 0; i < results.length; i++) {
-        // asignar folio si tiene reservacion o se encuentra en espera
-        if (results[i].reservacion != null) {
-          // con reservacion
-          results[i].reservacion.folio = results[i].reservacion.id.toString();
-          while (results[i].reservacion.folio.length < 6) {
-            results[i].reservacion.folio = '0' + results[i].reservacion.folio;
-          }
-        } else if (results[i].espera != null) {
-          // en espera
-          results[i].espera.folio = results[i].espera.id.toString();
-          while (results[i].espera.folio.length < 6) {
-            results[i].espera.folio = '0' + results[i].espera.folio;
-          }
-        }
-        
-        var myDate = new Date(results[i].fechaOferta);
-        var diaSemana = myDate.getDay();
-        if (diaSemana == 1) {
-          results[i].fecha = 'Lunes ';
-        } else if (diaSemana == 2) {
-          results[i].fecha = 'Martes ';
-        } else if (diaSemana == 3) {
-          results[i].fecha = 'Miércoles ';
-        } else if (diaSemana == 4) {
-          results[i].fecha = 'Jueves ';
-        } else if (diaSemana == 5) {
-          results[i].fecha = 'Viernes ';
-        } else if (diaSemana == 6) {
-          results[i].fecha = 'Sabado ';
-        } else if (diaSemana == 0) {
-          results[i].fecha = 'Domingo ';
-        }
-        results[i].fecha = results[i].fecha + '[' + myDate.getDate() + '/' + myDate.getMonth() + '/' + myDate.getFullYear() + ']';
-      }
-
-      return results;
     };
+    $scope.showCompraList = function(ruta){
+      $scope.selRuta = ruta;
 
-    $scope.showCompraList = function(sugerenciaSelected){
-      $scope.sugSelected = sugerenciaSelected;
-
-      console.log(sugerenciaSelected);
-      RutaOferta.query({exId: sugerenciaSelected.ruta.id}, function(res){
+      console.log(ruta);
+      RutaOferta.query({exId: ruta.id}, function(res){
         if (res.success) {
           console.log(res);
           $scope.errMsg = null;
@@ -3396,7 +3491,6 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
         }
       });       
     };    
-
     $scope.reservar = function(corrida){
       if ($window.confirm('Se reservará la corrida con id [' + corrida.id + '], ¿Desea continuar?')) {
         $scope.errMsg = null;
@@ -3442,7 +3536,6 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
         }); 
       }
     };
-
     $scope.reservarRecurrente = function(corrida){
       if ($window.confirm('Se reservará de manera recurrente todos los días de la corrida con id [' + corrida.id + '], ¿Desea continuar?')) {
         $scope.errMsg = null;
@@ -3538,7 +3631,241 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
         }); 
       } 
     };
+    $scope.showMapa = function(ruta) {
+      $scope.selRuta = ruta;
+      idm = ruta.id;
+      ShowMapa($window, $scope, $location, AuthenticationService, idm, Mapa);      
+      $('#mapaModal').modal({
+        show: true
+      });          
+    };
+  }]);
 
+// -----------------------------------------------------
+/* Usuario - Rutas */
+muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaReservarRecurrente', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'Mapa',
+  function($window, $scope, $location, AuthenticationService, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaReservarRecurrente, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove, Mapa) {
+    //$scope.PointCount = 0;
+    $scope.mostrarSugerencias = false;
+    $scope.puntoALat = 0;
+    $scope.puntoALng = 0;
+    $scope.puntoBLat = 0;
+    $scope.puntoBLng = 0;
+    $scope.rutasuggest = null;
+    $scope.cargandorutas = false;
+    creapuntos();
+    $scope.rutas = null;
+    $scope.orderProp = 'nombre';
+
+    $scope.prepareResults = function(results) {
+      // add folio
+      for (var i = 0; i < results.length; i++) {
+        // asignar folio si tiene reservacion o se encuentra en espera
+        if (results[i].reservacion != null) {
+          // con reservacion
+          results[i].reservacion.folio = results[i].reservacion.id.toString();
+          while (results[i].reservacion.folio.length < 6) {
+            results[i].reservacion.folio = '0' + results[i].reservacion.folio;
+          }
+        } else if (results[i].espera != null) {
+          // en espera
+          results[i].espera.folio = results[i].espera.id.toString();
+          while (results[i].espera.folio.length < 6) {
+            results[i].espera.folio = '0' + results[i].espera.folio;
+          }
+        }
+        
+        var myDate = new Date(results[i].fechaOferta);
+        var diaSemana = myDate.getDay();
+        if (diaSemana == 1) {
+          results[i].fecha = 'Lunes ';
+        } else if (diaSemana == 2) {
+          results[i].fecha = 'Martes ';
+        } else if (diaSemana == 3) {
+          results[i].fecha = 'Miércoles ';
+        } else if (diaSemana == 4) {
+          results[i].fecha = 'Jueves ';
+        } else if (diaSemana == 5) {
+          results[i].fecha = 'Viernes ';
+        } else if (diaSemana == 6) {
+          results[i].fecha = 'Sabado ';
+        } else if (diaSemana == 0) {
+          results[i].fecha = 'Domingo ';
+        }
+        results[i].fecha = results[i].fecha + '[' + myDate.getDate() + '/' + myDate.getMonth() + '/' + myDate.getFullYear() + ']';
+      }
+
+      return results;
+    };
+    $scope.showCompraList = function(sugerenciaSelected){
+      $scope.sugSelected = sugerenciaSelected;
+
+      console.log(sugerenciaSelected);
+      RutaOferta.query({exId: sugerenciaSelected.ruta.id}, function(res){
+        if (res.success) {
+          console.log(res);
+          $scope.errMsg = null;
+          $scope.corridas = $scope.prepareResults(res.resultObject);
+          console.log($scope.corridas);
+          $('#myModal').modal({
+            show: true
+          });          
+        } else {
+          $scope.errMsg = res.msg;
+          if (DebugMode) {
+            $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+          }
+        }
+      }, function(err) {
+        if (isValidToken(err, $window)) {
+          console.log(err);
+          $scope.errMsg = err.data.msg;
+          $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
+        }
+      });       
+    };    
+    $scope.reservar = function(corrida){
+      if ($window.confirm('Se reservará la corrida con id [' + corrida.id + '], ¿Desea continuar?')) {
+        $scope.errMsg = null;
+        $scope.sucMsg = null;
+        RutaReservar.query({exId: corrida.id}, function(res){
+          if (res.success) {
+            $scope.errMsg = null;
+            $scope.sucMsg = "La reservación se realizó con éxito";
+            //$window.alert($scope.sucMsg);
+            RutaOferta.query({exId: corrida.RutaId}, function(result){
+              if (result.success) {
+                $scope.errMsg = null;
+                console.log(result);
+                $scope.corridas = $scope.prepareResults(result.resultObject);         
+              } else {
+                $scope.errMsg = result.msg;
+                $scope.sucMsg = null;
+                if (DebugMode) {
+                  $scope.errMsg = $scope.errMsg + ' [' + result.msgCode + ']';
+                }
+              }
+            }, function(err) {
+              if (isValidToken(err, $window)) {
+                console.log(err);
+                $scope.errMsg = err.data.msg;
+                $scope.sucMsg = null;  
+              } else {
+                ForceLogOut($window, $scope, $location, AuthenticationService);
+              }
+            });         
+          } else {
+            $scope.errMsg = res.msg;
+            $scope.sucMsg = null;
+          }
+        }, function(err) {
+          if (isValidToken(err, $window)) {
+            console.log(err);
+            $scope.errMsg = err.data.msg;
+            $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
+          }
+        }); 
+      }
+    };
+    $scope.reservarRecurrente = function(corrida){
+      if ($window.confirm('Se reservará de manera recurrente todos los días de la corrida con id [' + corrida.id + '], ¿Desea continuar?')) {
+        $scope.errMsg = null;
+        $scope.sucMsg = null;
+
+        var ex = new RutaReservarRecurrente(corrida);          
+        console.log(ex); 
+        ex.$create({}, function(res){
+          if (res.success) {
+            $scope.sucMsg = "La reservación recurrente se realizó con éxito";
+            RutaOferta.query({exId: corrida.RutaId}, function(result){
+              if (result.success) {
+                $scope.errMsg = null;
+                console.log(result);
+                $scope.corridas = $scope.prepareResults(result.resultObject);         
+              } else {
+                $scope.errMsg = result.msg;
+                $scope.sucMsg = null;
+                if (DebugMode) {
+                  $scope.errMsg = $scope.errMsg + ' [' + result.msgCode + ']';
+                }
+              }
+            }, function(err) {
+              if (isValidToken(err, $window)) {
+                console.log(err);
+                $scope.errMsg = err.data.msg;
+                $scope.sucMsg = null;  
+              } else {
+                ForceLogOut($window, $scope, $location, AuthenticationService);
+              }
+            });
+          } else {
+            $scope.errMsg = res.msg;
+            if (DebugMode) {
+              $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+            }
+          }
+        }, function(err) {
+          console.log('ERROR...');
+          console.log(err);
+          if (isValidToken(err, $window)) {
+            console.log(err);
+            $scope.errMsg = err.data.msg;
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
+          }
+        });
+      }
+    };
+    $scope.esperar = function(corrida){
+      if ($window.confirm('Se reservará la corrida con id [' + corrida.id + '], ¿Desea continuar?')) {
+        $scope.errMsg = null;
+        $scope.sucMsg = null;      
+        RutaEsperar.query({exId: corrida.id}, function(res){
+          if (res.success) {
+            $scope.errMsg = null;
+            $scope.sucMsg = "La espera se realizó con éxito";
+            $window.alert($scope.sucMsg);          
+            RutaOferta.query({exId: corrida.RutaId}, function(result){
+              if (result.success) {
+                $scope.errMsg = null;
+                $scope.corridas = $scope.prepareResults(result.resultObject);         
+              } else {
+                $scope.errMsg = result.msg;
+                if (DebugMode) {
+                  $scope.errMsg = $scope.errMsg + ' [' + result.msgCode + ']';
+                }
+              }
+            }, function(err) {
+              if (isValidToken(err, $window)) {
+                console.log(err);
+                $scope.errMsg = err.data.msg;
+                $scope.sucMsg = null;  
+              } else {
+                ForceLogOut($window, $scope, $location, AuthenticationService);
+              }
+            });          
+                   
+          } else {
+            $scope.errMsg = res.msg;
+            if (DebugMode) {
+              $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+            }
+          }
+        }, function(err) {
+          if (isValidToken(err, $window)) {
+            console.log(err);
+            $scope.errMsg = err.data.msg;
+            $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
+          }
+        }); 
+      } 
+    };
     $scope.favorito = function(ruta){
       if (ruta.isFavorite) {
         RutaFavoritaRemove.query({usrid: SessionService.currentUser.id, rutaid: ruta.id}, 
@@ -3588,7 +3915,6 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
         );
       }   
     };    
-
     $scope.sugerir = function() {
       $scope.mostrarSugerencias = true;
       $scope.cargandorutas = true;
@@ -3643,7 +3969,6 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
         }
       );
     };    
-
     $scope.showMapa = function(ruta){
       ShowMapa($window, $scope, $location, AuthenticationService, ruta.id, Mapa);
     };

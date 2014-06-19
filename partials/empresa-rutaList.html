@@ -20,52 +20,52 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th width="10%">
+					<th width="7%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='id'"><b>ID</b></a></span>
+							<span class="input-group-addon"><a href="" ng-click="orderProp='id'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.id" type="text" class="form-control input-sm" placeholder="ID" />
 						</div>
 					</th>
 					<th width="15%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='companyownernombre'"><b>Empresa</b></a></span>
+							<span class="input-group-addon"><a href="" ng-click="orderProp='companyownernombre'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.companyownernombre" type="text" class="form-control input-sm" placeholder="Empresa" />
 						</div>
 					</th>
 					<th width="15%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='nombre'"><b>Nombre</b></a></span>
+							<span class="input-group-addon"><a href="" ng-click="orderProp='nombre'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.nombre" type="text" class="form-control input-sm" placeholder="Nombre" />
 						</div>
 					</th>
 					<th width="12%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='origentxt'"><b>Origen</b></a></span>
+							<span class="input-group-addon"><a href="" ng-click="orderProp='origentxt'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.origentxt" type="text" class="form-control input-sm" placeholder="Origen" />
 						</div>
 					</th>
 					<th width="12%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='destinotxt'"><b>Destino</b></a></span>
+							<span class="input-group-addon"><a href="" ng-click="orderProp='destinotxt'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.destinotxt" type="text" class="form-control input-sm" placeholder="Destino" />
 						</div>
 					</th>	
-					<th width="4%">
+					<th width="7%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='recorridoParadas'"><b>Paradas</b></a></span>
-							<!--<input ng-model="query.recorridoParadas" type="text" class="form-control input-sm" placeholder="Paradas" />-->
+							<span class="input-group-addon"><a href="" ng-click="orderProp='recorridoParadas'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
+							<input ng-model="query.recorridoParadas" type="text" class="form-control input-sm" placeholder="Paradas" />
 						</div>
 					</th>					
-					<th width="4%">
+					<th width="7%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='capacidadReservada'"><b>Reservado</b></a></span>
-							<!--<input ng-model="query.capacidadReservada" type="text" class="form-control input-sm" placeholder="Nombre" />-->
+							<span class="input-group-addon"><a href="" ng-click="orderProp='capacidadReservada'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
+							<input ng-model="query.capacidadReservada" type="text" class="form-control input-sm" placeholder="Reservado" />
 						</div>
 					</th>					
-					<th width="4%">
+					<th width="7%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='capacidadOfertada'"><b>Ofertado</b></a></span>
-							<!--<input ng-model="query.capacidadOfertada" type="text" class="form-control input-sm" placeholder="Nombre" />-->
+							<span class="input-group-addon"><a href="" ng-click="orderProp='capacidadOfertada'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
+							<input ng-model="query.capacidadOfertada" type="text" class="form-control input-sm" placeholder="Ofertado" />
 						</div>
 					</th>		
 					<th>-</th>
@@ -88,6 +88,7 @@
 						<a type="button" class="btn btn-info" href="#/empresaRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
 						<a type="button" class="btn btn-info" href="#/empresaMapaShow/{{ruta.id}}"><span class="glyphicon glyphicon-map-marker"></span></a>						
 						<a type="button" class="btn btn-info" href="#/empresaCorridaList/{{ruta.id}}"><span class="glyphicon glyphicon-calendar"></span></a>
+						<a type="button" class="btn btn-info" href="#/empresaRutaUsuariosList/{{ruta.id}}"><span class="glyphicon glyphicon-user"></span></a>
 						<a type="button" class="btn btn-danger" ng-click="deleteRuta(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
 

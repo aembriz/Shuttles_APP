@@ -121,6 +121,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-rutaList.html',
         controller: 'EmbarqRutaListCtrl'
       }).      
+      when('/embarqRutaUsuariosList/:id', {
+        templateUrl: 'partials/embarq-rutaUsuariosList.html',
+        controller: 'EmbarqRutaUsuariosListCtrl'
+      }). 
       // -----------------------------------------------------
       // EmbarQ - Ruta compartida
       when('/embarqRutaCompartidaList', {
@@ -129,6 +133,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
       }).      
       // -----------------------------------------------------
       // EmbarQ - Corrida de Ruta
+      when('/embarqCorridaEdit/:id', {
+        templateUrl: 'partials/embarq-corridaForm.html',
+        controller: 'EmbarqCorridaEditCtrl'
+      }).
       when('/embarqCorridaShow/:id', {
         templateUrl: 'partials/embarq-corridaShow.html',
         controller: 'EmbarqCorridaDetailCtrl'
@@ -138,7 +146,7 @@ muukApp.config(['$routeProvider', '$httpProvider',
         controller: 'EmbarqCorridaListCtrl'
       }).
       when('/embarqCorridaNew/:id', {
-        templateUrl: 'partials/empresa-corridaForm.html',
+        templateUrl: 'partials/embarq-corridaForm.html',
         controller: 'EmbarqCorridaFormCtrl'
       }).      
       // -----------------------------------------------------
@@ -261,6 +269,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/empresa-rutaForm.html',
         controller: 'EmpresaRutaEditCtrl'
       }).
+      when('/empresaRutaUsuariosList/:id', {
+        templateUrl: 'partials/empresa-rutaUsuariosList.html',
+        controller: 'EmpresaRutaUsuariosListCtrl'
+      }). 
       // -----------------------------------------------------
       // Empresa - Corrida de Ruta
       when('/empresaCorridaEdit/:id', {

@@ -1,0 +1,93 @@
+<div class="container-fluid">
+	<br/>
+	<br/>
+    <h1 class="page-header" align="center">Ruta</h1>
+    <link href="css/panels.css" rel="stylesheet">
+    <form name="exForm" novalidate class="form-1200">
+       	<div class="panel panel-info">
+
+	   		<div class="panel-heading" align="center">
+	   			<a type="button" class="btn btn-info btn-xs" href="#/embarqCorridaNew/{{rutaid}}"><span class="glyphicon glyphicon-plus"></span>Crear corrida</a>
+	   			<button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Rutas</button>
+	   		</div>
+
+	   		<div class="panel-body">
+				<ul class="nav nav-tabs">
+				  <li><a href="#/embarqRutaShow/{{rutaid}}">General</a></li>
+				  <li><a href="#/embarqMapaShow/{{rutaid}}">Mapa</a></li>
+				  <li><a href="#/embarqCorridaList/{{ruta.id}}">Corridas</a></li>
+				  <li class="active"><a href="#">Usuarios registrados</a></li>
+				</ul>
+				<br/>
+				<div class="btn-toolbar" role="toolbar">
+			      <div class="btn-group" style="width:100%;">
+			      	
+			      	<div class="input-group">			
+			      		<!--
+						<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/embarqCorridaNew"><span class="glyphicon glyphicon-plus"></span></a></span>
+					-->
+						<span class="input-group-addon">Buscar: </span>
+					  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de corridas"/>
+					</div>
+					<img ng-show="corridas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+					<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+						<p ng-bind-html="message"></p>
+					</div>		
+
+			      </div>
+			    </div>
+
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th><a href="" ng-click="orderProp='id'">ID</a></th>
+								<th><a href="" ng-click="orderProp='horaSalidaFmt'">Hora de salida</a></th>
+								<th><a href="" ng-click="orderProp='horaLlegadaFmt'">Hora de llegada</a></th>
+								<th><a href="" ng-click="orderProp='!dia1'">Lun</a></th>
+								<th><a href="" ng-click="orderProp='!dia2'">Mar</a></th>
+								<th><a href="" ng-click="orderProp='!dia3'">M&iacute;e</a></th>
+								<th><a href="" ng-click="orderProp='!dia4'">Jue</a></th>
+								<th><a href="" ng-click="orderProp='!dia5'">Vie</a></th>
+								<th><a href="" ng-click="orderProp='!dia6'">Sab</a></th>
+								<th><a href="" ng-click="orderProp='!dia7'">Dom</a></th>
+								<th><a href="" ng-click="orderProp='capacidadOfertada'">Capacidad ofertada</a></th>
+								<th><a href="" ng-click="orderProp='tarifa'">Tarifa (MX$)</a></th>
+								<th>-</th>
+							</tr>
+						</thead>
+						<tbody>			
+							<tr ng-repeat="corrida in corridas | filter:query | orderBy:orderProp">
+								<td>{{corrida.id}}</td>
+								<td><a href="#/embarqCorridaShow/{{corrida.id}}">{{corrida.horaSalidaFmt}}</a></td>
+								<td>{{corrida.horaLlegadaFmt}}</td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia1==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia2==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia3==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia4==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia5==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia6==true"></span></td>
+								<td> <span class="glyphicon glyphicon-xs glyphicon-ok" ng-show="corrida.dia7==true"></span></td>
+								<td>{{corrida.capacidadOfertada}}</td>
+								<td>{{corrida.tarifa}}</td>
+								<td>
+									<a type="button" class="btn btn-info" href="#/embarqCorridaShow/{{corrida.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
+									<a type="button" class="btn btn-danger" ng-click="deleteCorrida(corrida.id)"><span class="glyphicon glyphicon-remove"></span></a>
+									<a type="button" class="btn btn-warning" ng-click="generarOferta(rutaid)"><span class="glyphicon glyphicon-refresh"></span></a>									
+								</td>
+
+							</tr>
+						</tbody>
+					</table>		
+					
+				</div>
+			</div>
+
+	   		<div class="panel-heading" align="center">
+	   			<button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Rutas</button>
+	   		</div>			
+		</div>
+			
+	</form>
+		
+</div>

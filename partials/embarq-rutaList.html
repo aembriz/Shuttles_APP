@@ -87,8 +87,9 @@
 					<td>{{ruta.capacidadOfertada}}</td>
 					<td>
 						<a type="button" class="btn btn-info" href="#/embarqRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
-						<a type="button" class="btn btn-info" href="#/mapaview/{{ruta.id}}"><span class="glyphicon glyphicon-map-marker"></span></a>
+						<a type="button" class="btn btn-info" href="#/embarqMapaShow/{{ruta.id}}"><span class="glyphicon glyphicon-map-marker"></span></a>
 						<a type="button" class="btn btn-info" href="#/embarqCorridaList/{{ruta.id}}"><span class="glyphicon glyphicon-calendar"></span></a>
+						<a type="button" class="btn btn-info" href="#/embarqRutaUsuariosList/{{ruta.id}}"><span class="glyphicon glyphicon-user"></span></a>
 						<a type="button" class="btn btn-success" ng-click="showCompartirRuta(ruta)"><span class="glyphicon glyphicon-transfer"></span></a>
 						<a type="button" class="btn btn-danger" ng-click="deleteRuta(ruta.id)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>

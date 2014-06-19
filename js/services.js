@@ -558,25 +558,33 @@ muukServices.factory('Comentarios',['$resource', 'SessionService',
     });
 
   }]);
-/*
-muukServices.factory('RutaSugerida',['$resource', 'SessionService',
+
+muukServices.factory('RutaUsuariosXRuta',['$resource', 'SessionService',
   function($resource, SessionService){
-    var ResourceObject = $resource(servicesUrl + '/compra/rutasugeridas');
-    return {
-      getTransformedValues:function() {
-        return ResourceObject.query().$promise.then(function(data){
-
-        });
-      }
-    };
-
-    $resource(, {}, {
-      query: {method: 'GET', params:{puntoALat: '@OrigenLat', puntoALng: '@OrigenLng', puntoBLat: '@DestinoLat', puntoBLng: '@DestinoLng'}, isArray:true, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }}
+    return $resource(servicesUrl + '/reservacionrecurrente', {}, {
+      query: {
+        method: 'GET', 
+        params: {ruta: '@rutaid'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      } 
     });
 
-    //{puntoALat: $scope.OrigenLat, puntoALng: $scope.OrigenLng, puntoBLat: $scope.DestinoLat, puntoBLng: $scope.DestinoLng}
   }]);
-*/
+
+muukServices.factory('RutaUsuariosXCorrida',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/reservacionrecurrente/:rutaid/corrida/:corridaid', {}, {
+      query: {
+        method: 'GET', 
+        params: {rutaid: '@rutaid', corridaid: '@corridaid'}, 
+        isArray: false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      } 
+    });
+
+  }]);
+
 muukServices.factory('Estadisticas',['$resource', 'SessionService',
   function($resource, SessionService){
     return $resource(servicesUrl + '/estadistica', {}, {

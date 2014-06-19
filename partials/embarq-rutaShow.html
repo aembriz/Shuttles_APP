@@ -3,7 +3,7 @@
 	<br/>
 	<h1 class="page-header" align="center">Ruta</h1>
 	<link href="css/panels.css" rel="stylesheet">
-    <form name="exForm" novalidate class="form-400">
+    <form name="exForm" novalidate class="form-600">
 	   	<div class="panel panel-info">
 
 	   		<div class="panel-heading" align="center">
@@ -11,6 +11,7 @@
 				<a type="button" class="btn btn-info" href="#/mapaview/{{ruta.id}}">Ver Mapa</a>					
 				<a type="button" class="btn btn-info" href="#/embarqCorridaList">Ver Corridas</a>					
 			-->
+				<a type="button" class="btn btn-info" href="#/embarqRutaEdit/{{ruta.id}}">Editar</a>
 				<button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Rutas</button>
 	   		</div>
 
@@ -20,6 +21,7 @@
 				  <li class="active"><a href="#">General</a></li>
 				  <li><a href="#/embarqMapaShow/{{ruta.id}}">Mapa</a></li>
 				  <li><a href="#/embarqCorridaList/{{ruta.id}}">Corridas</a></li>
+				  <li><a href="#/embarqRutaUsuariosList/{{ruta.id}}">Usuarios registrados</a></li>				
 				</ul>
 				<br/>
 				<div class="form-group">

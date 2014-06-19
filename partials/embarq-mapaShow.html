@@ -9,7 +9,7 @@
     <div class="panel panel-info">
 
       <div class="panel-heading" align="center">
-        <button class="btn btn-link" ng-click="cancel()">Regresar a Rutas</button>
+        <button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Rutas</button>
       </div>
 
       <div class="panel-body" align="center">
@@ -17,6 +17,7 @@
           <li><a href="#/embarqRutaShow/{{rutaid}}">General</a></li>
           <li class="active"><a href="#">Mapa</a></li>
           <li><a href="#/embarqCorridaList/{{rutaid}}">Corridas</a></li>
+          <li><a href="#/embarqRutaUsuariosList/{{rutaid}}">Usuarios registrados</a></li>
         </ul>        
         <!--
         <div onload ="mapa();" aling="center" class="btn-group" style="width:100%;" ng-show="pMapa == null">
