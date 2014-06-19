@@ -6,6 +6,7 @@ var muukControllers = angular.module('muukControllers', []);
 var DebugMode = true;
 
 var msgConfirmarCancelarRutaNueva = 'Se cancelará la ruta y se perderán los cambios hechos, ¿Deseas continuar?';
+var msgConfirmarBorrarPunto = 'Se borrará el punto seleccionado, ¿Deseas continuar?';
 
 function isValidToken(result, $window) {
   if ((result.data != null)&&(result.data.error != null)&&(result.data.error == "The security token is invalid. [The AuthToken has expired. Log in again please. [ERR0001]]")) {
@@ -17,20 +18,29 @@ function isValidToken(result, $window) {
 function ForceLogOut($window, $scope, $location, AuthenticationService) {
   $window.alert("La sesión ha terminado. Favor de voler a firmarse." + $scope.user.authtoken);
   AuthenticationService.logout();
-  $scope.user.authenticated = AuthenticationService.isLoggedIn();
+  $scope.user.authenticated = false;//AuthenticationService.isLoggedIn();
   console.log('ForceLogOut - goto(Login)');
+  $scope.mainSection = 'login';
   $location.path('login');
 }
 
 muukControllers.controller('AppCtrl', ['$scope', '$location', '$window', 'SessionService',
   function($scope, $location, $window, SessionService) { 
+    console.log('Starting AppCtrl - SessionService');
+    console.log(SessionService);
+
     if(SessionService.currentUser != null){
       $scope.user = {authenticated: true, name: SessionService.currentUser.name, empresa: SessionService.currentUser.empresa, authtoken: SessionService.currentUser.token, role: SessionService.currentUser.role, id: SessionService.currentUser.id};    
+      //$scope.mainSection = '';
     } 
     else{
-      $scope.user = {authenticated: false, name: ''};   
+      $scope.user = {authenticated: false, name: ''}; 
       $scope.mainSection = 'login';
     }   
+
+    $scope.updateUser = function(user) {
+      $scope.user = user;
+    }
 
     $scope.gotoRegister = function() {
       // this should replace login with register form
@@ -59,9 +69,24 @@ muukControllers.controller('LoginController', ['$window', '$scope', '$location',
       if(data.error){
         $scope.message = data.message;
       }
-      else{            
-        console.log('LoginController.logincallbackSuccess - goto(redirect)');
-        $location.path('redirect');        
+      else{           
+        var user = SessionService.currentUser;
+        user.authenticated = AuthenticationService.isLoggedIn();
+        console.log(user);
+        $scope.updateUser(user);
+        $scope.$apply();
+
+        if (data.role == 'ADMIN') {
+          console.log('LoginController.logincallbackSuccess - goto(embarqEstadisticas)');
+          $location.path('embarqEstadisticas');        
+        } else if (data.role == 'EMPRESA') {
+          console.log('LoginController.logincallbackSuccess - goto(empresaPerfilShow)');
+          $location.path('empresaPerfilShow');        
+        } else if (data.role == 'USUARIO') {
+          console.log('LoginController.logincallbackSuccess - goto(usuarioPerfilShow)');
+          $location.path('usuarioPerfilShow');        
+        }
+        //$location.path('redirect');        
       }      
       $scope.$apply();
     };
@@ -83,8 +108,8 @@ muukControllers.controller('LoginController', ['$window', '$scope', '$location',
 muukControllers.controller('MainCtrl', ['$scope', '$location', 'AuthenticationService',
   function($scope, $location, AuthenticationService) {	
 
-  	$scope.menuActive = ["active","","","",""];
-    $scope.submenuActive = ["active","","","",""];
+  	$scope.menuActive = ["active","","","","","",""];
+    $scope.submenuActive = ["active","","","","","",""];
   	$scope.menuSelect = function(menu){		
   		for (var i = 0; i < $scope.menuActive.length; ++i) {			
   			$scope.menuActive[i] = "";
@@ -104,9 +129,10 @@ muukControllers.controller('MainCtrl', ['$scope', '$location', 'AuthenticationSe
 
     $scope.logout = function(){
       AuthenticationService.logout();
-      $scope.user.authenticated = AuthenticationService.isLoggedIn();
+      $scope.user.authenticated = false;//AuthenticationService.isLoggedIn();
+      $scope.updateUser($scope.user);
       console.log('MainCtrl.logout - goto(Login)');
-      $location.path('login');
+      $scope.gotoLogin();
     };
   }]);
 muukControllers.controller("DashboardCtrl", ['$scope', '$routeParams', '$window', 'File', 'Agent', 
@@ -206,7 +232,6 @@ muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', '$loca
         ex.$create({}, function(res){
           if (res.success) {
             $scope.errMsg = null;
-//            console.log('Se creo exitosamente y vamos a login...');
             $window.alert('La empresa ' + empresa.nombre + ' fue creada exitosamente. Se le notificará por correo cuando su solicitud sea autorizada.')
             console.log($scope);
             $scope.gotoLogin();
@@ -224,49 +249,7 @@ muukControllers.controller('LoginRegisterUserCtrl', ['$window', '$scope', '$loca
           } else {
             ForceLogOut($window, $scope, $location, AuthenticationService);
           }
-        }); 
-        
-
-/*
-      var ex = new EmpresaPreregister(empresa, function(res) {
-        if (res.success) {
-          $scope.errMsg = null;
-        } else {
-          $scope.errMsg = res.msg;
-          if (DebugMode) {
-            $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-          }
-        }
-      }, function(err) {
-        if (isValidToken(err, $window)) {
-          console.log(err);
-          $scope.empresas = null;
-          $scope.errMsg = err.data.msg;
-        } else {
-          ForceLogOut($window, $scope, $location, AuthenticationService);
-        }
-      });         
-      console.log(ex);    
-
-      ex.$create({}, function(res) {
-        if (res.success) {
-          $scope.errMsg = null;
-          $scope.gotoLogin;
-        } else {
-          $scope.errMsg = res.msg;
-          if (DebugMode) {
-            $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-          }
-        }
-      }, function(err) {
-        if (isValidToken(err, $window)) {
-          console.log(err);
-          $scope.errMsg = err.data.msg;
-        } else {
-          ForceLogOut($window, $scope, $location, AuthenticationService);
-        }
-      });   
-      */    
+        });    
     };
     
     $scope.cancel = function(){
@@ -539,6 +522,29 @@ function UpdateEmpresa($window, $scope, $location, AuthenticationService, empres
     }
   });       
 }
+function LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, empresaid, successCallback) {
+  Empresa.query({exId: empresaid}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      $scope.empresa = res.resultObject;
+      successCallback(res.resultObject);
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    console.log(err);
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  }); 
+}
 muukControllers.controller('EmbarqEmpresaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Empresa', 'EmpresasAutorizadas',
   function($window, $scope, $location, AuthenticationService, Empresa, EmpresasAutorizadas) {
     LoadEmpresasAutorizadas($window, $scope, $location, AuthenticationService, EmpresasAutorizadas);
@@ -735,6 +741,428 @@ muukControllers.controller('EmbarqSolicitudEmpresaListCtrl', ['$window', '$scope
   };      
 
   }]);
+// -----------------------------------------------------
+/* EmbarQ - Usuarios */
+function LoadUsuariosAutorizados($window, $scope, $location, AuthenticationService, UsuariosAutorizados) {
+  UsuariosAutorizados.query({}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      $scope.usuarios = res.resultObject;
+      for (var index in $scope.usuarios) {
+        console.log($scope.usuarios[index]);
+        if ($scope.usuarios[index].empresa == null) {
+          //var myEmpresa = {nombre: 'EMBARQ México'};
+          $scope.usuarios[index].empresanombre = 'EMBARQ México';
+        } else {
+          $scope.usuarios[index].empresanombre = $scope.usuarios[index].empresa.nombre;
+        }
+      }     
+      //console.log($scope.usuarios);
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  }); 
+}
+function LoadUsuariosNuevos($window, $scope, $location, AuthenticationService, UsuariosNuevos) {
+  UsuariosNuevos.query({}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      $scope.usuarios = res.resultObject;
+      for (var index in $scope.usuarios) {
+        console.log($scope.usuarios[index]);
+        if ($scope.usuarios[index].empresa == null) {
+          //var myEmpresa = {nombre: 'EMBARQ México'};
+          $scope.usuarios[index].empresanombre = 'EMBARQ México';
+        } else {
+          $scope.usuarios[index].empresanombre = $scope.usuarios[index].empresa.nombre;
+        }
+      }  
+      //console.log($scope.usuarios);
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  }); 
+}
+function LoadUsuariosAutorizadosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosAutorizadosXEmpresa) {
+  UsuariosAutorizadosXEmpresa.query({}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      $scope.usuarios = res.resultObject;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  }); 
+}
+function LoadUsuariosNuevosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosNuevosXEmpresa) {
+  UsuariosNuevosXEmpresa.query({}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      $scope.usuarios = res.resultObject;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  }); 
+}
+function LoadUsuario($window, $scope, $location, AuthenticationService, usuarioid, Usuario) {
+  Usuario.show({exId: usuarioid}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      res.resultObject.passwordCoded = '';
+      for (var i = 0; i < res.resultObject.password.length; i++) {
+        res.resultObject.passwordCoded = res.resultObject.passwordCoded + '●';
+      }      
+      $scope.usuario = res.resultObject;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  });  
+}
+function CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, locationTo) {
+  var ex = new UsuarioPreregister(usuario, function(res) {
+    if (res.success) {
+      $scope.errMsg = null;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  });   
+  console.log(ex); 
+  ex.$create({}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      if (locationTo != '') {
+        console.log('CreateUsuarioPreregister - goto(' + locationTo + ')');
+        $location.path(locationTo);
+      }
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  });
+}
+function UpdateUsuario($window, $scope, $location, AuthenticationService, usuario, Usuario, locationTo) {
+  var ex = new Usuario(usuario, function(res) {
+    if (res.success) {
+      $scope.errMsg = null;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  });   
+
+  console.log(ex);    
+  ex.$update({ exId: usuario.id }, function(res) {
+    if (res.success) {
+      $scope.errMsg = null;
+      console.log('UpdateUsuario - goto(' + locationTo + ')');
+      $location.path(locationTo);
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  });       
+}
+muukControllers.controller('EmbarqUsuarioListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Usuario', 'UsuariosAutorizados',
+  function($window, $scope, $location, AuthenticationService, Usuario, UsuariosAutorizados) {
+    LoadUsuariosAutorizados($window, $scope, $location, AuthenticationService, UsuariosAutorizados);
+    $scope.orderProp = 'nombre';
+
+    $scope.deleteUsuario = function (exId) {
+      if( $window.confirm("Se eliminará el usuario con id [" + exId + "] ¿Continuar?")) {
+        Usuario.remove({ exId: exId },
+          function(res){
+            if (res.success) {
+              $scope.errMsg = null;
+              LoadUsuariosAutorizados($window, $scope, $location, AuthenticationService, UsuariosAutorizados);
+            } else {
+              $scope.errMsg = res.msg;
+              if (DebugMode) {
+                $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+              }
+            }  
+          }, function(err) {
+            if (isValidToken(err, $window)) {
+              console.log(err);
+              $scope.errMsg = err.data.msg;
+              $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
+            }
+          }
+        ); 
+      }
+    };
+
+  }]);
+muukControllers.controller('EmbarqUsuarioFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'UsuarioPreregister', 
+  function($window, $scope, $location, AuthenticationService, UsuarioPreregister) {
+    $scope.master = {};
+
+    $scope.update = function(usuario) {
+      $scope.master = angular.copy(usuario);
+    };
+
+    $scope.reset = function() {
+      $scope.usuario = angular.copy($scope.master);
+    };
+
+    $scope.save = function(usuario) {
+      CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, 'embarqUsuarioList');
+    };
+
+    $scope.cancel = function(){
+      console.log('EmbarqUsuarioFormCtrl.cancel - goto(embarqUsuarioList)');
+      $location.path('embarqUsuarioList');
+    };
+
+    $scope.reset();
+
+  }]);
+muukControllers.controller('EmbarqUsuarioShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario) {
+    LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
+    
+    $scope.cancel = function(){
+      console.log('EmbarqUsuarioShowCtrl.cancel - goto(embarqUsuarioList)');
+      $location.path('embarqUsuarioList');
+    };
+  }]);
+muukControllers.controller('EmbarqUsuarioEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario) {
+    LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
+
+    $scope.save = function(usuario) {
+      UpdateUsuario($window, $scope, $location, AuthenticationService, usuario, Usuario, 'embarqUsuarioList');      
+    };
+    
+    $scope.cancel = function(){
+      console.log('EmbarqUsuarioEditCtrl.cancel - goto(embarqUsuarioList)');
+      $location.path('embarqUsuarioList');
+    };
+  }]);
+
+muukControllers.controller('EmbarqMultiUsuarioNewCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'UsuarioPreregister', 'SessionService', 'Empresa',
+  function($window, $scope, $location, AuthenticationService, $routeParams, UsuarioPreregister, SessionService, Empresa) {
+    var EmpresaSelected = $routeParams.id;
+    LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, EmpresaSelected, function(res){});
+    $scope.master = "";
+
+    $scope.update = function(usuarios) {
+      $scope.master = angular.copy(usuarios);
+    };
+
+    $scope.reset = function() {
+      $scope.usuarios = angular.copy($scope.master);
+    };
+
+    $scope.save = function(usuarios) {
+      var message = "";      
+      var created = 0;
+      var userList = usuarios.split("\n");
+      for (var index in userList) {
+        var UserObj = userList[index].split(",");
+        if (UserObj.length >= 2) {
+          // get name
+          var name = UserObj[0]; 
+          // get mail removing empty spaces
+          var mail = UserObj[1].replace(" ", ""); 
+          // validate mail
+          if (validateEmail(mail) == false) {
+            // add wrong call to the message response
+            message = name + ", " + mail + "\n";
+          } else {
+            // add user
+            console.log('Creando usuario de empresa ' + $scope.empresa.nombre)
+            var usuario = {nombre: name, email: mail, password: "", EmpresaId: $scope.empresa.id};
+            CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, ''); 
+            created = created + 1;
+          }
+        } else {
+          // add wrong call to the message response
+          message = userList[index] + "\n";
+        }
+      }  // end for
+      
+      if (message == "") {
+        console.log('VAMOS a empresaUsuarioList');
+        $window.alert("Se invitaron a " + created.toString() + "/" + userList.length + " usuarios." );
+        console.log('EmbarqMultiUsuarioNewCtrl.save - goto(embarqEmpresaList)');
+        $location.path('embarqEmpresaList');
+        return true;
+      } else {
+        $scope.usuarios = message;
+        $window.alert("Se invitaron a " + created.toString() + "/" + userList.length + " usuarios. Favor de verificar los datos de usuarios sobrantes." );
+        /*console.log('EmbarqMultiUsuarioNewCtrl.save - goto(embarqMultiUsuarioNew/' + EmpresaSelected + ')');
+        $location.path('embarqMultiUsuarioNew/' + EmpresaSelected);*/
+      }
+
+    };
+
+    $scope.cancel = function(){
+      console.log('EmbarqMultiUsuarioNewCtrl.cancel - goto(embarqEmpresaList)');
+      $location.path('embarqEmpresaList');
+    };
+
+    $scope.reset();
+    
+    function validateEmail(email) { 
+      var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(email);
+    }
+
+  }]);
+
+// -----------------------------------------------------
+/* EmbarQ - Solicitud de usuarios */
+muukControllers.controller('EmbarqSolicitudUsuarioListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Usuario', 'UsuariosNuevos',
+  function($window, $scope, $location, AuthenticationService, Usuario, UsuariosNuevos) {
+    LoadUsuariosNuevos($window, $scope, $location, AuthenticationService, UsuariosNuevos);
+    $scope.orderProp = 'nombre';
+
+    $scope.deleteUsuario = function (exId) {
+      if( $window.confirm("Se eliminará el usuario con id [" + exId + "] ¿Continuar?")) {
+        Usuario.remove({ exId: exId },
+          function(res){
+            if (res.success) {
+              $scope.errMsg = null;
+              LoadUsuariosNuevos($window, $scope, $location, AuthenticationService, UsuariosNuevos);
+            } else {
+              $scope.errMsg = res.msg;
+              if (DebugMode) {
+                $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+              }
+            }  
+          }, function(err) {
+            if (isValidToken(err, $window)) {
+              console.log(err);
+              $scope.errMsg = err.data.msg;
+              $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
+            }
+          }
+        );
+      }
+    };  
+
+  }]);
+muukControllers.controller('EmbarqSolicitudUsuarioShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario) {    
+    LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
+    
+    $scope.cancel = function(){
+      console.log('EmbarqSolicitudUsuarioShowCtrl.cancel - goto(embarqSolicitudUsuarioList)');
+      $location.path('embarqSolicitudUsuarioList');
+    };
+  }]);
+muukControllers.controller('EmbarqSolicitudUsuarioEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Usuario',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Usuario) {
+    LoadUsuario($window, $scope, $location, AuthenticationService, $routeParams.id, Usuario);
+
+    $scope.save = function(usuario) {
+      UpdateUsuario($window, $scope, $location, AuthenticationService, usuario, Usuario, 'embarqSolicitudUsuarioList'); 
+    };
+
+    $scope.cancel = function(){
+      console.log('EmbarqSolicitudUsuarioEditCtrl.cancel - goto(embarqSolicitudUsuarioList)');
+      $location.path('embarqSolicitudUsuarioList');
+    };
+  }]);
 
 // -----------------------------------------------------
 /* EmbarQ - Ruta */
@@ -743,6 +1171,10 @@ function LoadRutasAutorizadas($window, $scope, $location, AuthenticationService,
     if (res.success) {
       $scope.errMsg = null;
       $scope.rutas = res.resultObject;
+      console.log(res);
+      for (var index in $scope.rutas) {
+        $scope.rutas[index].companyownernombre = $scope.rutas[index].companyowner.nombre;
+      }
     } else {
       $scope.errMsg = res.msg;
       if (DebugMode) {
@@ -765,6 +1197,14 @@ function LoadRutasCompartidas($window, $scope, $location, AuthenticationService,
       $scope.errMsg = null;
       $scope.sucMsg = null;
       $scope.rutas = res.resultObject;
+      console.log(res);
+      for (var index in $scope.rutas) {
+        $scope.rutas[index].empresanombre = $scope.rutas[index].empresa.nombre;
+        $scope.rutas[index].empresaClientenombre = $scope.rutas[index].empresaCliente.nombre;
+        $scope.rutas[index].rutumnombre = $scope.rutas[index].rutum.nombre;
+        $scope.rutas[index].rutumorigentxt = $scope.rutas[index].rutum.origentxt;
+        $scope.rutas[index].rutumdestinotxt = $scope.rutas[index].rutum.destinotxt;
+      }      
     } else {
       $scope.errMsg = res.msg;
       $scope.sucMsg = null;
@@ -787,6 +1227,10 @@ function LoadRutasNuevas($window, $scope, $location, AuthenticationService, Ruta
     if (res.success) {
       $scope.errMsg = null;
       $scope.rutas = res.resultObject;
+      console.log(res);
+      for (var index in $scope.rutas) {
+        $scope.rutas[index].companyownernombre = $scope.rutas[index].companyowner.nombre;
+      }      
     } else {
       $scope.errMsg = res.msg;
       if (DebugMode) {
@@ -980,31 +1424,116 @@ muukControllers.controller('EmbarqRutaListCtrl', ['$window', '$scope', '$locatio
     };  
 
   }]);
-muukControllers.controller('EmbarqRutaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Ruta', 'SessionService',
-  function($window, $scope, $location, AuthenticationService, Ruta, SessionService) {
-  $scope.master = {};
 
-  $scope.update = function(ruta) {
-    $scope.master = angular.copy(ruta);
-  };
+                                                  
+muukControllers.controller('EmbarqRutaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta', 'SessionService', 'Mapa', 'Empresa',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Ruta, SessionService, Mapa, Empresa) {
+    var EmpresaSelected = $routeParams.id;
+    LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, EmpresaSelected, function(res){
+      $scope.reset();
+    });
 
-  $scope.reset = function() {
-    $scope.ruta = angular.copy($scope.master);
-    $scope.ruta.CompanyownerID = SessionService.currentUser.empresa;
-  };
+    $scope.master = {};
+    //$scope.user.empresa = $routeParams.id;//SessionService.currentUser.empresa;
+    $scope.step = 1;
+    $scope.selectedMarker = null;
+    $scope.selectedMarkerIndex = -1;
 
-  $scope.save = function(ruta) {
-    CreateRuta($window, $scope, $location, AuthenticationService, ruta, Ruta, 'embarqRutaList');
-  };
+    $scope.update = function(ruta) {
+      $scope.master = angular.copy(ruta);
+    };
 
-  $scope.cancel = function(){
-    console.log('EmbarqRutaFormCtrl.cancel - goto(embarqRutaList)');
-    $location.path('embarqRutaList');
-  };
+    $scope.reset = function() {
+      console.log('reseting...' + EmpresaSelected);
+      $scope.ruta = angular.copy($scope.master);
+      $scope.ruta.CompanyownerID = EmpresaSelected;// SessionService.currentUser.empresa;
+      $scope.ruta.diasofertafuturo = 7; // TODO: aceptar cambio de dias futuros
+    };
 
-  $scope.reset();
+    $scope.saveRuta = function(ruta) {
+      var ex = new Ruta(ruta);
+      console.log('New ruta result:');
+      console.log(ex);
+      ex.$create({}, function(result){
+        console.log(result);      
+        if (result.success) {
+          $scope.errMsg = null;
+          $scope.step = 2;
+          console.log('Create ruta result:');
+          console.log(result);
+          idm = result.resultObject.id;
+          creapuntos();
+        } else {
+          $scope.errMsg = res.msg;
+          if (DebugMode) {
+            $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+          }
+        }    
+      }, function(err) {
+        if (isValidToken(err, $window)) {
+          console.log(err);
+          $scope.errMsg = err.data.msg;
+          $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
+        }
+      });
 
-  }]);
+      /*      
+      var ex = new Ruta(ruta);
+      console.log(ex);
+      ex.$create({}, function(){
+        var lista = Ruta.query();
+        lista.$promise.then(function(result){
+          for (var i = 0; i < result.resultObject.length; i++) {
+            if(result.resultObject[i].nombre == ruta.nombre ){
+              console.log("ya cargo RutaId---< " + result.resultObject[i].id);
+              $scope.step = 2;
+              idm = result.resultObject[i].id;
+              creapuntos();
+            }
+          }
+        });
+      });*/
+    }; 
+
+    $scope.savePunto = function(selectedMarker) {
+      //$scope.selectedMarker = selectedMarker;
+      console.log('saving selected punto ' + $scope.selectedMarkerIndex);
+      saveSelectedPunto();      
+    };
+
+    $scope.deletePunto = function() {
+      if ($window.confirm(msgConfirmarBorrarPunto)) {
+        console.log('deleting selected punto ' + $scope.selectedMarkerIndex);
+        deleteSelectedPunto();
+      }
+    };
+      
+    $scope.savePuntos = function() {
+      console.log('vamos a salvar puntos');
+      saveRutaPuntos();
+    };
+
+    $scope.saveMapa = function(mapa) {
+      console.log('$scope.saveMapa');        
+      console.log(mapa);        
+      if($scope.user.role == 'EMPRESA'){
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqEmpresaList'); 
+      }else if($scope.user.role == 'ADMIN'){
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqEmpresaList'); 
+      }       
+    }; 
+
+    $scope.cancel = function(){
+      if ($window.confirm(msgConfirmarCancelarRutaNueva)) {
+        console.log('EmbarqRutaFormCtrl.cancel - goto(embarqEmpresaList)');
+        $location.path('embarqEmpresaList');
+      }
+    };
+
+    //$scope.reset();
+  }]);  
 muukControllers.controller('EmbarqRutaDetailCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Ruta', 
   function($window, $scope, $location, AuthenticationService, $routeParams, Ruta) {
     LoadRuta($window, $scope, $location, AuthenticationService, $routeParams.id, Ruta);
@@ -1155,8 +1684,8 @@ function UpdateRuta($window, $scope, $location, AuthenticationService, ruta, Rut
     }
   });       
 }
-muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta',
-  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta) {
+muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta', 'OfertaGenerar',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Corrida, CorridaXRuta, OfertaGenerar) {
     $scope.rutaid = $routeParams.id;
     LoadCorridasXRuta($window, $scope, $location, AuthenticationService, CorridaXRuta, $routeParams.id);
     $scope.orderProp = 'nombre';
@@ -1190,7 +1719,31 @@ muukControllers.controller('EmbarqCorridaListCtrl', ['$window', '$scope', '$loca
       console.log('EmbarqCorridaListCtrl.cancel - goto(embarqRutaList)');
       $location.path('embarqRutaList');
     };
-    
+    $scope.generarOferta = function(exId) {
+      OfertaGenerar.query({ exId: exId },
+          function(res){
+            console.log(res);
+            if (res.success) {
+              $scope.errMsg = null;
+              $window.alert(res.msg);
+            } else {
+              $scope.errMsg = res.msg;
+              if (DebugMode) {
+                $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+              }
+            }           
+          }, function(err) {
+            if (isValidToken(err, $window)) {
+              console.log(err);
+              $scope.errMsg = err.data.msg;
+              $scope.sucMsg = null;  
+            } else {
+              ForceLogOut($window, $scope, $location, AuthenticationService);
+            }
+          }
+        );
+    };
+   
   }]);
 muukControllers.controller('EmbarqCorridaDetailCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 
   function($window, $scope, $location, AuthenticationService, $routeParams, Corrida) {
@@ -1203,7 +1756,59 @@ muukControllers.controller('EmbarqCorridaDetailCtrl', ['$window', '$scope', '$lo
       $location.path('embarqCorridaList/' + $scope.rutaid);
     };
   }]);
+muukControllers.controller('EmbarqCorridaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Corrida', '$routeParams',
+  function($window, $scope, $location, AuthenticationService, Corrida, $routeParams) {
+    $scope.master = {};
 
+    $scope.update = function(corrida) {
+      $scope.master = angular.copy(corrida);
+    };
+
+    $scope.reset = function() {
+      $scope.corrida = angular.copy($scope.master);
+      $scope.corrida.RutaId = $routeParams.id;
+      $scope.corrida.dia1 = true;
+      $scope.corrida.dia2 = false;
+      $scope.corrida.dia3 = false;
+      $scope.corrida.dia4 = false;
+      $scope.corrida.dia5 = false;
+      $scope.corrida.dia6 = false;
+      $scope.corrida.dia7 = false;
+    };
+
+    $scope.save = function(corrida) {
+      CreateCorrida($window, $scope, $location, AuthenticationService, corrida, Corrida, 'embarqCorridaList/' + $scope.corrida.RutaId);
+      /*
+      var ex = new Corrida(corrida);
+      console.log(ex);
+      //ex.$save();
+      ex.$create({}, function(result){
+        console.log(result);
+        if (!result.success) {
+          console.log(JSON.stringify(result.msg))
+          $window.alert(JSON.stringify(result.msg));
+        } else {
+          $location.path();
+        }
+        
+      });*/
+    };
+
+    $scope.cancel = function(){
+      console.log('EmbarqCorridaFormCtrl.cancel - goto(embarqCorridaList/' + $scope.corrida.RutaId);
+      $location.path('embarqCorridaList/' + $scope.corrida.RutaId);
+    };
+
+    $scope.validateChecks = function() {
+      if (($scope.corrida.dia1 == null) || ($scope.corrida.dia2 == null) || ($scope.corrida.dia3 == null) || ($scope.corrida.dia4 == null) || ($scope.corrida.dia5 == null) || ($scope.corrida.dia6 == null) || ($scope.corrida.dia7 == null)) {
+        return false;
+      } else {
+        return ($scope.corrida.dia1 || $scope.corrida.dia2 || $scope.corrida.dia3 || $scope.corrida.dia4 || $scope.corrida.dia5 || $scope.corrida.dia6 || $scope.corrida.dia7);
+      }
+    };
+
+    $scope.reset();
+  }]);
 // -----------------------------------------------------
 /* EmbarQ - Solicitud Corrida */
 muukControllers.controller('EmbarqSolicitudCorridaListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Corrida', 'CorridaXRuta',
@@ -1405,9 +2010,6 @@ muukControllers.controller('EmbarqEstadisticasCtrl', ['$scope', '$location', 'Au
         console.log($scope.rowsNumerosGlobales)
       }
     });
-
-
-
   }]);
 // -----------------------------------------------------
 /* EmbarQ - Comentarios */
@@ -1417,6 +2019,9 @@ function LoadComentarios($window, $scope, $location, AuthenticationService, Come
       $scope.errMsg = null;
       for (var i = 0; i < res.resultObject.length; i++) {
         res.resultObject[i].fechaCreada = res.resultObject[i].createdAt.substring(0, 10); 
+        res.resultObject[i].empresanombre = res.resultObject[i].empresa.nombre; 
+        res.resultObject[i].usuarionombre = res.resultObject[i].usuario.nombre; 
+        res.resultObject[i].usuarioemail = res.resultObject[i].usuario.email; 
       }
       $scope.comentarios = res.resultObject;
     } else {
@@ -1451,37 +2056,15 @@ muukControllers.controller('EmbarqAdminEmpresasCtrl', ['$window', '$scope', '$lo
 /* Empresa  */
 // *****************************************************
 /* Empresa - Perfil */
-function LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, empresaid) {
-  Empresa.query({exId: empresaid}, function(res){
-    if (res.success) {
-      $scope.errMsg = null;
-      $scope.empresa = res.resultObject;
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-      }
-    }
-  }, function(err) {
-    console.log(err);
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  }); 
-}
 muukControllers.controller('EmpresaPerfilShowCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'Empresa',
   function($window, $scope, $location, AuthenticationService, SessionService, Empresa) {
     console.log(SessionService.currentUser.authtoken);
-    LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, SessionService.currentUser.empresa);
+    LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, SessionService.currentUser.empresa, function(res){});
 
   }]);
 muukControllers.controller('EmpresaPerfilEditCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'Empresa',
   function($window, $scope, $location, AuthenticationService, SessionService, Empresa) {
-    LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, SessionService.currentUser.empresa);
+    LoadEmpresa($window, $scope, $location, AuthenticationService, Empresa, SessionService.currentUser.empresa, function(res){});
 
     $scope.save = function(empresa) {
       UpdateEmpresa($window, $scope, $location, AuthenticationService, empresa, Empresa, 'empresaPerfilShow');
@@ -1496,158 +2079,6 @@ muukControllers.controller('EmpresaPerfilEditCtrl', ['$window', '$scope', '$loca
 
 // -----------------------------------------------------
 /* Empresa - Usuarios */
-function LoadUsuariosAutorizadosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosAutorizadosXEmpresa) {
-  UsuariosAutorizadosXEmpresa.query({}, function(res){
-    if (res.success) {
-      $scope.errMsg = null;
-      $scope.usuarios = res.resultObject;
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-      }
-    }
-  }, function(err) {
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  }); 
-}
-function LoadUsuariosNuevosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosNuevosXEmpresa) {
-  UsuariosNuevosXEmpresa.query({}, function(res){
-    if (res.success) {
-      $scope.errMsg = null;
-      $scope.usuarios = res.resultObject;
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-      }
-    }
-  }, function(err) {
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  }); 
-}
-function LoadUsuario($window, $scope, $location, AuthenticationService, usuarioid, Usuario) {
-  Usuario.show({exId: usuarioid}, function(res){
-    if (res.success) {
-      $scope.errMsg = null;
-      res.resultObject.passwordCoded = '';
-      for (var i = 0; i < res.resultObject.password.length; i++) {
-        res.resultObject.passwordCoded = res.resultObject.passwordCoded + '●';
-      }      
-      $scope.usuario = res.resultObject;
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-      }
-    }
-  }, function(err) {
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  });  
-}
-function CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, locationTo) {
-  var ex = new UsuarioPreregister(usuario, function(res) {
-    if (res.success) {
-      $scope.errMsg = null;
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-      }
-    }
-  }, function(err) {
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  });   
-  console.log(ex); 
-  ex.$create({}, function(res){
-    if (res.success) {
-      $scope.errMsg = null;
-      if (locationTo != '') {
-        console.log('CreateUsuarioPreregister - goto(' + locationTo + ')');
-        $location.path(locationTo);
-      }
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-      }
-    }
-  }, function(err) {
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  });
-}
-function UpdateUsuario($window, $scope, $location, AuthenticationService, usuario, Usuario, locationTo) {
-  var ex = new Usuario(usuario, function(res) {
-    if (res.success) {
-      $scope.errMsg = null;
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-      }
-    }
-  }, function(err) {
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  });   
-
-  console.log(ex);    
-  ex.$update({ exId: usuario.id }, function(res) {
-    if (res.success) {
-      $scope.errMsg = null;
-      console.log('UpdateUsuario - goto(' + locationTo + ')');
-      $location.path(locationTo);
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-      }
-    }
-  }, function(err) {
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  });       
-}
 muukControllers.controller('EmpresaUsuarioListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Usuario', 'UsuariosAutorizadosXEmpresa',
   function($window, $scope, $location, AuthenticationService, Usuario, UsuariosAutorizadosXEmpresa) {
     LoadUsuariosAutorizadosXEmpresa($window, $scope, $location, AuthenticationService, UsuariosAutorizadosXEmpresa);
@@ -1767,7 +2198,7 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', '
       if (message == "") {
         console.log('VAMOS a empresaUsuarioList');
         $window.alert("Se invitaron a " + created.toString() + "/" + UserObj.length + " usuarios." );
-//        $scope.cancel();
+
         console.log('EmpresaMultiUsuarioNewCtrl.save - goto(empresaUsuarioList)');
         $location.path('empresaUsuarioList');
         return true;
@@ -1859,6 +2290,10 @@ function LoadRutasXEmpresa($window, $scope, $location, AuthenticationService, Ru
     if (res.success) {
       $scope.errMsg = null;
       $scope.rutas = res.resultObject;
+      console.log(res);
+      for (var index in $scope.rutas) {
+        $scope.rutas[index].companyownernombre = $scope.rutas[index].companyowner.nombre;
+      }      
     } else {
       $scope.errMsg = res.msg;
       if (DebugMode) {
@@ -1929,35 +2364,59 @@ muukControllers.controller('EmpresaRutaFormCtrl', ['$window', '$scope', '$locati
 
     $scope.saveRuta = function(ruta) {
       var ex = new Ruta(ruta);
+      console.log('New ruta result:');
       console.log(ex);
-    
-      ex.$create({}, function(){
-        var lista = Ruta.query();
-        lista.$promise.then(function(result){
-        for (var i = 0; i < result.resultObject.length; i++) {
-          if(result.resultObject[i].nombre == ruta.nombre ){
-            console.log("ya cargo ---< " + result.resultObject[i].id);
-            $scope.step = 2;
-            creapuntos();
-            //ShowMapa($window, $scope, $location, AuthenticationService, idm, Mapa);
-//            console.log('EmpresaRutaFormCtrl.save - goto(mapaview/'+result.resultObject[i].id);
-//            $location.path('mapaview/'+result.resultObject[i].id);
+      ex.$create({}, function(result){
+        console.log(result);      
+        if (result.success) {
+          $scope.errMsg = null;
+          $scope.step = 2;
+          console.log('Create ruta result:');
+          console.log(result);
+          idm = result.resultObject.id;
+          creapuntos();
+        } else {
+          $scope.errMsg = res.msg;
+          if (DebugMode) {
+            $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
           }
+        }    
+      }, function(err) {
+        if (isValidToken(err, $window)) {
+          console.log(err);
+          $scope.errMsg = err.data.msg;
+          $scope.sucMsg = null;  
+        } else {
+          ForceLogOut($window, $scope, $location, AuthenticationService);
         }
       });
-  //      $location.path('empresaRutaList');
-      });
     }; 
-/*
+
     $scope.savePunto = function(selectedMarker) {
-      $scope.selectedMarker = selectedMarker;
+      //$scope.selectedMarker = selectedMarker;
+      console.log('saving selected punto ' + $scope.selectedMarkerIndex);
+      saveSelectedPunto();      
     };
-*/
-    $scope.saveMapa = function(mapa) {  
+
+    $scope.deletePunto = function() {
+      if ($window.confirm(msgConfirmarBorrarPunto)) {
+        console.log('deleting selected punto ' + $scope.selectedMarkerIndex);
+        deleteSelectedPunto();
+      }
+    };
+      
+    $scope.savePuntos = function() {
+      console.log('vamos a salvar puntos');
+      saveRutaPuntos();
+    };
+
+    $scope.saveMapa = function(mapa) {
+      console.log('$scope.saveMapa');        
+      console.log(mapa);        
       if($scope.user.role == 'EMPRESA'){
         SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'empresaRutaList'); 
       }else if($scope.user.role == 'ADMIN'){
-        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqRutaList'); 
+        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'empresaRutaList'); 
       }       
     }; 
 
@@ -2368,6 +2827,14 @@ function LoadReservaciones($window, $scope, $location, AuthenticationService, Re
         // fill fechas
         res.resultObject[i].fechaCreada = res.resultObject[i].createdAt.substring(0, 10);
         res.resultObject[i].fechaReservada = res.resultObject[i].fechaReservacion.substring(0, 10);
+        res.resultObject[i].rutumnombre = res.resultObject[i].rutum.nombre;
+        res.resultObject[i].rutumorigentxt = res.resultObject[i].rutum.origentxt;
+        res.resultObject[i].rutumdestinotxt = res.resultObject[i].rutum.destinotxt;
+
+
+        res.resultObject[i].rutaCorridahoraSalidaFmt = res.resultObject[i].rutaCorrida.horaSalidaFmt;
+        res.resultObject[i].rutaCorridahoraLlegadaFmt = res.resultObject[i].rutaCorrida.horaLlegadaFmt;
+
       }
       
       $scope.reservaciones = res.resultObject;
@@ -2401,7 +2868,8 @@ function LoadEsperas($window, $scope, $location, AuthenticationService, Esperas)
         res.resultObject[i].fechaCreada = res.resultObject[i].createdAt.substring(0, 10);
         res.resultObject[i].fechaReservada = res.resultObject[i].fechaReservacion.substring(0, 10);
       }      
-      $scope.esperas = res.resultObject;
+      //$scope.esperas = res.resultObject;
+      $scope.reservaciones = res.resultObject;
     } else {
       $scope.errMsg = res.msg;
       if (DebugMode) {
@@ -2447,6 +2915,10 @@ function LoadRutasXUsuario($window, $scope, $location, AuthenticationService, Us
           // mostrar todos
           $scope.rutas = res.resultObject;;
         }        
+        console.log(res);
+        for (var index in $scope.rutas) {
+          $scope.rutas[index].companyownernombre = $scope.rutas[index].companyowner.nombre;
+        }
         //console.log($scope.rutas);
         //$scope.rutas = res.resultObject;
       }, function(err) {
@@ -2544,13 +3016,15 @@ muukControllers.controller('UsuarioRutasCtrl', ['$window', '$scope', '$location'
   function($window, $scope, $location, AuthenticationService) {
 
   }]);
-muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Reservaciones', 'CancelarReservacion', 'ConfirmarReservacion',
-  function($window, $scope, $location, AuthenticationService, Reservaciones, CancelarReservacion, ConfirmarReservacion) {
+muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Reservaciones', 'CancelarReservacion', 'ConfirmarReservacion', 'Esperas', 'CancelarEspera',
+  function($window, $scope, $location, AuthenticationService, Reservaciones, CancelarReservacion, ConfirmarReservacion, Esperas, CancelarEspera) {
 
     $scope.loadReservaciones = function(estatus, vigente) {
       LoadReservaciones($window, $scope, $location, AuthenticationService, Reservaciones, estatus, vigente);
     }
-
+    $scope.loadEsperas = function() {
+      LoadEsperas($window, $scope, $location, AuthenticationService, Esperas);
+    }
     $scope.init = function(estatus, vigente) {
       Reservaciones.query({estatus: estatus, vigente: vigente}, function(res){
         if (res.success) {
@@ -2607,9 +3081,8 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
         }
       });      
     }
-
     $scope.cancel = function(reservacion) {
-      if( $window.confirm("Se cancelará la reservacion id [" + reservacion.id + "] ¿Continuar?")) {
+      if( $window.confirm("Se cancelará la reservacion id [" + reservacion.id + "], ¿Desea continuar?")) {
         CancelarReservacion.query({exId: reservacion.id}, 
           function(res) {
             if (res.success) {
@@ -2633,7 +3106,6 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
         );
       }
     }
-
     $scope.confirm = function(reservacion) {
       if( $window.confirm("Se confirmará la reservacion id [" + reservacion.id + "] ¿Continuar?")) {
         ConfirmarReservacion.query({exId: reservacion.id}, 
@@ -2659,23 +3131,52 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
         );        
       }
     }
-
     $scope.selectTab = function(tabIndex) {
-      if (tabIndex == 0) {
-        $scope.tabActive = ["active","",""];  
-        $scope.tabSelected = "new";
-      } else if (tabIndex == 1) {
-        $scope.tabActive = ["","active",""];  
-        $scope.tabSelected = "confirmed";
-      } else if (tabIndex == 2) {
-        $scope.tabActive = ["","","active"];  
-        $scope.tabSelected = "canceled";
-      }
       $scope.reservaciones = null;
-      $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
+      $scope.esperas = null;
+      if (tabIndex == 0) {
+        $scope.tabActive = ["active","","",""];  
+        $scope.tabSelected = "new";
+        $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
+      } else if (tabIndex == 1) {
+        $scope.tabActive = ["","active","",""];  
+        $scope.tabSelected = "confirmed";
+        $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
+      } else if (tabIndex == 2) {
+        $scope.tabActive = ["","","active",""];  
+        $scope.tabSelected = "canceled";
+        $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
+      } else if (tabIndex == 3) {
+        $scope.tabActive = ["","","","active"];  
+        $scope.tabSelected = "waiting";
+        $scope.loadEsperas();
+      }
+    }
+    $scope.cancelEspera = function(espera) {
+      if( $window.confirm("Se cancelará la espera de la corrida con id [" + reservacion.id + "], ¿Desea continuar?")) {
+        CancelarEspera.query({exId: espera.id}, function(res){
+          if (res.success) {
+            $scope.errMsg = null;
+            $scope.loadEsperas();
+          } else {
+            $scope.errMsg = res.msg;
+            if (DebugMode) {
+              $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+            }
+          }
+        }, function(err) {
+          if (isValidToken(err, $window)) {
+            console.log(err);
+            $scope.errMsg = err.data.msg;
+            $scope.sucMsg = null;  
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
+          }
+        });
+      }      
     }
 
-    $scope.tabActive = ["active","",""];
+    $scope.tabActive = ["active","","",""];
     $scope.tabSelected = "new";
     $scope.tabHideOlder = true; 
 
@@ -2716,20 +3217,6 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$locat
   function($window, $scope, $location, AuthenticationService, SessionService, UsuarioRuta, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove) {
     $scope.showFavoritos = false;
     LoadRutasXUsuario($window, $scope, $location, AuthenticationService, UsuarioRuta, RutaFavorita, SessionService.currentUser.id);
-    /*
-    $scope.rutas = UsuarioRuta.query(function(results){
-      var RutaList = RutaFavorita.query({usrid: SessionService.currentUser.id}, function(favoritos) {
-        for (var i = 0; i < favoritos.length; i++) {
-          for (var j = 0; j < results.length; j++) {
-            console.log("comparando " + results[j].id + '/' + favoritos[i].RutaId);
-            results[j].isFavorite = (results[j].id == favoritos[i].RutaId);
-            if (results[j].isFavorite) { break; }
-          } 
-        }
-        $scope.rutas = results;
-      });
-
-    });*/
     $scope.orderProp = 'nombre';
 
     $scope.favorito = function(ruta){
@@ -2825,8 +3312,8 @@ muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$locat
 
 // -----------------------------------------------------
 /* Usuario - Rutas */
-muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'Mapa',
-  function($window, $scope, $location, AuthenticationService, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove, Mapa) {
+muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'RutaSugerida', 'RutaOferta', 'RutaReservar', 'RutaReservarRecurrente', 'RutaEsperar', 'RutaFavorita', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'Mapa',
+  function($window, $scope, $location, AuthenticationService, SessionService, RutaSugerida, RutaOferta, RutaReservar, RutaReservarRecurrente, RutaEsperar, RutaFavorita, RutaFavoritaAdd, RutaFavoritaRemove, Mapa) {
     //$scope.PointCount = 0;
     $scope.mostrarSugerencias = false;
     $scope.puntoALat = 0;
@@ -2876,61 +3363,17 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
         }
         results[i].fecha = results[i].fecha + '[' + myDate.getDate() + '/' + myDate.getMonth() + '/' + myDate.getFullYear() + ']';
       }
-//      console.log(results);
+
       return results;
-      /*
-      // inicializamos variables para comparar fechas
-      var daymilisec = 24 * 60 * 60 * 1000;
-      var hoy = new Date();
-      var d1 = new Date(hoy.getTime() + daymilisec);
-      var d2 = new Date(hoy.getTime() + 2 * daymilisec);
-      var d3  = new Date(hoy.getTime() + 3 * daymilisec);
-      var d4  = new Date(hoy.getTime() + 4 * daymilisec);
-      var d5  = new Date(hoy.getTime() + 5 * daymilisec);
-      var d6  = new Date(hoy.getTime() + 6 * daymilisec);
-      var d7  = new Date(hoy.getTime() + 7 * daymilisec);
-      var d8  = new Date(hoy.getTime() + 8 * daymilisec);
-
-      $scope.dias = [][];
-      $scope.dias0 = [];
-      $scope.dias1 = [];
-      $scope.dias2 = [];
-      $scope.dias3 = [];
-      $scope.dias4 = [];
-      $scope.dias5 = [];
-      $scope.dias6 = [];
-      $scope.dias7 = [];
-
-      // llenar listas
-      for (var i = 0; i < results.length; i++) {
-        console.log(results[i].fechaOferta);
-        var fechaOferta = new Date(results[i].fechaOferta);
-        console.log(fechaOferta);
-        // filtrado de listas
-        if ((fechaOferta > hoy)&&(fechaOferta < d1)) {
-          $scope.dias0.push(results[i]);
-        } else if ((fechaOferta > d1)&&(fechaOferta < d2)) {
-          $scope.dias1.push(results[i]);
-        } else if ((fechaOferta > d2)&&(fechaOferta < d3)) {
-          $scope.dias2.push(results[i]);
-        } else if ((fechaOferta > d3)&&(fechaOferta < d4)) {
-          $scope.dias3.push(results[i]);
-        } else if ((fechaOferta > d4)&&(fechaOferta < d5)) {
-          $scope.dias4.push(results[i]);
-        } else if ((fechaOferta > d5)&&(fechaOferta < d6)) {
-          $scope.dias5.push(results[i]);
-        } else if ((fechaOferta > d6)&&(fechaOferta < d7)) {
-          $scope.dias6.push(results[i]);
-        } else if ((fechaOferta > d1)&&(fechaOferta < d8)) {
-          $scope.dias7.push(results[i]);
-        }
-      }    
-      */    
     };
 
-    $scope.showCompraList = function(ruta){
-      RutaOferta.query({exId: ruta.id}, function(res){
+    $scope.showCompraList = function(sugerenciaSelected){
+      $scope.sugSelected = sugerenciaSelected;
+
+      console.log(sugerenciaSelected);
+      RutaOferta.query({exId: sugerenciaSelected.ruta.id}, function(res){
         if (res.success) {
+          console.log(res);
           $scope.errMsg = null;
           $scope.corridas = $scope.prepareResults(res.resultObject);
           console.log($scope.corridas);
@@ -3000,6 +3443,55 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
       }
     };
 
+    $scope.reservarRecurrente = function(corrida){
+      if ($window.confirm('Se reservará de manera recurrente todos los días de la corrida con id [' + corrida.id + '], ¿Desea continuar?')) {
+        $scope.errMsg = null;
+        $scope.sucMsg = null;
+
+        var ex = new RutaReservarRecurrente(corrida);          
+        console.log(ex); 
+        ex.$create({}, function(res){
+          if (res.success) {
+            $scope.sucMsg = "La reservación recurrente se realizó con éxito";
+            RutaOferta.query({exId: corrida.RutaId}, function(result){
+              if (result.success) {
+                $scope.errMsg = null;
+                console.log(result);
+                $scope.corridas = $scope.prepareResults(result.resultObject);         
+              } else {
+                $scope.errMsg = result.msg;
+                $scope.sucMsg = null;
+                if (DebugMode) {
+                  $scope.errMsg = $scope.errMsg + ' [' + result.msgCode + ']';
+                }
+              }
+            }, function(err) {
+              if (isValidToken(err, $window)) {
+                console.log(err);
+                $scope.errMsg = err.data.msg;
+                $scope.sucMsg = null;  
+              } else {
+                ForceLogOut($window, $scope, $location, AuthenticationService);
+              }
+            });
+          } else {
+            $scope.errMsg = res.msg;
+            if (DebugMode) {
+              $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+            }
+          }
+        }, function(err) {
+          console.log('ERROR...');
+          console.log(err);
+          if (isValidToken(err, $window)) {
+            console.log(err);
+            $scope.errMsg = err.data.msg;
+          } else {
+            ForceLogOut($window, $scope, $location, AuthenticationService);
+          }
+        });
+      }
+    };
     $scope.esperar = function(corrida){
       if ($window.confirm('Se reservará la corrida con id [' + corrida.id + '], ¿Desea continuar?')) {
         $scope.errMsg = null;
@@ -3123,6 +3615,13 @@ muukControllers.controller('UsuarioBuscarRutasCtrl', ['$window', '$scope', '$loc
                   } 
                 }
                 $scope.rutasuggest = res.resultObject;
+                console.log(res);
+                for (var index in $scope.rutasuggest) {
+                  $scope.rutasuggest[index].rutanombre = $scope.rutasuggest[index].ruta.nombre;
+                  $scope.rutasuggest[index].ascensoSugeridodescripcion = $scope.rutasuggest[index].ascensoSugerido.rutaPunto.descripcion;
+                  $scope.rutasuggest[index].descensoSugeridodescripcio = $scope.rutasuggest[index].descensoSugerido.rutaPunto.descripcio;
+                } 
+
               }
             );
            
@@ -3262,11 +3761,7 @@ muukControllers.controller('EmpresaMapaFormCtrl', ['$window', '$scope', '$locati
     ShowMapa($window, $scope, $location, AuthenticationService, idm, Mapa);
 
     $scope.save = function(mapa) {
-      if($scope.user.role == 'EMPRESA'){
-        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'empresaRutaList'); 
-      }else if($scope.user.role == 'ADMIN'){
-        SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqRutaList'); 
-      }  
+      SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'empresaRutaList'); 
     }; 
 
     $scope.cancel = function(){
@@ -3274,6 +3769,19 @@ muukControllers.controller('EmpresaMapaFormCtrl', ['$window', '$scope', '$locati
       $location.path('empresaRutaList');
     };  
   }]);
+muukControllers.controller('EmbarqMapaFormCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'Mapa',
+  function($window, $scope, $location, AuthenticationService, $routeParams, Mapa) {
+    idm = $routeParams.id;
+    ShowMapa($window, $scope, $location, AuthenticationService, idm, Mapa);
 
+    $scope.save = function(mapa) {
+      SaveMapa($window, $scope, $location, AuthenticationService, mapa, Mapa, 'embarqRutaList'); 
+    }; 
+
+    $scope.cancel = function(){
+      console.log('EmbarqMapaFormCtrl.cancel - goto(embarqRutaList)');
+      $location.path('embarqRutaList');
+    };  
+  }]);
 
   

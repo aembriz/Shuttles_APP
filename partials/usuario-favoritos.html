@@ -1,51 +1,110 @@
 <div class="container-fluid">
-    <h1 class="page-header">Mis Rutas</h1>
-	<div class="btn-toolbar" role="toolbar">
-      <div class="btn-group" style="width:100%;">
-      	
-      	<div class="input-group">			
-
-			<span ng-show="showFavoritos == true" class="input-group-addon" style="background-color:orange"><a type="button" class="btn btn-warning btn-xs" ng-click="filtraFavoritos()"><span class="glyphicon glyphicon-star"></span></a></span>
-			<span ng-show="showFavoritos != true" class="input-group-addon"><a type="button" class="btn btn-default btn-xs" ng-click="filtraFavoritos()"><span class="glyphicon glyphicon-star"></span></a></span>
-			<span class="input-group-addon">Buscar: </span>
-		  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de rutas"/>
+    <h1 class="page-header">Mis Rutas
+		<div style="float:right;">
+			<a type="button" class="btn btn-info btn-xs" ng-show="showFavoritos == true" ng-click="filtraFavoritos()">
+				Ver todas las rutas
+			</a>
+			<a type="button" class="btn btn-warning btn-xs" ng-show="showFavoritos != true" ng-click="filtraFavoritos()">
+				<span class="glyphicon glyphicon-star"></span>Ver solo rutas favoritas
+			</a>
 		</div>
-		<img ng-show="rutas==null" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
-		<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
-			<p ng-bind-html="message"></p>
-		</div>		
+    </h1>
 
-      </div>
-    </div>
-
+	<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
+	  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	  <strong>Error!</strong> {{errMsg}}
+	</div>
+	<div class="alert alert-success alert-dismissable" ng-show="(sucMsg != null)&&(sucMsg != '')">
+	  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+	  {{sucMsg}}
+	</div>  
+	<img ng-show="(rutas==null)&&(errMsg == null)" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+	<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+		<p ng-bind-html="message"></p>
+	</div>
 	<div class="table-responsive">
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<th><span class="glyphicon glyphicon-star"></span></th>
-					<th><a href="" ng-click="orderProp='id'">ID</a></th>
-					<th><a href="" ng-click="orderProp='nombre'">Nombre</a></th>
-					<th><a href="" ng-click="orderProp='origentxt'">Origen</a></th>
-					<th><a href="" ng-click="orderProp='destinotxt'">Destino</a></th>
+					<th width="1%">
+						<a type="button" class="btn btn-warning btn-xs" ng-show="showFavoritos == true" ng-click="filtraFavoritos()">
+							<span class="glyphicon glyphicon-star"></span>
+						</a>
+						<a type="button" class="btn btn-default btn-xs" ng-show="showFavoritos != true" ng-click="filtraFavoritos()">
+							<span class="glyphicon glyphicon-star-empty"></span>
+						</a>
+					</th>
+					<th width="10%">
+						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='id'"><b>ID</b></a></span>
+							<input ng-model="query.id" type="text" class="form-control input-sm" placeholder="ID" />
+						</div>
+					</th>
+					<th width="15%">
+						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='companyownernombre'"><b>Empresa</b></a></span>
+							<input ng-model="query.companyownernombre" type="text" class="form-control input-sm" placeholder="Empresa" />
+						</div>
+					</th>
+					<th width="15%">
+						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='nombre'"><b>Nombre</b></a></span>
+							<input ng-model="query.nombre" type="text" class="form-control input-sm" placeholder="Nombre" />
+						</div>
+					</th>
+					<th width="20%">
+						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='origentxt'"><b>Origen</b></a></span>
+							<input ng-model="query.origentxt" type="text" class="form-control input-sm" placeholder="Origen" />
+						</div>
+					</th>
+					<th width="20%">
+						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='destinotxt'"><b>Destino</b></a></span>
+							<input ng-model="query.destinotxt" type="text" class="form-control input-sm" placeholder="Destino" />
+						</div>
+					</th>	
+					<!--
+					<th width="4%">
+						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='recorridoParadas'"><b>Paradas</b></a></span>
+							v>
+					</th>					
+					<th width="4%">
+						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='capacidadReservada'"><b>Reservado</b></a></span>
+						</div>
+					</th>					
+					<th width="4%">
+						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='capacidadOfertada'"><b>Ofertado</b></a></span>
+						</div>
+					</th>						-->
 					<th>-</th>
 				</tr>
 			</thead>
 			<tbody>			
 				<tr ng-repeat="ruta in rutas | filter:query | orderBy:orderProp">
 					<td ng-show="ruta.isFavorite == true">
-						<a type="button"  class="btn btn-warning" ng-click="favorito(ruta)">
+						<a type="button"  class="btn btn-warning btn-xs" ng-click="favorito(ruta)">
 							<span class="glyphicon glyphicon-star"></span>
 						</a>
 					</td>
 					<td ng-show="ruta.isFavorite != true">
-						<a type="button"  class="btn btn-default" ng-click="favorito(ruta)">
+						<a type="button"  class="btn btn-default btn-xs" ng-click="favorito(ruta)">
 							<span class="glyphicon glyphicon-star-empty"></span>
 						</a>
 					</td>
 					<td>{{ruta.id}}</td>
-					<td>{{ruta.nombre}}</td>
+					<td>{{ruta.companyownernombre}}</td>
+					<td><a href="#/usuarioRutaShow/{{ruta.id}}">{{ruta.nombre}}</a></td>
 					<td>{{ruta.origentxt}}</td>
 					<td>{{ruta.destinotxt}}</td>
+					<!--
+					<td>{{ruta.recorridoParadas}}</td>
+					<td>{{ruta.capacidadReservada}}</td>
+					<td>{{ruta.capacidadOfertada}}</td>	
+				-->
 					<td>
 						<a type="button" class="btn btn-info" href="#/usuarioRutaShow/{{ruta.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
 						<a type="button" class="btn btn-info" href="#/usuarioMapaShow/{{ruta.id}}"><span class="glyphicon glyphicon-map-marker"></span></a>						

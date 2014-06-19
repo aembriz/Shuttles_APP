@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <h1 class="page-header">Lista de usuarios</h1>
+	<h1 class="page-header">Solicitudes de nuevos usuarios</h1>
 
 	<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
 	  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -25,42 +25,50 @@
 					</th>
 					<th width="25%">
 						<div class="input-group">
+							<span class="input-group-addon"><a href="" ng-click="orderProp='empresanombre'"><b>Empresa</b></a></span>
+							<input ng-model="query.empresanombre" type="text" class="form-control input-sm" placeholder="Empresa" />
+						</div>
+					</th>
+					<th width="20%">
+						<div class="input-group">
 							<span class="input-group-addon"><a href="" ng-click="orderProp='nombre'"><b>Nombre</b></a></span>
 							<input ng-model="query.nombre" type="text" class="form-control input-sm" placeholder="Nombre" />
 						</div>
 					</th>
-					<th width="25%">
+					<th width="20%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='origentxt'"><b>Origen</b></a></span>
-							<input ng-model="query.origentxt" type="text" class="form-control input-sm" placeholder="Origen" />
+							<span class="input-group-addon"><a href="" ng-click="orderProp='email'"><b>E-mail</b></a></span>
+							<input ng-model="query.email" type="text" class="form-control input-sm" placeholder="E-mail" />
 						</div>
 					</th>
-					<th width="25%">
+					<th width="10%">
 						<div class="input-group">
-							<span class="input-group-addon"><a href="" ng-click="orderProp='destinotxt'"><b>Destino</b></a></span>
-							<input ng-model="query.destinotxt" type="text" class="form-control input-sm" placeholder="Destino" />
+							<span class="input-group-addon"><a href="" ng-click="orderProp='role'"><b>Rol</b></a></span>
+							<input ng-model="query.role" type="text" class="form-control input-sm" placeholder="Rol" />
 						</div>
-					</th>	
+					</th>					
 					<th>-</th>
 				</tr>
 			</thead>
-			<tbody>		
-				<!--
-			    <p> {{usuarios}}</p>	
-			-->
+			<tbody>
 				<tr ng-repeat="usr in usuarios | filter:query | orderBy:orderProp">
 					<td>{{usr.id}}</td>
-					<td><a href="#/empresaUsuarioShow/{{usr.id}}">{{usr.nombre}}</a></td>
+					<td ng-show="usr.empresa!=null">{{usr.empresanombre}}</td>
+					<td ng-show="usr.empresa==null">EMBARQ M&eacute;xico</td>					
+<!--					<td><a href="#/empresaSolicitudUsuarioShow/{{usr.id}}">{{usr.nombre}}</a></td> -->
+					<td>{{usr.nombre}}</td>
 					<td>{{usr.email}}</td>
 					<td>{{usr.role}}</td>
 					<td>
-						<a type="button" class="btn btn-info" href="#/empresaUsuarioShow/{{usr.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
-						<a type="button" class="btn btn-danger" ng-click="deleteUsuario(usr.id)" ng-show="usr.id!=user.id"><span class="glyphicon glyphicon-remove"></span></a>
+<!--						<a type="button" class="btn btn-info" href="#/empresaSolicitudUsuarioShow/{{usr.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a> -->
+						<a type="button" class="btn btn-danger" ng-click="deleteUsuario(usr.id)"><span class="glyphicon glyphicon-remove"></span></a>
 					</td>
 
 				</tr>
 			</tbody>
-		</table>		
-		
-	</div>	
+		</table>
+
+	</div>
+
+
 </div>

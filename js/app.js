@@ -68,6 +68,42 @@ muukApp.config(['$routeProvider', '$httpProvider',
         controller: 'EmbarqEmpresaDetailCtrl'
       }).   
       // -----------------------------------------------------
+      // EmbarQ - Usuarios
+      when('/embarqUsuarioList', {
+        templateUrl: 'partials/embarq-usuarioList.html',
+        controller: 'EmbarqUsuarioListCtrl',
+      }).
+      when('/embarqUsuarioNew', {
+        templateUrl: 'partials/embarq-usuarioForm.html',
+        controller: 'EmbarqUsuarioFormCtrl'
+      }).
+      when('/embarqUsuarioShow/:id', {
+        templateUrl: 'partials/embarq-usuarioShow.html',
+        controller: 'EmbarqUsuarioShowCtrl'
+      }).
+      when('/embarqUsuarioEdit/:id', {
+        templateUrl: 'partials/embarq-usuarioForm.html',
+        controller: 'EmbarqUsuarioEditCtrl'
+      }).
+      when('/embarqMultiUsuarioNew/:id', {
+        templateUrl: 'partials/embarq-multiUsuarioForm.html',
+        controller: 'EmbarqMultiUsuarioNewCtrl'
+      }).   
+      // -----------------------------------------------------
+      // EmbarQ - Solicitud de usuarios
+      when('/embarqSolicitudUsuarioList', {
+        templateUrl: 'partials/embarq-solicitudUsuarioList.html',
+        controller: 'EmbarqSolicitudUsuarioListCtrl'
+      }).
+      when('/embarqSolicitudUsuarioShow/:id', {
+        templateUrl: 'partials/embarq-solicitudUsuarioShow.html',
+        controller: 'EmbarqSolicitudUsuarioShowCtrl'
+      }).
+      when('/embarqSolicitudUsuarioEdit/:id', {
+        templateUrl: 'partials/embarq-solicitudUsuarioForm.html',
+        controller: 'EmbarqSolicitudUsuarioUpdateCtrl'
+      }).      
+      // -----------------------------------------------------
       // EmbarQ - Ruta
       when('/embarqRutaEdit/:id', {
         templateUrl: 'partials/embarq-rutaForm.html',
@@ -77,10 +113,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-rutaShow.html',
         controller: 'EmbarqRutaDetailCtrl'
       }).   
-      when('/embarqRutaNew', {
-        templateUrl: 'partials/embarq-rutaForm.html',
+      when('/embarqRutaNew/:id', {
+        templateUrl: 'partials/embarq-rutaFormNew.html',
         controller: 'EmbarqRutaFormCtrl'
-      }).      
+      }).        
       when('/embarqRutaList', {
         templateUrl: 'partials/embarq-rutaList.html',
         controller: 'EmbarqRutaListCtrl'
@@ -101,6 +137,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-corridaList.html',
         controller: 'EmbarqCorridaListCtrl'
       }).
+      when('/embarqCorridaNew/:id', {
+        templateUrl: 'partials/empresa-corridaForm.html',
+        controller: 'EmbarqCorridaFormCtrl'
+      }).      
       // -----------------------------------------------------
       // EmbarQ - Solicitud Corrida de Ruta
       when('/embarqSolicitudCorridaShow/:id', {
@@ -329,6 +369,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/empresa-mapaShow.html',
         controller: 'EmpresaMapaFormCtrl'
       }). 
+      when('/embarqMapaShow/:id', {
+        templateUrl: 'partials/embarq-mapaShow.html',
+        controller: 'EmbarqMapaFormCtrl'
+      }).       
       when('/mapaview/:id', {
         templateUrl: 'partials/mapanew.html',
         controller: 'MapaFormCtrl'

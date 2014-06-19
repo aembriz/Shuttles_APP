@@ -7,13 +7,14 @@
        	<div class="panel panel-info">
 
 	   		<div class="panel-heading" align="center">
+	   			<a type="button" class="btn btn-info btn-xs" href="#/embarqCorridaNew/{{rutaid}}"><span class="glyphicon glyphicon-plus"></span>Crear corrida</a>
 	   			<button class="btn btn-link" ng-click="cancel()">Regresar a la lista de Rutas</button>
 	   		</div>
 
 	   		<div class="panel-body">
 				<ul class="nav nav-tabs">
 				  <li><a href="#/embarqRutaShow/{{rutaid}}">General</a></li>
-				  <li><a href="#/mapaview/{{rutaid}}">Mapa</a></li>
+				  <li><a href="#/embarqMapaShow/{{rutaid}}">Mapa</a></li>
 				  <li class="active"><a href="#">Corridas</a></li>
 				</ul>
 				<br/>
@@ -71,6 +72,7 @@
 								<td>
 									<a type="button" class="btn btn-info" href="#/embarqCorridaShow/{{corrida.id}}"><span class="glyphicon glyphicon-zoom-in"></span></a>
 									<a type="button" class="btn btn-danger" ng-click="deleteCorrida(corrida.id)"><span class="glyphicon glyphicon-remove"></span></a>
+									<a type="button" class="btn btn-warning" ng-click="generarOferta(rutaid)"><span class="glyphicon glyphicon-refresh"></span></a>									
 								</td>
 
 							</tr>

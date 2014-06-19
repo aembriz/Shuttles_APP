@@ -366,7 +366,7 @@ muukServices.factory('RutaOferta',['$resource', 'SessionService',
     return $resource(servicesUrl + '/compra/ruta/:exId/oferta', {}, {
       query: {
         method: 'GET', 
-        params:{}, 
+        params:{exId: '@exId'}, 
         isArray:false, 
         headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
       }     
@@ -379,6 +379,18 @@ muukServices.factory('RutaReservar',['$resource', 'SessionService',
       query: {
         method: 'POST', 
         params:{exId: '@exId'}, 
+        isArray:false, 
+        headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
+      }     
+    });
+  }]);
+
+muukServices.factory('RutaReservarRecurrente',['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/reservacionrecurrente', {}, {
+      create: {
+        method: 'POST', 
+        params:{}, 
         isArray:false, 
         headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }
       }     

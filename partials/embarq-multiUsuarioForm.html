@@ -1,0 +1,44 @@
+<div class="container-fluid">
+	<br/>
+	<script src="js/holder/holder.js"></script>	
+	<h1 class="page-header" align="center">{{empresa.nombre}}</h1>
+	<link href="css/panels.css" rel="stylesheet">
+    <form name="exForm" novalidate class="form-800">
+	   	<div class="panel panel-success">
+
+	   		<div class="panel-heading" align="center">				
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuarios)">Invitar usuarios</button>
+				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+    		</div>
+
+    		<div class="panel-body" >
+				<div class="form-group" ng-class="{ 'has-error' : exForm.exName.$invalid && !exForm.exName.$pristine }">
+					<label for="exName">Nuevos usuarios para invitar</label><br/>
+					<textarea name="exName" class="form-control" placeholder="Nombre, correo@ejemplo.com" ng-model="usuarios" required></textarea>
+
+					<p ng-show="exForm.exName.$invalid && !exForm.exName.$pristine" class="help-block">Favor de revisar el formato.</p>
+					
+				</div>
+
+				<p> 
+					<i>
+						<b>Ejemplo:</b><br/>
+						Felipe Arteaga, Felipe.Arteaga@empresa.com<br/>
+						Maria Felix, maria@empresa.com
+					</i>
+					<br/><br/>
+					Ingresa cada usuario en una nueva l&iacute;nea con el formato:
+					<br/><b>Nombre, Correo@empresa.com </b> 
+
+				</p>
+			</div>	
+
+			<div class="panel-heading" align="center">
+				<button type="submit" class="btn btn-success" ng-disabled="exForm.$invalid" ng-click="save(usuarios)">Invitar usuarios</button>
+				<button class="btn btn-link" ng-click="cancel()">Cancelar</button>
+			</div>
+		</div>		
+    </form>
+	<br/>
+	  				  		
+</div>

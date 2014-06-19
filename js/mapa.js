@@ -5,9 +5,11 @@ var ArrDatos = [];
 var arrPuntos = new Array();
 
 function creapuntos(){
+  /*
 $('#Botpuntos').attr("disabled", true);
 $('#limpia').attr("disabled", true);
 $('#carga').attr("disabled", true);
+*/
   var mapOptions = {
     zoom: 10,
     //Optenemos el centro del mapa
@@ -61,13 +63,12 @@ console.log("DATOS DE CONSULTA ----> " + infoPuntos[0].latitud);
   });
   
   bindInfoWindow(marker, map, infowindow, infoPuntos[i].descripcion);
-
 }
 
 var flightPath = new google.maps.Polyline({
       path: flightPlanCoordinates,
       geodesic: true,
-      strokeColor: '#FF0000',
+      strokeColor: '#428bca',
       strokeOpacity: 1.0,
       strokeWeight: 2
        });
@@ -77,8 +78,8 @@ flightPath.setMap(map);
 
 // empezamos el evento para crear la polilinea
 function addLatLng(event) {
-  $('#Botpuntos').attr("disabled", false);
-$('#limpia').attr("disabled", false);
+  /*$('#Botpuntos').attr("disabled", false);
+$('#limpia').attr("disabled", false);*/
   path = poly.getPath();
 
   // introducimos cordenadas a las variables
@@ -140,7 +141,7 @@ function bindInfoWindow(marker, map, infowindow, strDescription) {
 }
 
 // hacemos el arreglo de la lista de cordenadas a llenar datos   
-$("#Botpuntos").click(function(){
+/*$("#Botpuntos").click(function(){
   for (x=0;x<puntos.length;x++){
         $('#puntos').append('<label for=\"cord\">Cordenada '+(x+1)+'</label><br>'+
           '<input type=\"text\" name=\"cordenada\" id=\"cord'+x+'\" value=\"'+puntos[x]+'\" size=\"45\" disabled><br>'+
@@ -160,22 +161,23 @@ $('#Botpuntos').attr("disabled", true);
 $('#limpia').attr("disabled", false);
 $('#carga').attr("disabled", false);
 });
-
+*/
 
 function setAllMap(map) {
   for (var i = 0; i < puntos.length; i++) {
     puntos[i].setMap(map);
   }
 }
-
+/*
 // limpiamos los markers y lineas.
 $("#limpia").click(function(){
   if ($('table.table td').length == 0){
     console.log ( "Noooooo hay filas en la tabla!! ----> " + $("table.table td").length );
-}
+  }
   $('#puntos').html("");
   puntos = [];
   creapuntos();
+
 $('#Botpuntos').attr("disabled", true);
 $('#limpia').attr("disabled", true);
 $('#carga').attr("disabled", true);
@@ -209,3 +211,4 @@ $("#carga").click(function(){
   console.log(tmp);
 angular.element($('.view-frame')).scope().save(tmp);
 });
+*/
