@@ -15,6 +15,8 @@
     <script src="https://maps.googleapis.com/maps/api/js?libraries=places&ssensor=false"></script>
   </head>
 
+  <link href="css/login.css" rel="stylesheet">
+  <link href="css/panels.css" rel="stylesheet">
   <body >  
   <div class="animate-switch-container" ng-switch on="user.authenticated">
     <div class="animate-switch" ng-switch-when="false">
@@ -23,22 +25,48 @@
 
         <!-- LOGIN -->
         <div class="animate-switch" ng-switch-when="login">
-          <link href="css/login.css" rel="stylesheet">
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
+          <br/>
           <div class="container-fluid" ng-controller="LoginController">            
-            <div align="center"> <img src="imgs/logo_preliminar.png" width="180px"></div>
-            <form class="form-signin" autocomplete="on">              
-              <div align="center">
-                <!-- <h2 class="form-signin-heading">Iniciar sesión</h2> -->  
+            <form class="form-signin" autocomplete="on">  
+
+              <div align="left">
+                <br/>
+                <br/>
+                <div align="center"> <img src="imgs/logo_login.png" width="290px"></div>
+                <br/>
+                <br/>
+                <div> <img class="lineapunteada" src="imgs/lineapunteada.png" width="330px"></div>
+                <br/>
+              </div>
+              
+              <div align="left" class="logincontrols">
+                <div class="form-group">
+                  <label for="idTransporte">Usuario</label><br/>
+                  <input type="text" class="form-control" placeholder="Correo electr&oacute;nico" id="usr" ng-model="usr"/>
+                </div>  
+                <div class="form-group">
+                  <label for="idTransporte">Contraseña</label><br/>
+                  <input type="password" class="form-control" placeholder="Contraseña" id="pwd" ng-model="pwd"/>
+                </div>                  
+                <!-- <h2 class="form-signin-heading">Iniciar sesión</h2>   
                 <input id="usr" type="text" class="input-block-level" placeholder="Correo electr&oacute;nico" ng-model="usr" autofill="autofill">
                 <input id="pwd" type="password" class="input-block-level" placeholder="Contraseña" ng-model="pwd">
+                <br/>-->
+              </div>
+              <div align="center">
+                <button class="btn btn-large login btn-warning " type="submit" ng-click="loginUser(usr, pwd, logincallbackSuccess, logincallbackError)">Entrar</button>     
+                <br/>
                 <br/>
                 <a href="#/loginForgotPass">¿Olvidaste tu contraseña?</a> 
                 <br/>
-                <a href="#/loginRegisterUser" ng-click="gotoRegister()">Registrar nueva empresa</a> 
-                <br/>
-                <br/>
-                <button class="btn btn-large btn-primary" type="submit" ng-click="loginUser(usr, pwd, logincallbackSuccess, logincallbackError)">Entrar</button>       
-              </div>
+                <a href="#/loginRegisterUser" ng-click="gotoRegister()">Registrar nueva empresa</a>
+              </div>    
+
               <div id="rs-message" style="color:red" align="center"><strong>{{message}}</strong></div>
             </form>
           </div>
@@ -62,7 +90,7 @@
         <div ng-controller="MainCtrl">
           <!-- Custom styles for this view -->
           <link href="css/dashboard.css" rel="stylesheet">
-          <div class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background-color:#5BC0DE">
+          <div class="navbar navbar-default navbar-fixed-top" role="navigation" style="background-color:#FFFFFF">
             <div class="container-fluid">
               <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -71,46 +99,48 @@
                   <span class="icon-bar"></span>
                   <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#" style="padding:0px 5px;"><img src="imgs/logo_preliminar.png" height="70px"/></a>
+                <a class="navbar-brand" href="#" style="padding:0px 5px;"><img src="imgs/logo_login.png" height="100px"/></a>
               </div>
 
               <!-- menu principal -->
-              <div class="navbar-collapse collapse">
+              <div class="navbar-collapse collapse menu">
                 <!-- EmbarQ -->              
                 <div ng-show="user.role == 'ADMIN'">
                     <ul class="nav navbar-nav navbar-left">
-                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/embarqEstadisticas" ng-click="menuSelect(0)"><b>Estadísticas</b></a></li>
-                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/embarqEmpresaList" ng-click="menuSelect(1)"><b>Empresas</b></a></li>
-                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/embarqUsuarioList" ng-click="menuSelect(2)"><b>Usuarios</b></a></li>
-                      <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/embarqRutaList" ng-click="menuSelect(3)"><b>Rutas / Horarios</b></a></li>
-                      <li ng-class="menuActive[4]"><a style="color:#FFFFFF" href="#/embarqComentarios" ng-click="menuSelect(4)"><b>Comentarios</b></a></li>
+                      <li ng-class="menuActive[0]"><a href="#/embarqEstadisticas" ng-click="menuSelect(0)"><b>Estadísticas</b></a></li>
+                      <li ng-class="menuActive[1]"><a href="#/embarqEmpresaList" ng-click="menuSelect(1)"><b>Empresas</b></a></li>
+                      <li ng-class="menuActive[2]"><a href="#/embarqUsuarioList" ng-click="menuSelect(2)"><b>Usuarios</b></a></li>
+                      <li ng-class="menuActive[3]"><a href="#/embarqRutaList" ng-click="menuSelect(3)"><b>Rutas / Horarios</b></a></li>
+                      <li ng-class="menuActive[4]"><a href="#/embarqComentarios" ng-click="menuSelect(4)"><b>Comentarios</b></a></li>
                     </ul>
                 </div>
                 <!-- Empresa -->
                 <div ng-show="user.role == 'EMPRESA'">
                 <!-- <div ng-show="user.role == 'USUARIO'"> -->
                     <ul class="nav navbar-nav navbar-left">
-                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/empresaPerfilShow" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
-                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/empresaUsuarioList" ng-click="menuSelect(1)"><b>Usuarios</b></a></li>
-                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/empresaRutaList" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
-                      <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/empresaComentarios" ng-click="menuSelect(3)"><b>Comentarios</b></a></li>
+                      <li ng-class="menuActive[0]"><a href="#/empresaPerfilShow" ng-click="menuSelect(0)"><b>Perfil</b></a></li>
+                      <li ng-class="menuActive[1]"><a href="#/empresaUsuarioList" ng-click="menuSelect(1)"><b>Usuarios</b></a></li>
+                      <li ng-class="menuActive[2]"><a href="#/empresaRutaList" ng-click="menuSelect(2)"><b>Rutas / Horarios</b></a></li>
+                      <li ng-class="menuActive[3]"><a href="#/empresaComentarios" ng-click="menuSelect(3)"><b>Comentarios</b></a></li>
                       <!--<li ng-class="menuActive[4]"><a style="color:#FFFFFF" href="#/empresaEstadisticas" ng-click="menuSelect(4)"><b>Estadísticas</b></a></li>-->
                     </ul>
                 </div>
                 <!-- Usuario -->
                 <div ng-show="user.role == 'USUARIO'">                    
                     <ul class="nav navbar-nav navbar-left">
-                      <li ng-class="menuActive[0]"><a style="color:#FFFFFF" href="#/usuarioPerfilShow" ng-click="menuSelect(0)"><b>Perfil</b></a></li>                      
-                      <li ng-class="menuActive[1]"><a style="color:#FFFFFF" href="#/usuarioFavoritos" ng-click="menuSelect(1)"><b>Mis Rutas</b></a></li>
-                      <li ng-class="menuActive[2]"><a style="color:#FFFFFF" href="#/usuarioReservaciones" ng-click="menuSelect(2)"><b>Mis Reservaciones</b></a></li>
+                      <li ng-class="menuActive[0]"><a href="#/usuarioPerfilShow" ng-click="menuSelect(0)"><b>Perfil</b></a></li>                      
+                      <li ng-class="menuActive[1]"><a href="#/usuarioFavoritos" ng-click="menuSelect(1)"><b>Mis Rutas</b></a></li>
+                      <li ng-class="menuActive[2]"><a href="#/usuarioReservaciones" ng-click="menuSelect(2)"><b>Mis Reservaciones</b></a></li>
                       <!--<li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/usuarioEspera" ng-click="menuSelect(3)"><b>Reservaciones en espera</b></a></li>-->
-                      <li ng-class="menuActive[3]"><a style="color:#FFFFFF" href="#/usuarioBuscarRutas" ng-click="menuSelect(3)"><b>Buscar rutas</b></a></li>
-                      <li ng-class="menuActive[4]"><a style="color:#FFFFFF" href="#/usuarioComentarios" ng-click="menuSelect(4)"><b>Comentarios</b></a></li>
+                      <li ng-class="menuActive[3]"><a href="#/usuarioBuscarRutas" ng-click="menuSelect(3)"><b>Buscar rutas</b></a></li>
+                      <li ng-class="menuActive[4]"><a href="#/usuarioComentarios" ng-click="menuSelect(4)"><b>Comentarios</b></a></li>
                     </ul>
                 </div>
 
                 <ul class="nav navbar-nav navbar-right">
-                  <li><a style="color:#FFFFFF" href="#" ng-click="logout()">Salir [{{user.name}}]</a></li>
+                  <li>
+                    <a type="button" class="btn btn-xs" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> Salir [{{user.name}}]</a>
+                  </li>
                 </ul>
                 <!--
                 <form class="navbar-form navbar-right">
