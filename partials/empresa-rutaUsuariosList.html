@@ -17,14 +17,11 @@
 				  <li><a href="#/empresaCorridaList/{{rutaid}}">Corridas</a></li>
 				  <li class="active"><a href="#">Usuarios registrados</a></li>
 				</ul>
-				<br/>
+				<!--
 				<div class="btn-toolbar" role="toolbar">
 			      <div class="btn-group" style="width:100%;">
 			      	
 			      	<div class="input-group">			
-			      		<!--
-						<span class="input-group-addon" style="background-color:lightblue"><a type="button" class="btn btn-info btn-xs" href="#/embarqCorridaNew"><span class="glyphicon glyphicon-plus"></span></a></span>
-					-->
 						<span class="input-group-addon">Buscar: </span>
 					  	<input ng-model="query" type="text" class="form-control" placeholder="Filtar lista de usuarios"/>
 					</div>
@@ -34,8 +31,19 @@
 					</div>		
 
 			      </div>
-			    </div>
-
+			    </div>-->
+				<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
+				  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				  <strong>Error!</strong> {{errMsg}}
+				</div>
+				<div class="alert alert-success alert-dismissable" ng-show="(sucMsg != null)&&(sucMsg != '')">
+				  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+				  {{sucMsg}}
+				</div>  
+				<img ng-show="(usuarios==null)&&(errMsg == null)" alt="Loading  Content" src="imgs/loading.gif" height="25px" />		
+				<div bn-slide-show="message!=''" slide-show-duration="500" style="float: center" ng-class="messageType">
+					<p ng-bind-html="message"></p>
+				</div>	
 				<div class="table-responsive">
 					<table class="table table-striped">
 						<thead>

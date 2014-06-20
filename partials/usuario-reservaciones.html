@@ -7,6 +7,7 @@
 		  	<li ng-class="tabActive[1]"><a href="" ng-click="selectTab(1)">Confirmadas</a></li>
 		  	<li ng-class="tabActive[2]"><a href="" ng-click="selectTab(2)">Canceladas</a></li>
 		  	<li ng-class="tabActive[3]"><a href="" ng-click="selectTab(3)">En espera</a></li>
+		  	<li ng-class="tabActive[4]"><a href="" ng-click="selectTab(4)">Permanentes</a></li>
 		</ul>
 		<div class="alert alert-danger alert-dismissable" ng-show="(errMsg != null)&&(errMsg != '')">
 		  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -25,7 +26,7 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>			
-					<th width="10%">
+					<th width="10%" ng-show="tabActive[4]==''">
 						<div class="input-group">
 							<span class="input-group-addon"><a href="" ng-click="orderProp='id'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.id" type="text" class="form-control input-sm" placeholder="Folio" />
@@ -40,13 +41,13 @@
 					</th>
 					<!--<th><a href="" ng-click="orderProp='rutum.nombre'">Nombre</a></th>-->
 					<!--<th width="10%">Origen - Destino</th>-->
-					<th width="10%">
+					<th width="13%">
 						<div class="input-group">
 							<span class="input-group-addon"><a href="" ng-click="orderProp='rutumorigentxt'"><span class="glyphicon glyphicon-arrow-up"></span></span>
 							<input ng-model="query.rutumorigentxt" type="text" class="form-control input-sm" placeholder="Origen" />
 						</div>
 					</th>
-					<th width="15%">
+					<th width="13%">
 						<div class="input-group">
 							<span class="input-group-addon"><a href="" ng-click="orderProp='rutumdestinotxt'"><span class="glyphicon glyphicon-arrow-up"></span></span>
 							<input ng-model="query.rutumdestinotxt" type="text" class="form-control input-sm" placeholder="Destino" />
@@ -66,25 +67,28 @@
 						</div>
 					</th>
 					<!--<th><a href="" ng-click="orderProp='rutaCorrida.horaLlegadaFmt'">Hora de llegada</a></th>-->
-					<th width="10%">
+					<th width="10%" ng-show="(tabActive[4]=='')">
 						<div class="input-group">
 							<span class="input-group-addon"><a href="" ng-click="orderProp='fechaCreada'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.fechaCreada" type="text" class="form-control input-sm" placeholder="Reservado el" />
 						</div>
 					</th>
 					<!--<th><a href="" ng-click="orderProp='fechaCreada'">Reservado el</a></th>-->
-					<th width="10%" ng-show="tabActive[3]==''">
+					<th width="10%" ng-show="(tabActive[3]=='')&&(tabActive[4]=='')">
 						<div class="input-group">
 							<span class="input-group-addon"><a href="" ng-click="orderProp='fechaReservada'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.fechaReservada" type="text" class="form-control input-sm" placeholder="Reservado para" />
 						</div>
 					</th>
 					<!--<th ng-show="tabActive[3]==''"><a href="" ng-click="orderProp='fechaReservada'">Reservado para</a></th>-->
-					<th width="10%" ng-show="tabActive[3]=='active'">
+					<th width="10%" ng-show="(tabActive[3]=='active')&&(tabActive[4]=='')">
 						<div class="input-group">
 							<span class="input-group-addon"><a href="" ng-click="orderProp='fechaEspera'"><span class="glyphicon glyphicon-arrow-up"></span></a></span>
 							<input ng-model="query.fechaEspera" type="text" class="form-control input-sm" placeholder="Esperando para" />
 						</div>
+					</th>
+					<th width="30%" ng-show="(tabActive[4]=='active')">
+						Para los d&iacute;as:
 					</th>
 					<!--<th ng-show="tabActive[3]=='active'"><a href="" ng-click="orderProp='fechaEspera'">Esperando para</a></th>-->
 					<th>-</th>
@@ -92,14 +96,35 @@
 			</thead>
 			<tbody>			
 				<tr ng-repeat="reservacion in reservaciones | filter:query | orderBy:orderProp">
-					<td>{{reservacion.folio}}</td>
+					<td ng-show="(tabActive[4]=='')">{{reservacion.folio}}</td>
 					<td>{{reservacion.rutum.nombre}}</td>
 					<td>{{reservacion.rutum.origentxt}}</td>
 					<td>{{reservacion.rutum.destinotxt}}</td>
 					<td>{{reservacion.rutaCorrida.horaSalidaFmt}}</td>
 					<td>{{reservacion.rutaCorrida.horaLlegadaFmt}}</td>
-					<td>{{reservacion.fechaCreada}}</td>
-					<td>{{reservacion.fechaReservada}}</td>
+					<td ng-show="(tabActive[4]=='')">{{reservacion.fechaCreada}}</td>
+					<td ng-show="(tabActive[4]=='')">{{reservacion.fechaReservada}}</td>
+					<td ng-show="(tabActive[4]=='active')">
+						<div class="input-group">
+							<ul class="nav nav-pills">
+									<li class="active" ng-show="reservacion.rutaCorrida.dia1==true"><a>Lun</a></li>
+									<li ng-show="reservacion.rutaCorrida.dia1==false"><a>Lun</a></li>
+									<li class="active" ng-show="reservacion.rutaCorrida.dia2==true"><a>Mar</a></li>
+									<li ng-show="reservacion.rutaCorrida.dia2==false"><a>Mar</a></li>
+									<li class="active" ng-show="reservacion.rutaCorrida.dia3==true"><a>Mi&eacute;</a></li>
+									<li ng-show="reservacion.rutaCorrida.dia3==false"><a>Mi&eacute;</a></li>
+									<li class="active" ng-show="reservacion.rutaCorrida.dia4==true"><a>Jue</a></li>
+									<li ng-show="reservacion.rutaCorrida.dia4==false"><a>Jue</a></li>
+									<li class="active" ng-show="reservacion.rutaCorrida.dia5==true"><a>Vie</a></li>
+									<li ng-show="reservacion.rutaCorrida.dia5==false"><a>Vie</a></li>
+									<li class="active" ng-show="reservacion.rutaCorrida.dia6==true"><a>Sab</a></li>
+									<li ng-show="reservacion.rutaCorrida.dia6==false"><a>Sab</a></li>
+									<li class="active" ng-show="reservacion.rutaCorrida.dia7==true"><a>Dom</a></li>
+									<li ng-show="reservacion.rutaCorrida.dia7==false"><a>Dom</a></li>
+							</ul>
+						</div>	
+
+					</td>
 					<td>
 						<!--
 						<a type="button" class="btn btn-info" href="#/usuarioShowMapa/{{reservacion.RutaId}}"><span class="glyphicon glyphicon-map-marker"></span></a> 

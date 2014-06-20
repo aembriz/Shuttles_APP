@@ -872,6 +872,29 @@ function LoadUsuario($window, $scope, $location, AuthenticationService, usuarioi
     }
   });  
 }
+function LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, empresaid, rutaid, corridaid, UsuariosPermanentes) {
+  UsuariosPermanentes.query({empresa: empresaid, ruta: rutaid, corrida: corridaid}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;    
+      console.log(res);
+      $scope.usuarios = res.resultObject;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  });  
+}
+
 function CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, locationTo) {
   var ex = new UsuarioPreregister(usuario, function(res) {
     if (res.success) {
@@ -1104,6 +1127,11 @@ muukControllers.controller('EmbarqMultiUsuarioNewCtrl', ['$window', '$scope', '$
       var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       return re.test(email);
     }
+
+  }]);
+muukControllers.controller('EmbarqUsuarioPermanenteListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'UsuariosPermanentes', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, UsuariosPermanentes) {
+    LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, null, null, null, UsuariosPermanentes);
 
   }]);
 
@@ -2316,6 +2344,11 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', '
     }
 
   }]);
+muukControllers.controller('EmpresaUsuarioPermanenteListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'UsuariosPermanentes', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, UsuariosPermanentes) {
+    LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, $scope.user.empresa, null, null, UsuariosPermanentes);
+
+  }]);
 
 // -----------------------------------------------------
 /* Empresa - Solicitud de usuarios */
@@ -2969,6 +3002,29 @@ function LoadReservaciones($window, $scope, $location, AuthenticationService, Re
     }
   }); 
 }
+function LoadReservacionesPermanentes($window, $scope, $location, AuthenticationService, RutaUsuariosXRuta) {
+  RutaUsuariosXRuta.query({}, function(res){
+    if (res.success) {
+      $scope.errMsg = null;
+      $scope.reservaciones = res.resultObject;
+      console.log(res);
+//      $scope.usuarios = res.resultObject;
+    } else {
+      $scope.errMsg = res.msg;
+      if (DebugMode) {
+        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+      }
+    }
+  }, function(err) {
+    if (isValidToken(err, $window)) {
+      console.log(err);
+      $scope.errMsg = err.data.msg;
+      $scope.sucMsg = null;  
+    } else {
+      ForceLogOut($window, $scope, $location, AuthenticationService);
+    }
+  }); 
+}
 function LoadEsperas($window, $scope, $location, AuthenticationService, Esperas) {
   Esperas.query({ }, function(res){
     if (res.success) {
@@ -3131,11 +3187,14 @@ muukControllers.controller('UsuarioRutasCtrl', ['$window', '$scope', '$location'
   function($window, $scope, $location, AuthenticationService) {
 
   }]);
-muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Reservaciones', 'CancelarReservacion', 'ConfirmarReservacion', 'Esperas', 'CancelarEspera',
-  function($window, $scope, $location, AuthenticationService, Reservaciones, CancelarReservacion, ConfirmarReservacion, Esperas, CancelarEspera) {
+muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Reservaciones', 'CancelarReservacion', 'ConfirmarReservacion', 'Esperas', 'CancelarEspera', 'RutaUsuariosXRuta',
+  function($window, $scope, $location, AuthenticationService, Reservaciones, CancelarReservacion, ConfirmarReservacion, Esperas, CancelarEspera, RutaUsuariosXRuta) {
 
     $scope.loadReservaciones = function(estatus, vigente) {
       LoadReservaciones($window, $scope, $location, AuthenticationService, Reservaciones, estatus, vigente);
+    }
+    $scope.loadReservacionesPermanentes = function() {
+      LoadReservacionesPermanentes($window, $scope, $location, AuthenticationService, RutaUsuariosXRuta);
     }
     $scope.loadEsperas = function() {
       LoadEsperas($window, $scope, $location, AuthenticationService, Esperas);
@@ -3250,21 +3309,25 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
       $scope.reservaciones = null;
       $scope.esperas = null;
       if (tabIndex == 0) {
-        $scope.tabActive = ["active","","",""];  
+        $scope.tabActive = ["active","","","",""];  
         $scope.tabSelected = "new";
         $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
       } else if (tabIndex == 1) {
-        $scope.tabActive = ["","active","",""];  
+        $scope.tabActive = ["","active","","",""];  
         $scope.tabSelected = "confirmed";
         $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
       } else if (tabIndex == 2) {
-        $scope.tabActive = ["","","active",""];  
+        $scope.tabActive = ["","","active","",""];  
         $scope.tabSelected = "canceled";
         $scope.loadReservaciones($scope.tabSelected, $scope.tabHideOlder);
       } else if (tabIndex == 3) {
-        $scope.tabActive = ["","","","active"];  
+        $scope.tabActive = ["","","","active",""];  
         $scope.tabSelected = "waiting";
         $scope.loadEsperas();
+      } else if (tabIndex == 4) {
+        $scope.tabActive = ["","","","","active"];  
+        $scope.tabSelected = "permanent";
+        $scope.loadReservacionesPermanentes();
       }
     }
     $scope.cancelEspera = function(espera) {

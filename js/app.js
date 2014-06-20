@@ -89,6 +89,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/embarq-multiUsuarioForm.html',
         controller: 'EmbarqMultiUsuarioNewCtrl'
       }).   
+      when('/embarqUsuarioPermanenteList', {
+        templateUrl: 'partials/embarq-usuarioPermanenteList.html',
+        controller: 'EmbarqUsuarioPermanenteListCtrl'
+      }).   
       // -----------------------------------------------------
       // EmbarQ - Solicitud de usuarios
       when('/embarqSolicitudUsuarioList', {
@@ -237,6 +241,10 @@ muukApp.config(['$routeProvider', '$httpProvider',
         templateUrl: 'partials/empresa-multiUsuarioForm.html',
         controller: 'EmpresaMultiUsuarioNewCtrl'
       }).
+      when('/empresaUsuarioPermanenteList', {
+        templateUrl: 'partials/empresa-usuarioPermanenteList.html',
+        controller: 'EmpresaUsuarioPermanenteListCtrl'
+      }).        
       // -----------------------------------------------------
       // Empresa - Solicitud de Usuarios
       when('/empresaSolicitudUsuarioList', {

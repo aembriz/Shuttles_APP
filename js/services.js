@@ -254,6 +254,18 @@ muukServices.factory('UsuariosNuevos', ['$resource', 'SessionService',
       query: { method:'GET', params:{}, isArray:false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }},
     });
   }]);
+muukServices.factory('UsuariosPermanentes', ['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/reservacionrecurrenteusuarios', {}, {
+      query: { method:'GET', params:{empresa: '@empresaid', ruta: '@rutaid', corrida: '@corrida'}, isArray:false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }},
+    });
+  }]);
+muukServices.factory('UsuariosPermanentesAdmin', ['$resource', 'SessionService',
+  function($resource, SessionService){
+    return $resource(servicesUrl + '/reservacionrecurrenteusuarios', {}, {
+      query: { method:'GET', params:{}, isArray:false, headers: { 'Authorization': 'Bearer ' + SessionService.currentUser.authtoken }},
+    });
+  }]);
 
 muukServices.factory('UsuarioAutorizar', ['$resource', 'SessionService',
   function($resource, SessionService){

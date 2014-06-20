@@ -1,8 +1,15 @@
 a {
   text-decoration: none;
 }
+@font-face {
+  font-family: 'tabitha';
+  src: url("../fonts/tabitha.ttf") format("ttf");
+}
 h1 {
   color: #FFD100;
+  text-shadow: #af3f1f 0.02em 0.02em 0.02em;
+  border-bottom: 1px dotted #f00;
+  /*font-family: 'tabitha';*/
 }
 
 .form-signin {
@@ -68,9 +75,15 @@ body {
 
 a:active{
   color:#404041;
+  /*box-shadow: 0 0 10px black;*/
 }
 
-a{
+a:hover{
+  color:#404041;
+  /*box-shadow: 0 0 5px yellow;*/
+}
+
+a {
   color:#202021;
 }
 
@@ -83,24 +96,41 @@ a{
   height: 100px;
 }
 .menu {
-  padding-top: 50px;
-  
+  padding-top: 48px;
 }
 .nav-submenu {
   padding-left: 250px;
   padding-top: 4px;
 }
-
+.nav-pills > li > a {
+  border-radius: 4px;
+  color: #ffd100;
+}
+.nav-pills > li > a:hover {
+  border-radius: 4px;
+  background-color:#404041;
+  color: #FFFFFF;
+}
 .nav-submenu > li.active > a {
   background-color:#ffd100;
+  box-shadow: 0 0 10px black;
 }
 // This changes the color of the active
-
+.nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
+  color: #fff;
+  background-color:#ffd100;
+  box-shadow: 0 0 10px black;  
+/* background-color: #428bca; */
+}
 .nav-submenu > li.active > a:hover {
   background-color:#ffd100;
 }
 // This changes the color of the hovered pill
 
+.nav-submenu > a:hover {
+  background-color:#ffd100;
+  box-shadow: 0 0 10px black;
+}
 .navbar-default {
   background-color: #ffffff;
   border-color: #ffd100;
@@ -160,3 +190,32 @@ a{
     background-color: #ffd100;
   }
 }
+
+.navbar-collapse {
+  width: auto;
+  border-top: 0;
+  box-shadow: 0 0 10px black;
+  border-bottom-right-radius: 30px;  
+}
+
+.container-fluid {
+  padding-right: 0px; 
+  padding-left: 0px; 
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.btn-logout {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 15px;
+  margin-right: 20px;
+}
+
+.page-header {
+  padding-bottom: 9px;
+  margin: 0px 0 20px;
+  border-bottom: 1px dotted #FED312;
+}
+

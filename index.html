@@ -29,8 +29,6 @@
           <br/>
           <br/>
           <br/>
-          <br/>
-          <br/>
           <div class="container-fluid" ng-controller="LoginController">            
             <form class="form-signin" autocomplete="on">  
 
@@ -47,7 +45,7 @@
               <div align="left" class="logincontrols">
                 <div class="form-group">
                   <label for="idTransporte">Usuario</label><br/>
-                  <input type="text" class="form-control" placeholder="Correo electr&oacute;nico" id="usr" ng-model="usr"/>
+                  <input type="text" class="form-control" placeholder="Correo electr&oacute;nico" id="usr" ng-model="usr" autofill="autofill"/>
                 </div>  
                 <div class="form-group">
                   <label for="idTransporte">Contraseña</label><br/>
@@ -139,7 +137,7 @@
 
                 <ul class="nav navbar-nav navbar-right">
                   <li>
-                    <a type="button" class="btn btn-xs" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> Salir [{{user.name}}]</a>
+                    <a type="button" class="btn btn-logout" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> Salir [{{user.name}}]</a>
                   </li>
                 </ul>
                 <!--
@@ -180,6 +178,7 @@
                     <li ng-class="submenuActive[0]"><a href="#/embarqRutaList" ng-click="submenuSelect(0)">Lista de Rutas</a></li>
                     <li ng-class="submenuActive[1]"><a href="#/embarqRutaCompartidaList" ng-click="submenuSelect(1)">Rutas Compartidas</a></li>
                     <li ng-class="submenuActive[2]"><a href="#/embarqSolicitudRutaList" ng-click="submenuSelect(2)">Solicitudes de nuevas rutas</a></li>
+                    <li ng-class="submenuActive[3]"><a href="#/embarqUsuarioPermanenteList" ng-click="submenuSelect(3)">Usuarios permanentes</a></li>
                   </ul>
                 </div>  
               </div>
@@ -202,6 +201,7 @@
                   <ul class="nav nav-pills nav-submenu">
                     <li ng-class="submenuActive[0]"><a href="#/empresaRutaList" ng-click="submenuSelect(0)">Mis Rutas</a></li>
                     <li ng-class="submenuActive[1]"><a href="#/empresaRutasCompartidas" ng-click="submenuSelect(1)">Rutas compartidas</a></li>
+                    <li ng-class="submenuActive[2]"><a href="#/empresaUsuarioPermanenteList" ng-click="submenuSelect(2)">Usuarios permanentes</a></li>
                   </ul>
                 </div>  
                 <!-- menu Comentarios -->

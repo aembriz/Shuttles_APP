@@ -17,7 +17,8 @@ body {
      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
           box-shadow: 0 1px 2px rgba(0,0,0,.05);
   border-top-left-radius: 30px;
-  border-bottom-right-radius: 30px;            
+  border-bottom-right-radius: 30px;  
+  box-shadow: 0 0 20px black;          
 }
 
 .form-1200 {
@@ -33,7 +34,8 @@ body {
      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
           box-shadow: 0 1px 2px rgba(0,0,0,.05);
   border-top-left-radius: 30px;
-  border-bottom-right-radius: 30px;            
+  border-bottom-right-radius: 30px; 
+  box-shadow: 0 0 20px black;           
 }
 
 .form-800 {
@@ -49,7 +51,8 @@ body {
      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
           box-shadow: 0 1px 2px rgba(0,0,0,.05);
   border-top-left-radius: 30px;
-  border-bottom-right-radius: 30px;            
+  border-bottom-right-radius: 30px;  
+  box-shadow: 0 0 20px black;          
 }
 
 .form-600 {
@@ -65,7 +68,8 @@ body {
      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
           box-shadow: 0 1px 2px rgba(0,0,0,.05);
   border-top-left-radius: 30px;
-  border-bottom-right-radius: 30px;            
+  border-bottom-right-radius: 30px; 
+  box-shadow: 0 0 20px black;           
 }
 
 .form-500 {
@@ -81,7 +85,8 @@ body {
      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
           box-shadow: 0 1px 2px rgba(0,0,0,.05);
   border-top-left-radius: 30px;
-  border-bottom-right-radius: 30px;            
+  border-bottom-right-radius: 30px;  
+  box-shadow: 0 0 20px black;          
 }
 
 .form-400 {
@@ -98,7 +103,8 @@ body {
      -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
           box-shadow: 0 1px 2px rgba(0,0,0,.05);     
   border-top-left-radius: 30px;
-  border-bottom-right-radius: 30px;            
+  border-bottom-right-radius: 30px; 
+  box-shadow: 0 0 20px black;           
 }
 .form-default .form-default-heading,
 .form-default .checkbox {
