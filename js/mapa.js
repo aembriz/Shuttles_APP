@@ -32,49 +32,71 @@ console.log("EL ID ES -----> " + idm);
   google.maps.event.addListener(map, 'click', addLatLng);
 }
 
-function consultapuntos(){
-var flightPlanCoordinates = [];
-infoPuntos = angular.element($('.view-frame')).scope().pMapa;
-console.log("DATOS DE CONSULTA ----> " + infoPuntos[0].latitud);
+function consultapuntos() {
+  var flightPlanCoordinates = [];
+  infoPuntos = angular.element($('.view-frame')).scope().pMapa;
+  console.log("DATOS DE CONSULTA ----> " + infoPuntos.length);
+  // obtenemos punto central y zoom
+  var sumaLat = 0;
+  var sumaLng = 0;
+  for (var i = 0; i < infoPuntos.length; i++) {
+    if (i==0) {
+      console.log('setting origin...');      
+      var originLat = parseFloat(infoPuntos[i].latitud);
+      var originLng = parseFloat(infoPuntos[i].longitud);
+    } else if (i==infoPuntos.length-1) {
+      console.log('setting end...');      
+      var endLat = parseFloat(infoPuntos[i].latitud);
+      var endLng = parseFloat(infoPuntos[i].longitud);
+    }
+    sumaLat += parseFloat(infoPuntos[i].latitud);
+    sumaLng += parseFloat(infoPuntos[i].longitud);    
+  }
+
+  var promedioLat = sumaLat / infoPuntos.length;//(originLat + endLat) / 2;
+  var promedioLng = sumaLng / infoPuntos.length;//(originLng + endLng) / 2;
+
+  // creamos mapa de google
+  console.log("creamos mapa de google...");
   var infowindow =  new google.maps.InfoWindow({
       content: ""
   });
   var mapOptions = {
-    zoom: 10,
-    center:  new google.maps.LatLng(19.4338902, -99.1530205)
+    zoom: 14,
+    center:  new google.maps.LatLng(promedioLat, promedioLng)
   };
   map = new google.maps.Map(document.getElementById('map_canvas'),
       mapOptions);
   var infowindow =  new google.maps.InfoWindow({
       content: ""
-  });
+  });  
 
+  // dibujamos la ruta
+  console.log("dibujamos la ruta...");
   for (var i = 0; i < infoPuntos.length; i++) {
     console.log(infoPuntos[i].descripcion);
-    flightPlanCoordinates.push(new google.maps.LatLng(
-        parseFloat(infoPuntos[i].latitud),
-            parseFloat(infoPuntos[i].longitud)));
-  var latLng = new google.maps.LatLng( parseFloat(infoPuntos[i].latitud), parseFloat(infoPuntos[i].longitud)); 
-
-  var marker = new google.maps.Marker({
+    flightPlanCoordinates.push(new google.maps.LatLng(parseFloat(infoPuntos[i].latitud), parseFloat(infoPuntos[i].longitud)));
+    var latLng = new google.maps.LatLng( parseFloat(infoPuntos[i].latitud), parseFloat(infoPuntos[i].longitud)); 
+    var marker = new google.maps.Marker({
       position: latLng,
       map: map,
       icon:"imgs/"+infoPuntos[i].tipo+".png"
+    });
+    bindInfoWindow(marker, map, infowindow, infoPuntos[i].descripcion);
+  }
+
+  var flightPath = new google.maps.Polyline({
+    path: flightPlanCoordinates,
+    geodesic: true,
+    strokeColor: '#428bca',
+    strokeOpacity: 1.0,
+    strokeWeight: 2
   });
-  
-  bindInfoWindow(marker, map, infowindow, infoPuntos[i].descripcion);
+
+  flightPath.setMap(map);  
 }
 
-var flightPath = new google.maps.Polyline({
-      path: flightPlanCoordinates,
-      geodesic: true,
-      strokeColor: '#428bca',
-      strokeOpacity: 1.0,
-      strokeWeight: 2
-       });
 
-flightPath.setMap(map);
-}
 
 // empezamos el evento para crear la polilinea
 function addLatLng(event) {

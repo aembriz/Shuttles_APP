@@ -872,27 +872,52 @@ function LoadUsuario($window, $scope, $location, AuthenticationService, usuarioi
     }
   });  
 }
-function LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, empresaid, rutaid, corridaid, UsuariosPermanentes) {
-  UsuariosPermanentes.query({empresa: empresaid, ruta: rutaid, corrida: corridaid}, function(res){
-    if (res.success) {
-      $scope.errMsg = null;    
-      console.log(res);
-      $scope.usuarios = res.resultObject;
-    } else {
-      $scope.errMsg = res.msg;
-      if (DebugMode) {
-        $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+function LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, empresaid, rutaid, corridaid, UsuariosPermanentes, UsuariosPermanentesAdmin) {
+  if ((empresaid==null)&&(rutaid==null)&&(corridaid==null)) {
+    UsuariosPermanentesAdmin.query({}, function(res){
+      if (res.success) {
+        $scope.errMsg = null;    
+        console.log(res);
+        $scope.usuarios = res.resultObject;
+      } else {
+        $scope.errMsg = res.msg;
+        if (DebugMode) {
+          $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+        }
       }
-    }
-  }, function(err) {
-    if (isValidToken(err, $window)) {
-      console.log(err);
-      $scope.errMsg = err.data.msg;
-      $scope.sucMsg = null;  
-    } else {
-      ForceLogOut($window, $scope, $location, AuthenticationService);
-    }
-  });  
+    }, function(err) {
+      if (isValidToken(err, $window)) {
+        console.log(err);
+        $scope.errMsg = err.data.msg;
+        $scope.sucMsg = null;  
+      } else {
+        ForceLogOut($window, $scope, $location, AuthenticationService);
+      }
+    }); 
+  } else {
+    UsuariosPermanentes.query({empresa: empresaid, ruta: rutaid, corrida: corridaid}, function(res){
+      if (res.success) {
+        $scope.errMsg = null;    
+        console.log(res);
+        $scope.usuarios = res.resultObject;
+      } else {
+        $scope.errMsg = res.msg;
+        if (DebugMode) {
+          $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
+        }
+      }
+    }, function(err) {
+      if (isValidToken(err, $window)) {
+        console.log(err);
+        $scope.errMsg = err.data.msg;
+        $scope.sucMsg = null;  
+      } else {
+        ForceLogOut($window, $scope, $location, AuthenticationService);
+      }
+    }); 
+  }
+
+   
 }
 
 function CreateUsuarioPreregister($window, $scope, $location, AuthenticationService, usuario, UsuarioPreregister, locationTo) {
@@ -1129,9 +1154,9 @@ muukControllers.controller('EmbarqMultiUsuarioNewCtrl', ['$window', '$scope', '$
     }
 
   }]);
-muukControllers.controller('EmbarqUsuarioPermanenteListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'UsuariosPermanentes', 
-  function($window, $scope, $location, AuthenticationService, $routeParams, UsuariosPermanentes) {
-    LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, null, null, null, UsuariosPermanentes);
+muukControllers.controller('EmbarqUsuarioPermanenteListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'UsuariosPermanentes', 'UsuariosPermanentesAdmin', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, UsuariosPermanentes, UsuariosPermanentesAdmin) {
+    LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, null, null, null, UsuariosPermanentes, UsuariosPermanentesAdmin);
 
   }]);
 
@@ -2344,9 +2369,9 @@ muukControllers.controller('EmpresaMultiUsuarioNewCtrl', ['$window', '$scope', '
     }
 
   }]);
-muukControllers.controller('EmpresaUsuarioPermanenteListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'UsuariosPermanentes', 
-  function($window, $scope, $location, AuthenticationService, $routeParams, UsuariosPermanentes) {
-    LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, $scope.user.empresa, null, null, UsuariosPermanentes);
+muukControllers.controller('EmpresaUsuarioPermanenteListCtrl', ['$window', '$scope', '$location', 'AuthenticationService', '$routeParams', 'UsuariosPermanentes', 'UsuariosPermanentesAdmin', 
+  function($window, $scope, $location, AuthenticationService, $routeParams, UsuariosPermanentes, UsuariosPermanentesAdmin) {
+    LoadUsuariosPermanentes($window, $scope, $location, AuthenticationService, $scope.user.empresa, null, null, UsuariosPermanentes, UsuariosPermanentesAdmin);
 
   }]);
 
@@ -3359,37 +3384,6 @@ muukControllers.controller('UsuarioReservacionesCtrl', ['$window', '$scope', '$l
     $scope.tabHideOlder = true; 
 
     $scope.init($scope.tabSelected, $scope.tabHideOlder);    
-  }]);
-muukControllers.controller('UsuarioEsperaCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'Esperas', 'CancelarEspera',
-  function($window, $scope, $location, AuthenticationService, Esperas, CancelarEspera) {
-
-    $scope.loadEsperas = function() {
-      LoadEsperas($window, $scope, $location, AuthenticationService, Esperas);
-    }
-
-    $scope.cancel = function(espera) {
-      CancelarEspera.query({exId: espera.id}, function(res){
-        if (res.success) {
-          $scope.errMsg = null;
-          $scope.loadEsperas();
-        } else {
-          $scope.errMsg = res.msg;
-          if (DebugMode) {
-            $scope.errMsg = $scope.errMsg + ' [' + res.msgCode + ']';
-          }
-        }
-      }, function(err) {
-        if (isValidToken(err, $window)) {
-          console.log(err);
-          $scope.errMsg = err.data.msg;
-          $scope.sucMsg = null;  
-        } else {
-          ForceLogOut($window, $scope, $location, AuthenticationService);
-        }
-      });      
-    }
-
-    $scope.loadEsperas();
   }]);
 muukControllers.controller('UsuarioFavoritosCtrl', ['$window', '$scope', '$location', 'AuthenticationService', 'SessionService', 'UsuarioRuta', 'RutaFavorita', 'RutaOferta', 'RutaFavoritaAdd', 'RutaFavoritaRemove', 'RutaReservar', 'RutaReservarRecurrente', 'RutaEsperar', 'Mapa',
   function($window, $scope, $location, AuthenticationService, SessionService, UsuarioRuta, RutaFavorita, RutaOferta, RutaFavoritaAdd, RutaFavoritaRemove, RutaReservar, RutaReservarRecurrente, RutaEsperar, Mapa) {
