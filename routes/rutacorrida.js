@@ -54,6 +54,26 @@ exports.add = function() {
     rutacorrida.save().complete(function (err, rutacorrida) {
       //res.send((err === null) ? { msg: '', success: true} : { msg: err, success: false });          
       if(err == null){
+
+        if(req.body.paradas){
+          var paradas = [];
+          for (var i = 0; i < req.body.paradas.length; i++) {
+            var p = req.body.paradas[i];
+            var parada = {horaestimada: p.horaestimada, RutaId: rutacorrida.RutaId, 
+              RutaCorridaId: rutacorrida.id, RutaPuntoId: p.RutaPuntoId};
+            paradas.push(parada);
+          };
+          db.RutaParada.bulkCreate(paradas).complete(function(err){
+            if(err!=null){
+              res.send(util.formatResponse('Se creó correctamente la corrida, pero existieron problemas al registrar los horarios', null, true, 'ErrRucY016', constErrorTypes, rutacorrida));                  
+            }
+            else{
+              res.send(util.formatResponse('Se creó correctamente la corrida', null, true, 'ErrRucY017', constErrorTypes, rutacorrida));
+            }
+            return;
+          });
+        }
+
         res.send(util.formatResponse('Se creó correctamente la corrida', null, true, 'ErrRucY005', constErrorTypes, rutacorrida));
       }
       else{
@@ -74,8 +94,35 @@ exports.update = function() {
       db.RutaCorrida.find(idToUpdate).success(function(rutacorrida) {
         if(rutacorrida!=null){        
           rutacorrida.updateAttributes(req.body).success(function(rutacorrida) {
-            //res.send( { rutacorrida: rutacorrida} );
-            res.send(util.formatResponse('Se modificó correctamente la corrida', null, true, 'ErrRucY007', constErrorTypes, rutacorrida));
+
+            if(req.body.paradas){
+              var paradas = [];
+              for (var i = 0; i < req.body.paradas.length; i++) {
+                var p = req.body.paradas[i];
+                var parada = {horaestimada: p.horaestimada, RutaId: rutacorrida.RutaId, 
+                  RutaCorridaId: rutacorrida.id, RutaPuntoId: p.RutaPuntoId};
+                paradas.push(parada);
+              };
+              db.RutaParada.destroy({RutaCorridaId: rutacorrida.id}).complete(function(err){                
+                if(err!=null){
+                  res.send(util.formatResponse('Se modificó correctamente la corrida, pero existieron problemas al registrar los horarios', err, true, 'ErrRucY018', constErrorTypes, rutacorrida));
+                }
+                else{
+                  db.RutaParada.bulkCreate(paradas).complete(function(err){
+                    if(err!=null){
+                      res.send(util.formatResponse('Se modificó correctamente la corrida, pero existieron problemas al registrar los horarios', err, true, 'ErrRucY019', constErrorTypes, rutacorrida));
+                    }
+                    else{
+                      res.send(util.formatResponse('Se modificó correctamente la corrida', null, true, 'ErrRucY015', constErrorTypes, rutacorrida));
+                    }
+                    return;
+                  });
+                }
+              });
+            }
+            return;
+
+            res.send(util.formatResponse('Se modificó correctamente la corrida', null, true, 'ErrRucY007', constErrorTypes, rutacorrida));                         
           }).error(function(err){
               //res.send({ msg: 'Ocurrieron errores al modificar la corrida.', err: err});
               res.send(util.formatResponse('Ocurrieron errores al modificar la corrida', err, false, 'ErrRucY008', constErrorTypes, null));

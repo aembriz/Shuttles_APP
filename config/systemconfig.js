@@ -2,6 +2,7 @@
 
 module.exports.server = {};
 module.exports.server.port = 8082;
+module.exports.server.url = "http://localhost:8086";
 
 module.exports.db = {};
 module.exports.db.name = 'shuttle';

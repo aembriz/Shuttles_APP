@@ -25,7 +25,7 @@ Comandos RESTFul:
 * PUT /empresa/authorize/{id} = (Marca la empresa designada por el id como autorizada)
 * PUT /empresa/reject/{id} = (Marca la empresa designada por el id como rechazada)
 * DELETE /empresa/{id} = (Elimina registro marcado con el id)  
-
+* POST /empresa/img/upload?empresa={idEmpresa} = (Content-type = multipart, sube el logo para la empresa)
 
 Ejemplo post de empresa para registro y pre-registro (incluye usuario administrador):
 
@@ -179,7 +179,25 @@ Ejemplo creación de objeto ruta. Las horas se deben asignar directamente con va
       "dia3": false,
       "dia4": true,
       "dia5": true
+
+      "paradas": [
+        {"horaestimada": "19:00", "RutaPuntoId": "1"},
+        {"horaestimada": "20:00", "RutaPuntoId": "2"},
+        {"horaestimada": "21:00", "RutaPuntoId": "3"}
+      ]      
     }
+
+
+[URL...]/rutaparada
+Administración de las corridas de una ruta
+
+Comandos RESTFul:   
+* GET /rutaparada = (Consulta todos las horarios de paradas)  
+  * GET /rutaparada?corridaid=[id corrida] = (Consulta los horarios de paradas para la corrida especificada)
+* POST /rutaparada = (Creación de registro nuevo, la creación y actualización de horarios se hace desde el alta y actualización de corridas)
+* PUT /rutaparada/{id} = (Update al registro con el id especificado)  
+* DELETE /rutaparada/{id} = (Elimina registro marcado con el id) 
+
 
 ------------
 
@@ -220,6 +238,7 @@ Comandos RESTFul:
 * PUT /usuario/authorize/{id} = (Marca la empresa designada por el id como autorizada)
 * PUT /usuario/reject/{id} = (Marca la empresa designada por el id como rechazada)
 * DELETE /usuario/{id} = (Elimina registro marcado con el id)  
+* POST /usuario/img/upload?usuario={idUsuario} = (Content-type = multipart, sube la foto del usuario)
 
 Ejemplo de post para creación de usuario:
 
@@ -636,6 +655,7 @@ Crea reservaciones recurrentes para una corrida la cual debe de ser de la misma 
 
 Comandos RESTFul:   
 * GET /reservacionrecurrente = (Consulta todos. Se puede incluir filtro ?ruta={rutaid} para mostrar las reservaciones recurrentes de una ruta)  
+* GET /reservacionrecurrenteusuarios = (consulta los usuarios y reservaciones recurrentes se pueden implementar filtros ?empresa ?ruta ?corrida)
 * GET /reservacionrecurrente/ruta/{rutaid}/corrida = (Consulta las corridas de la ruta incluyendo las reservaciones recurrentes que el usuario haya generado para cada corrida.)  
 * GET /reservacionrecurrente/{id} = (Consulta registro con el id especificado  
 * POST /reservacionrecurrente = (Creación de registro nuevo)  

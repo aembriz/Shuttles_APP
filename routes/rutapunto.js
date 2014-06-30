@@ -141,7 +141,7 @@ exports.puntosXOferta = function(idOferta, soloParadas, callback){
     });
 };
 
-exports.puntosXCorrida = function(corrida, soloParadas, callback){
+exports.puntosXCorrida_bak = function(corrida, soloParadas, callback){
 
     var paramsWhere = {};
     paramsWhere.RutaId = corrida.RutaId;
@@ -172,6 +172,42 @@ exports.puntosXCorrida = function(corrida, soloParadas, callback){
 
 };
 
+exports.puntosXCorrida = function(corrida, soloParadas, callback){
+
+    var paramsWhere = {};
+    paramsWhere.RutaId = corrida.RutaId;
+    if(soloParadas) paramsWhere.tipo = {lt: 4};
+
+    var corridaTrayecto = corrida.horaLlegada - corrida.horaSalida;
+
+    db.RutaPunto.findAll( { where: paramsWhere, order: 'indice' } ).complete(function (err, puntos){
+      if(err!=null || puntos==null){
+        callback(util.formatResponse('Ocurrieron errores al consultar los puntos geográficos [puntos]', err, false, 'ErrRupX017', constErrorTypes, null));
+        return;
+      }
+
+      db.RutaParada.findAll( { where: {RutaCorridaId: corrida.id}, order: 'RutaPuntoId' }).complete(function(err, paradas){
+        if(err!=null || puntos==null){
+          callback(util.formatResponse('Ocurrieron errores al consultar las paradas [puntos]', err, false, 'ErrRupX017', constErrorTypes, null));
+          return;
+        }        
+
+        for (var i = 0; i < puntos.length; i++) {
+          puntos[i].dataValues.horaEstimada = "";
+          for (var j = 0; j < paradas.length; j++) {
+            if(puntos[i].id == paradas[j].RutaPuntoId){
+              puntos[i].dataValues.horaEstimada = paradas[j].horaestimada;
+              break;
+            }
+          }        
+        };      
+
+        callback(util.formatResponse('', null, true, 'ErrRupX005', constErrorTypes, puntos));
+      });
+
+    });
+
+};
 
 exports.puntosXOfertaServ = function() {
   return function(req, res) {

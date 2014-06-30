@@ -8,14 +8,15 @@ var jwt = require('jwt-simple');
 module.exports = function(app, passport) {
 	passport.use(new LocalStrategy(
 		function(username, password, done) {
-			db.Usuario.find({ where: { email: username } }).success(function(user) {
+			db.Usuario.find({ where: { email: username }, include: [{model: db.Empresa, as: 'Empresa'}] }).success(function(user) {
 				if (!user) {
 					return done(null, false, { message: 'Incorrect username.' });
 				}
 				if (!user.validPassword(password)) {
 					return done(null, false, { message: 'Incorrect password.' });
 				}
-				var usr = user.dataValues; // because of the format sent back by sequelizee
+				//var usr = user.dataValues; // because of the format sent back by sequelizee
+				var usr = user;
 				return done(null, usr);
 		    });
 		}

@@ -38,7 +38,12 @@ exports.login = function(req, res, next){
   			var expires = Date.now() + ( 12 * 3600 * 1000 );
   			var pretoken = 	{iss: user.email, exp: expires};
   			var token = jwt.encode(pretoken , app.get('jwtTokenSecret'));
-  			res.json({ token : token, role: user.role, empresa: user.EmpresaId, nombre: user.nombre, id: user.id });
+        var logoUrlx;
+        if(user.empresa!=null){
+          logoUrlx = user.empresa.logoUrl;
+        }
+  			res.json({ token : token, role: user.role, empresa: user.EmpresaId, nombre: user.nombre, id: user.id, 
+          logoUrl: logoUrlx, fotoUrl: user.fotoUrl, saldo: user.saldo });
   		})(req, res, next);
     }
 	
@@ -181,7 +186,7 @@ exports.addPre = function() {
     req.body.EstatusId = 1; // inicia con estatus nueva y despues se autoriza
     req.body.role = 'USUARIO';
     var usuario = db.Usuario.build(req.body);
-    usuario.save(['nombre', 'email', 'EmpresaId', 'role', 'EstatusId']).complete(function (err, usuario) {
+    usuario.save(['nombre', 'email', 'EmpresaId', 'role', 'EstatusId', 'telefono', 'area']).complete(function (err, usuario) {
       	if(err == null) {
           mail.notifyUserInvitations([usuario]);
           //res.send({ msg: '', success: true })

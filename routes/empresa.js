@@ -4,6 +4,8 @@ var constant = require('../config/constant.js');
 var util = require('./utilities');
 var constErrorTypes = {'ErrEmpX000': '', 'ErrEmpX000':''};
 
+var fs = require('fs');
+
 exports.list = function() { 
 	return function(req, res){
     var sts = 0;
@@ -76,7 +78,7 @@ exports.add = function(preregister) {
 
     // validate Usuario
     var usrData = {nombre: req.body.usuarionombre, email: req.body.usuarioemail, password: req.body.usuariopassword, 
-      EstatusId: sts, EmpresaId: 0, role: 'EMPRESA'}
+      EstatusId: sts, EmpresaId: 0, role: 'EMPRESA', telefono: req.body.usuariotelefono, area: req.body.usuarioarea}
     var usuario = db.Usuario.build(usrData);   
     var valerr = usuario.validate();
     if(valerr){
@@ -90,7 +92,7 @@ exports.add = function(preregister) {
     var usuario2 = null;
     if(req.body.usuario2nombre && req.body.usuario2email  && req.body.usuario2password){
       var usrData2 = {nombre: req.body.usuario2nombre, email: req.body.usuario2email, password: req.body.usuario2password, 
-        EstatusId: sts, EmpresaId: 0, role: 'EMPRESA'}
+        EstatusId: sts, EmpresaId: 0, role: 'EMPRESA', telefono: req.body.usuario2telefono, area: req.body.usuario2area}
       usuario2 = db.Usuario.build(usrData2);   
       var valerr = usuario2.validate();
       if(valerr){
@@ -169,6 +171,7 @@ exports.update = function() {
         if(empresa!=null){
           delete req.body.EstatusId // elimina el atributo estatus porque este solo se maneja internamente
       		empresa.updateAttributes(req.body).success(function(empresa) {
+
             res.send(util.formatResponse('', null, true, 'ErrEmpX000', constErrorTypes, empresa));
       		}).error(function(err){
             res.send(util.formatResponse('Ocurrieron errores al actualizar la empresa', err, false, 'ErrEmpX012', constErrorTypes));

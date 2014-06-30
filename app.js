@@ -42,6 +42,7 @@ require('./config/passport')(app, passport); // configure strategies for passpor
 app.set('port', process.env.PORT || sysconfig.server.port);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.use(express.bodyParser( { keepExtensions: true, uploadDir: __dirname + '/public/uploads' } ));
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.json());
@@ -50,6 +51,8 @@ app.use(express.methodOverride());
 app.use(passport.initialize()); // initialize passport for authentication
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 // development only
 if ('development' == app.get('env')) {
@@ -141,6 +144,7 @@ app.put('/empresa/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRE
 app.put('/empresa/authorize/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), empresa.authorize());
 app.put('/empresa/reject/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), empresa.reject());
 app.delete('/empresa/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), empresa.delete());
+
 
 // --------------- Ruta ----------------
 var ruta = require('./routes/ruta');
@@ -244,6 +248,22 @@ app.get('/reservacionrecurrente/:id', usuario.authenticate, reservacionrecurrent
 app.post('/reservacionrecurrente', usuario.authenticate, reservacionrecurrente.add());
 app.delete('/reservacionrecurrente/:id', usuario.authenticate, reservacionrecurrente.delete());
 
+
+app.get('/reservacionrecurrenteusuarios', usuario.authenticate, reservacionrecurrente.listUsuarios());
+
+// --------------- Image Uploads ----------------
+var uploads = require('./routes/uploads');
+app.post('/empresa/img/upload', uploads.uploadImage('EMPRESA'));
+app.post('/usuario/img/upload', uploads.uploadImage('USUARIO'));
+
+
+// --------------- RutaParada ----------------  
+var rutaparada = require('./routes/rutaparada');
+app.get('/rutaparada', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutaparada.list());
+app.get('/rutaparada/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutaparada.listOne());
+app.post('/rutaparada', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutaparada.add());
+app.put('/rutaparada/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutaparada.update());
+app.delete('/rutaparada/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutaparada.delete());
 
 // --------------- Pruebas ----------------
 //var mail = require('./routes/mailing');

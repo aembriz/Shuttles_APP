@@ -10,7 +10,7 @@ exports.list = function() {
   	var paramsWhere = {};
 
     if('ruta' in req.query){      
-      params.where.RutaId = req.query.ruta;
+      paramsWhere.RutaId = req.query.ruta;
     }
 
   	if(usr.role != 'ADMIN') paramsWhere.UsuarioId = usr.id;
@@ -26,6 +26,64 @@ exports.list = function() {
   			return;
   		}
   		res.send(util.formatResponse('', null, true, 'ErrRsrX002', constErrorTypes, result));
+  	});
+
+  }
+};
+
+
+exports.listUsuarios = function() { 
+  return function(req, res){
+
+  	var usr = req.user;
+  	var paramsWhere = {};
+
+    if('ruta' in req.query){      
+      paramsWhere.RutaId = req.query.ruta;
+    }
+    if('corrida' in req.query){      
+      paramsWhere.RutaCorridaId = req.query.corrida;
+    }    
+    if('empresa' in req.query){      
+      paramsWhere["Rutum.CompanyownerID"] = req.query.empresa;
+    }    
+
+  	if(usr.role != 'ADMIN'){
+	  	if(usr.role == 'EMPRESA'){
+	  		paramsWhere["Rutum.CompanyownerID"] = req.query.empresa;
+	  	}
+	  	else{
+	  		paramsWhere.UsuarioId = usr.id;	
+	  	}  	   	 
+  	}
+
+  	db.ReservacionRecurrente.findAll({ where: paramsWhere, include: [
+  		{model: db.Ruta, include: [{model: db.Empresa, as: 'companyowner'}]},
+  		{model: db.RutaCorrida},
+  		{model: db.Usuario, attributes: ['nombre', 'email']},
+  		] 
+  	}).complete(function (err, result) {
+  		if(err != null || result == null){
+  			res.send(util.formatResponse('Ocurrieron errores al consultar las reservaciones compartidas', err, false, 'ErrRsrX001', constErrorTypes, null));
+  			return;
+  		}
+  		
+  		var processedresult = [];
+  		for (var i = 0; i < result.length; i++) {
+  			var obj = result[i];
+  			var persona = {id: obj.usuario.id, nombre: obj.usuario.nombre, email: obj.usuario.email, 
+  				empresa: obj.rutum.companyowner.nombre, ruta: obj.rutum.nombre, rutaid: obj.rutum.id,
+  				horaSalidaFmt: obj.rutaCorrida.horaSalidaFmt, horaLlegadaFmt: obj.rutaCorrida.horaLlegadaFmt,
+  				origen: obj.rutum.origentxt, destino: obj.rutum.destinotxt}
+
+  			for (var j = 1; j <= 7; j++) {
+  				persona["dia" + j] = obj.rutaCorrida["dia" + j];
+  			};
+
+  			processedresult.push(persona);
+  		};
+
+  		res.send(util.formatResponse('', null, true, 'ErrRsrX002', constErrorTypes, processedresult));
   	});
 
   }

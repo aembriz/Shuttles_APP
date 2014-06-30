@@ -310,7 +310,7 @@ console.log("hoy-->" + hoy );// + " UTC-->" + hoy.toUTCString());
 
 exports.reservationCreate = function() { 
   return function(req, res){
-    var usrid = req.user.id; //5; // TODO: se debe extraer del token de acceso
+    var usrid = req.user.id; 
     db.Oferta.find(req.params.ofertaid).success(function(oferta){    
       if(oferta==null){
         res.send(util.formatResponse('Ocurrieron errores al crear la reservación', null, false, 'ErrPcrX013', constErrorTypes, null));

@@ -10,7 +10,7 @@ module.exports = function(sequelize, DataTypes) {
   }, {
     timestamps: false,
     associate: function(models) {
-      RutaPunto.belongsTo(models.Ruta, {foreignKey: 'RutaId'})
+      RutaPunto.belongsTo(models.Ruta, {foreignKey: 'RutaId'})      
     },
     validate: {
       validateMinutosLlegar: function(){
