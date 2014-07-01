@@ -3,6 +3,8 @@ var constant = require('../config/constant.js');
 var util = require('./utilities');
 var constErrorTypes = {'ErrSugX000': '', 'ErrSugX000':''};
 
+var mail = require('./mailing'); // used for sending mails
+
 // ----------------------Sugerencias---------------------------
 /*
 * Lista las sugerencias (si es usuario solo del usuario, si es empresa solo de la empresa)
@@ -78,8 +80,9 @@ exports.add = function() {
     var obj = {UsuarioId: idUsr, comentario: req.body.comentario, EmpresaId: req.user.EmpresaId};
     var sugerencia = db.Sugerencia.build(obj);
     sugerencia.save().complete(function (err, sugerencia) {
-      if(err==null){        
+      if(err==null){
         res.send(util.formatResponse('Se creó correctamente la sugerencia/comentario', null, true, 'ErrSugX003', constErrorTypes, null));
+        mail.notifySuggestion(sugerencia);
       }
       else{
         res.send(util.formatResponse('Ocurrieron errores al crear la sugerencia/comentario', err, false, 'ErrSugX004', constErrorTypes, null));

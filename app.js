@@ -12,6 +12,8 @@ var path = require('path');
 
 var sysconfig = require('./config/systemconfig.js');
 
+var csv = require('express-csv');
+
 // Database
 /* Using MongoSkin as mongodb handler
 var mongo = require('mongoskin');
@@ -264,6 +266,30 @@ app.get('/rutaparada/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EM
 app.post('/rutaparada', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutaparada.add());
 app.put('/rutaparada/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutaparada.update());
 app.delete('/rutaparada/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutaparada.delete());
+
+
+// --------------- Configuracion ---------------- 
+var configuracion = require('./routes/configuracion');
+app.get('/configuracion', usuario.authenticate, usuario.needsRole(['ADMIN']), configuracion.list());
+app.get('/configuracion/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), configuracion.listOne());
+app.post('/configuracion', usuario.authenticate, usuario.needsRole(['ADMIN']), configuracion.add());
+app.put('/configuracion/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), configuracion.update());
+app.delete('/configuracion/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), configuracion.delete());
+
+
+
+// --------------- Reportes ---------------- 
+var reportes = require('./routes/reportes');
+/*
+app.get('/reporte/general', function(req, res) {
+  res.csv([
+    ["a", "b", "c"]
+  , ["d", "e", "f"]
+  ]);
+});
+*/
+app.get('/reporte/general', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvGeneral());
+app.get('/reporte/edocta', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvEdoCta());
 
 // --------------- Pruebas ----------------
 //var mail = require('./routes/mailing');

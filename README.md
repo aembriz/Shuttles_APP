@@ -786,6 +786,31 @@ Ejemplo de creación de sugerencia:
 
 ------------
 
+Servicio "Configuración" 
+-------------------------
+Objeto para parámetros de configuración del sistema. Sólo debe haber un registro en esta tabla 
+
+[URL...]/configuracion
+
+Comandos RESTFul:   
+* GET /configuracion = (Consulta todos)  
+* GET /configuracion/{id} = (Consulta registro con el id especificado)  
+* POST /configuracion = (Creación de registro nuevo, si ya existe un registro no crea otro, lo actualiza)  
+* PUT /configuracion/{id} = (Update al registro con el id especificado)  
+* DELETE /configuracion/{id} = (Elimina registro marcado con el id)  
+
+------------
+
+Servicios de "Reporte"
+-------------------------
+Servicios para generación de reportes del sistema
+
+* GET /reporte/general = (Genera el reporte general en formato CSV)
+* GET /reporte/edocta = (Genera el reporte de estado de cuenta en formato CSV. Recibe filtros: empresaid=[id empresa] ó usuarioid=[id usuario] con lo que genera el edo cta para la empresa o el usuario especificado respectivamente)
+
+------------
+
+
 ** FORMATO DE RESPUESTA DE SERVICIOS **
 -------------------------
 El formato de resultado de TODOS los servicios (excepto login y la respuesta de autenticación), es de la siguiente manera:

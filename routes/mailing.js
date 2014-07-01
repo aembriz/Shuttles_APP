@@ -1,6 +1,7 @@
 var nodemailer = require("nodemailer");
 var db = require('../models');
 var constant = require('../config/constant.js');
+var config = require('./configuracion'); // configuración parametrizable
 
 // create reusable transport method (opens pool of SMTP connections)
 var smtpTransport = nodemailer.createTransport("SMTP",{
@@ -117,4 +118,24 @@ exports.notifyReservationChange = function(reservacion) {
         console.log("notifyReservationChange::No se pudo acceder a la reservación 2");
     });
 
+};
+
+
+exports.notifySuggestion = function(sugerencia){
+    console.log('Notifiying suggestion');
+
+    db.Sugerencia.find( { where: {id: sugerencia.id}, include: [{model: db.Usuario}, {model: db.Empresa}] } ).complete(function(err, sugerencia){
+        if(err!=null && sugerencia == null){
+            console.log("Error al enviar la sugerencia");
+            console.log(err);
+            return;
+        }
+        config.getConf(function(err, conf){
+            if(err!=null) console.log(err);        
+            emails.send('sugerencia.jade', { to: conf.correoCopiaComentarios, 
+                subject: 'Optimo Shuttles - Se generó un comentario' }, 
+                { usuario: sugerencia.usuario, empresa: sugerencia.empresa, sugerencia: sugerencia } 
+            );        
+        });        
+    });
 };

@@ -6,6 +6,7 @@ var constant = require('../config/constant.js');
 
 var util = require('./utilities');
 var constErrorTypes = {'ErrPcrX000': '', 'ErrPcrX000':''};
+var config = require('./configuracion'); // configuración parametrizable
 // -------------------------------------------------
 
 /*
@@ -194,7 +195,6 @@ exports.listOferta = function() {
       hoy = hoy.getFullYear() + "-" + ("0"+(hoy.getMonth()+1)).slice(-2) + "-" + ("0"+hoy.getDate()).slice(-2);
       //hoy = new Date(hoy.toISOString().slice(0, 10) + 'T00:00:00.000-05:00');
 
-console.log("hoy-->" + hoy );// + " UTC-->" + hoy.toUTCString());
       //hoy = hoy.getFullYear() + '-' + (hoy.getMonth() + 1) + '-' + hoy.getDate() +  ' 00:00:00';
       queryParams.where.fechaOferta = {gte: hoy};
     }
@@ -260,7 +260,9 @@ console.log("hoy-->" + hoy );// + " UTC-->" + hoy.toUTCString());
           for (var i = 0; i < result.length; i++) {
             var fecOf = result[i].fechaOferta.toISOString().slice(0, 10) + 'T' + result[i].rutaCorrida.horaSalidaFmt + ':00.000-05:00';
             //fecOf = new Date(fecOf.getUTCFullYear(), fecOf.getUTCMonth(), fecOf.getUTCDate())
+            //result[i].fechaOferta = fecOf;
             fecOf = new Date(fecOf)
+
 
             var minsToOferta = ((fecOf.getTime() - ahora.getTime())/60000 );
             if(usr.EmpresaId!=result[i].rutum.CompanyownerID && minsToOferta > result[i].rutaCorrida.caducaCapacidadReservada){
@@ -276,7 +278,7 @@ console.log("hoy-->" + hoy );// + " UTC-->" + hoy.toUTCString());
             }
             fechaAnt = result[i].fechaOferta;
             // --------------------
-
+            
 
           };
 
@@ -311,7 +313,7 @@ console.log("hoy-->" + hoy );// + " UTC-->" + hoy.toUTCString());
 exports.reservationCreate = function() { 
   return function(req, res){
     var usrid = req.user.id; 
-    db.Oferta.find(req.params.ofertaid).success(function(oferta){    
+    db.Oferta.find( { where: {id: req.params.ofertaid}, include: [{model: db.RutaCorrida}] } ).success(function(oferta){    
       if(oferta==null){
         res.send(util.formatResponse('Ocurrieron errores al crear la reservación', null, false, 'ErrPcrX013', constErrorTypes, null));
         return;
@@ -319,8 +321,10 @@ exports.reservationCreate = function() {
       if(oferta.values.oferta > 0){
         oferta.decrement('oferta', 1).success(function(oferta) {
           var of = oferta.values;
+          var fecRsv = of.fechaOferta.toISOString().slice(0, 10) + 'T' + oferta.rutaCorrida.horaSalidaFmt + ':00.000-05:00';
+
           var resv = {RutaId: of.RutaId, RutaCorridaId: of.RutaCorridaId, OfertaId: of.id, UsuarioId: usrid, 
-            fechaReservacion: of.fechaOferta, estatus: constant.estatus.Reservacion.confirmed}; // Se crea como confirmada
+            fechaReservacion: fecRsv, estatus: constant.estatus.Reservacion.confirmed}; // Se crea como confirmada
 
           var reservacion = db.Reservacion.build(resv);
           reservacion.save().complete(function (err, reservacion) {
@@ -425,7 +429,7 @@ exports.reservationConfirm = function() {
           res.send(util.formatResponse('No tiene permisos sobre esta reservación', null, false, 'ErrPcrX023', constErrorTypes, null));
           return;
         }
-        // cancela la reservación
+        // confirma la reservación
         reservacion.updateAttributes({estatus: constant.estatus.Reservacion.confirmed}).success(function(reservacion) {
           //res.send({msg: 'Reservacion confirmada', reservacion: reservacion});      
           mail.notifyReservationChange(reservacion);
@@ -456,17 +460,23 @@ exports.reservationCancel = function() {
           res.send(util.formatResponse('No tiene permisos sobre la reservación', null, false, 'ErrPcrX028', constErrorTypes, null));
           return;
         }
-        // cancela la reservación
-        reservacion.updateAttributes({estatus: constant.estatus.Reservacion.canceled}).success(function(reservacion) {          
-          // procesa lista de espera y actualización de la oferta
-          processWaitingList(reservacion);
-          //res.send({msg: 'Reservación ha sido cancelada exitosamente.', reservacion: reservacion})
-          mail.notifyReservationChange(reservacion);
-          res.send(util.formatResponse('Se canceló correctamente la reservación', null, true, 'ErrPcrX029', constErrorTypes, reservacion));
-        }).error(function(err){
-          //res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
-          res.send(util.formatResponse('Ocurrieron errores al cancelar la reservación', err, false, 'ErrPcrX030', constErrorTypes, null));
-        });        
+        policyCanCancel(reservacion, function(canCancel){
+          if(!canCancel){
+            res.send(util.formatResponse('De acuerdo a las políticas, no se puede cancelar la reservación', null, false, 'ErrPcrX050', constErrorTypes, null));
+            return;
+          }
+          // cancela la reservación
+          reservacion.updateAttributes({estatus: constant.estatus.Reservacion.canceled}).success(function(reservacion) {          
+            // procesa lista de espera y actualización de la oferta
+            processWaitingList(reservacion);
+            //res.send({msg: 'Reservación ha sido cancelada exitosamente.', reservacion: reservacion})
+            mail.notifyReservationChange(reservacion);
+            res.send(util.formatResponse('Se canceló correctamente la reservación', null, true, 'ErrPcrX029', constErrorTypes, reservacion));
+          }).error(function(err){
+            //res.send({msg: 'Existieron errores al cancelar la reservación.', err: err});
+            res.send(util.formatResponse('Ocurrieron errores al cancelar la reservación', err, false, 'ErrPcrX030', constErrorTypes, null));
+          });        
+        });
       }
       else{
         res.send(util.formatResponse('Ocurrieron errores al cancelar la reservación', null, false, 'ErrPcrX031', constErrorTypes, null));
@@ -637,7 +647,7 @@ var processWaitingList = function(canceledReservation){
       var e = espera[0].values; // sólo tomo el primer valor
       // proceso reservación
       var resv = {RutaId: e.RutaId, RutaCorridaId: e.RutaCorridaId, OfertaId: canceledReservation.OfertaId, 
-        UsuarioId: e.UsuarioId, fechaReservacion: e.fechaReservacion, estatus: constant.estatus.Reservacion.new}; // Se crea como pendiente
+        UsuarioId: e.UsuarioId, fechaReservacion: canceledReservation.fechaReservacion, estatus: constant.estatus.Reservacion.new}; // Se crea como pendiente
 
       var reservacion = db.Reservacion.build(resv);
       reservacion.save().complete(function (err, reservacion) {
@@ -675,3 +685,21 @@ var processWaitingList = function(canceledReservation){
 
 };
 
+// regresa true si se permite cancelar la reservación de acuerdo a la política
+// como resultado invoca callback(canCancel)
+var policyCanCancel = function(reservation, callback){
+  if(reservation==null){
+    return false;
+  }
+  var fecRsv = reservation.fechaReservacion.toISOString(); //.slice(0, 10) + 'T' + result[i].rutaCorrida.horaSalidaFmt + ':00.000-05:00';
+  fecRsv = new Date(fecRsv);
+  var ahora = new Date();
+
+  var minsTo = ((fecRsv.getTime() - ahora.getTime())/60000 );
+
+  config.getConf(function(err, conf){
+    if(err!=null) console.log(err);
+    callback( (minsTo > conf.reservMinParaCancelar) );
+  });
+
+}
