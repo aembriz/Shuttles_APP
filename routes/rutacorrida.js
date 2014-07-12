@@ -120,9 +120,10 @@ exports.update = function() {
                 }
               });
             }
-            return;
+            else{
+              res.send(util.formatResponse('Se modificó correctamente la corrida', null, true, 'ErrRucY007', constErrorTypes, rutacorrida));                                       
+            }
 
-            res.send(util.formatResponse('Se modificó correctamente la corrida', null, true, 'ErrRucY007', constErrorTypes, rutacorrida));                         
           }).error(function(err){
               //res.send({ msg: 'Ocurrieron errores al modificar la corrida.', err: err});
               res.send(util.formatResponse('Ocurrieron errores al modificar la corrida', err, false, 'ErrRucY008', constErrorTypes, null));

@@ -1,0 +1,9 @@
+extends layout
+
+block content
+
+	h3 Estimado #{usuario.nombre},
+
+	p Se le está invitando a unirse a la plataforma &copy;Optimo Shuttles para lo cual debe completar su registro accediendo a la liga que se muestra a continuación
+
+	a(href='#{config.homeurl}/#registro/#{usuario.id}') Completar registro

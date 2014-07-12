@@ -131,11 +131,88 @@ exports.notifySuggestion = function(sugerencia){
             return;
         }
         config.getConf(function(err, conf){
-            if(err!=null) console.log(err);        
-            emails.send('sugerencia.jade', { to: conf.correoCopiaComentarios, 
-                subject: 'Optimo Shuttles - Se generó un comentario' }, 
-                { usuario: sugerencia.usuario, empresa: sugerencia.empresa, sugerencia: sugerencia } 
-            );        
+            if(err!=null) {
+                console.log(err);        
+            }
+            else{                
+                emails.send('sugerencia.jade', { to: conf.correoCopiaComentarios, 
+                    subject: 'Optimo Shuttles - Se generó un comentario' }, 
+                    { usuario: sugerencia.usuario, empresa: sugerencia.empresa, sugerencia: sugerencia } 
+                );        
+            }
         });        
     });
 };
+
+/*
+* Notifica Solicitud de conatcto por parte de la empresa
+*/
+exports.notifyContactRequestEmpresa = function(contacto) {
+    console.log('Notifiying contact request [Company]');
+
+    config.getConf(function(err, conf){
+        if(err!=null) {
+            console.log(err);        
+        }
+        else{
+            emails.send('contactoempresa.jade', { to: conf.correoCopiaComentarios, 
+                subject: 'Se recibió petición de contacto [Empresa]' }, 
+                { contacto: contacto } 
+            );                
+        }
+
+    });    
+}
+
+/*
+* Notifica Solicitud de conatcto por parte del empleado
+*/
+exports.notifyContactRequestEmpleado = function(contacto) {
+    console.log('Notifiying contact request [Employee]');
+
+    config.getConf(function(err, conf){
+        if(err!=null) {
+            console.log(err);        
+        }
+        else{
+            emails.send('contactoempleado.jade', { to: conf.correoCopiaComentarios, 
+                subject: 'Se recibió petición de contacto [Empleado]' }, 
+                { contacto: contacto } 
+            );                
+        }
+
+    });    
+}
+
+/*
+* Notifica Solicitud de conatcto General
+*/
+exports.notifyContactRequestGeneral = function(contacto) {
+    console.log('Notifiying contact request');
+
+    config.getConf(function(err, conf){
+        if(err!=null) {
+            console.log(err);        
+        }
+        else{
+            emails.send('contactogeneral.jade', { to: conf.correoCopiaComentarios, 
+                subject: 'Se recibió petición de contacto' }, 
+                { contacto: contacto } 
+            );                
+        }
+
+    });    
+}
+
+
+/*
+* Servicio, olvidé mi contraseña
+*/
+exports.notifyRecoverPassword = function(user) {
+    console.log('Notifiying forgotten password');
+
+    emails.send('recuperapassword.jade', { to: user.email, 
+        subject: 'Recuperación de contrasela' }, 
+        { usuario: user } 
+    );
+}

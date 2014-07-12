@@ -1,0 +1,58 @@
+extends layout
+
+block content
+
+	h3 Solicitud de contacto,
+
+	p Se ha recibido una solicitud de contacto en la sección 'Soy Empresa', los datos proporcionados se muestran a continuación:
+
+	ul
+		li: p 
+			| Nombre de la empresa: 
+			b #{contacto.nombre}
+		li: p 
+			| Sede: 
+			b #{contacto.sede}
+		li: p 
+			| Dirección: 
+			b #{contacto.direccion}
+		li: p 
+			| Calle: 
+			b #{contacto.calle}
+		li: p 
+			| Colonia: 
+			b #{contacto.colonia}
+		li: p 
+			| Delegación: 
+			b #{contacto.delegacion}
+		li: p 
+			| Ciudad: 
+			b #{contacto.ciudad}
+		li: p 
+			| Número de empleados: 
+			b #{contacto.empleadosnum}
+		li: p 
+			| Cómo se trasladan: 
+			b #{contacto.trasladocomo}
+		li: p 
+			| Contacto dentro de la empresa: 
+			b #{contacto.contactonombre}
+		li: p 
+			| E-mail de contacto: 
+			a(href='mailto:#{contacto.contactocorreo}') #{contacto.contactocorreo}
+		li: p 
+			| Actividad del solicitante: 
+			b #{contacto.actividad}
+		li: p 
+			| Nombre del solicitante: 
+			b #{contacto.tunombre}
+		li: p 
+			| Teléfono del solicitante: 
+			b #{contacto.tutelefono}
+		li: p 
+			| E-mail del solicitante: 
+			a(href='mailto:#{contacto.tucorreo}') #{contacto.tucorreo}
+		li: p 
+			| Cómo se enteró del servicio: 
+			b #{contacto.tucomo}
+

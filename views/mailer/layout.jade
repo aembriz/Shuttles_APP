@@ -1,0 +1,22 @@
+doctype html
+html
+	head
+		title= title		
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		
+		- var fechaFmt = function(fecha){ return fecha.toISOString().substring(0, 10)};
+		- var folioFmt = function(folio){ return ("00000" + folio).slice(-6)};
+
+
+	body
+		div(style='text-align:left;background: #000000')
+			img(src="http://nubeet.com/shuttles/imgs/logo_black.png", width="120px")
+		block content
+
+		p Atte, 
+			br 
+			&copy;Optimo Shuttles - EmbarQ méxico
+
+		div(style='padding:8px; align:center;background: #000000; text-align:center;')
+			span(style="color: #FFFFFF; font-size:10px; ") 
+				&copy;Optimo Shuttles - EmbarQ México			

@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+	h3 Estimado #{usuario.nombre},
+
+	p 
+	| Nos da gusto notificarle que la solicitud de registro para la empresa 
+	b #{empresa.nombre}
+	|, ha sido aceptado.
+
+	p Podrá acceder al sistema usando sus datos de administrador:
+
+	ul
+		li: p Usuario: #{usuario.email}
+		li: p Password: #{usuario.password}
+
+	a(href='#{config.homeurl}') #{config.homeurl}

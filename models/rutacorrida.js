@@ -33,12 +33,13 @@ module.exports = function(sequelize, DataTypes) {
         if( (this.capacidadReservada ) < this.reservacionesRecurrentes ){
           throw new Error('No se pueden generar más reservaciones recurrentes que la capacidad reservada.');
         }        
-      },
+      }/*,
       validateHoras: function(){
         if( this.horaSalida >= this.horaLlegada ){
           throw new Error('La hora de llegada debe ser mayor a la de salida.');
         }
-      }      
+      } 
+      */     
     },
     getterMethods   : {
       horaSalidaFmt : function()  { 
@@ -62,6 +63,16 @@ module.exports = function(sequelize, DataTypes) {
         var parts = v.split(":");
         var mins = (parseInt(parts[0]) * 60) + parseInt(parts[1]);
         return this.setDataValue('horaLlegada', mins);
+      },      
+      horaSalida : function(v)  { 
+        if(v!=null){
+          return this.setDataValue('horaSalida', v);
+        }        
+      },
+      horaLlegada : function(v)  { 
+        if(v!=null){
+          return this.setDataValue('horaLlegada', v);
+        }
       }      
     }
   })

@@ -1,0 +1,18 @@
+extends layout
+
+block content
+
+	h3 Solicitud de contacto,
+
+	p Se ha recibido una solicitud de contacto, los datos proporcionados se muestran a continuación:
+
+	ul
+		li: p 
+			| Nombre: 
+			b #{contacto.nombre}
+		li: p 
+			| E-mail: 
+			a(href='mailto:#{contacto.correo}') #{contacto.correo}
+		li: p 
+			| Mensaje: 
+			b #{contacto.mensaje}

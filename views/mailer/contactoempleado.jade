@@ -1,0 +1,42 @@
+extends layout
+
+block content
+
+	h3 Solicitud de contacto,
+
+	p Se ha recibido una solicitud de contacto en la sección 'Soy Empleado', los datos proporcionados se muestran a continuación:
+
+	ul
+		li: p 
+			| Nombre de la empresa: 
+			b #{contacto.empresa}
+		li: p 
+			| Sede: 
+			b #{contacto.sede}
+		li: p 
+			| Nombre: 
+			b #{contacto.nombre}
+		li: p 
+			| E-mail: 
+			a(href='mailto:#{contacto.correo}') #{contacto.correo}
+		li: p 
+			| Teléfono: 
+			b #{contacto.telefono}
+		li: p 
+			| Cómo se enteró: 
+			b #{contacto.como}
+		li: p 
+			| Porqué quiere que una su empresa: 
+			b #{contacto.porque}
+		li: p 
+			| Contacto dentro de la empresa: 
+			b #{contacto.contactonombre}
+		li: p 
+			| Teléfono del contacto: 
+			b #{contacto.contactotelefono}
+		li: p 
+			| E-mail de contacto: 
+			a(href='mailto:#{contacto.contactocorreo}') #{contacto.contactocorreo}
+		li: p 
+			| Actividad del contacto: 
+			b #{contacto.actividad}

@@ -1,0 +1,28 @@
+extends layout
+
+block content
+
+	h3 Estimado #{usuario.nombre},
+
+	p Le informamos que se ha liberado un espacio para la ruta "#{reservacion.rutum.nombre}" para la cual usted solicitó se le apuntara en la lista de espera. 
+
+	p Se le creó una reservación preliminar para:
+
+	ul
+		li: p 
+			| Folio de reservación: 
+			b #{folioFmt(reservacion.id)}
+		li: p 
+			| Ruta: 
+			b #{reservacion.rutum.nombre}
+		li: p 
+			| Fecha: 
+			b #{fechaFmt(reservacion.fechaReservacion)}
+		li: p 
+			| Hora: 
+			b #{reservacion.rutaCorrida.horaSalidaFmt}
+
+	p 
+	| Esta reservación debe ser confirmada a la brevedad desde su aplicación móvil o desde 
+	a(href='#{config.homeurl}') #{config.homeurl}
+	

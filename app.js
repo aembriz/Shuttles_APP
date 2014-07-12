@@ -121,10 +121,12 @@ app.put('/usuario/:id', usuario.update());
 app.put('/usuario/authorize/:id', usuario.authorize());
 app.put('/usuario/reject/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), usuario.reject());
 app.delete('/usuario/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), usuario.delete());
+app.post('/usuario/forgotpassword', usuario.forgotPassword()); // servicio para recuperación de password
 
 app.post('/preregister/usuario', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), usuario.addPre());
 app.post('/preregister/usuariobulk', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), usuario.addPreBulk());
 app.get('/roles', usuario.listRoles());
+
 
 
 // --------------- Estatus ----------------
@@ -146,7 +148,6 @@ app.put('/empresa/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRE
 app.put('/empresa/authorize/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), empresa.authorize());
 app.put('/empresa/reject/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), empresa.reject());
 app.delete('/empresa/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), empresa.delete());
-
 
 // --------------- Ruta ----------------
 var ruta = require('./routes/ruta');
@@ -291,10 +292,18 @@ app.get('/reporte/general', function(req, res) {
 app.get('/reporte/general', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvGeneral());
 app.get('/reporte/edocta', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvEdoCta());
 
+// --------------- Servicios públicos ----------------
+var publicos = require('./routes/publicos');
+app.get('/public/empresas', publicos.empresalist()); // lista de empresas para usar en el sitio público
+app.post('/public/contacto/empresa', publicos.contactoSoyEmpresa()); // para solicitud de contacto por 'Soy Empresa'
+app.post('/public/contacto/empleado', publicos.contactoSoyEmpleado()); // para solicitud de contacto por 'Soy Empleado'
+app.post('/public/contacto/general', publicos.contactoGeneral()); // para solicitud de contacto por 'Soy Empleado'
+
+
 // --------------- Pruebas ----------------
 //var mail = require('./routes/mailing');
 //app.get('/prueba', usuario.authenticate, mail.prueba());
-
+	
 
 // ------------------INI Schedulers-------------------------
 

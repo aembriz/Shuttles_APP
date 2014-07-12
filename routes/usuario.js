@@ -353,3 +353,25 @@ exports.reject = function() {
     });
   }
 };
+
+
+/*
+* Servicio Olvidé mi contraseña
+*/
+
+exports.forgotPassword = function() {
+  return function(req, res) {
+    var user = req.body.username;
+    db.Usuario.find( {where: {email: user} } ).success(function(usuario) {
+      if(usuario!=null) {
+        mail.notifyRecoverPassword(usuario);
+        res.send(util.formatResponse('Se ha enviado a su correo la contraseña.', null, true, 'ErrUsrX032', constErrorTypes, null));
+      }
+      else{
+        res.send(util.formatResponse('No existe el usuario, favor de verificar.', null, false, 'ErrUsrX030', constErrorTypes, null));
+      }
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores, no se pudo recuperar su contraseña', err, false, 'ErrUsrX031', constErrorTypes, null));
+    });
+  }
+}

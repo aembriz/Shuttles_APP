@@ -1,0 +1,23 @@
+extends layout
+
+block content
+
+	h3 Estimado #{usuario.nombre},
+
+	p Se ha confirmado la reservación con los datos siguientes:
+
+	ul
+		li: p 
+			| Folio de reservación: 
+			b #{folioFmt(reservacion.id)}
+		li: p 
+			| Ruta: 
+			b #{reservacion.rutum.nombre}
+		li: p 
+			| Fecha: 
+			b #{fechaFmt(reservacion.fechaReservacion)}
+		li: p 
+			| Hora: 
+			b #{reservacion.rutaCorrida.horaSalidaFmt}
+
+	

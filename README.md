@@ -239,6 +239,7 @@ Comandos RESTFul:
 * PUT /usuario/reject/{id} = (Marca la empresa designada por el id como rechazada)
 * DELETE /usuario/{id} = (Elimina registro marcado con el id)  
 * POST /usuario/img/upload?usuario={idUsuario} = (Content-type = multipart, sube la foto del usuario)
+* POST /usuario/forgotpassword = (solicita la recuperación de password del usuario, en el cuerpo se espera el campo 'username').
 
 Ejemplo de post para creación de usuario:
 
