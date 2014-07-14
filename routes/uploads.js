@@ -5,6 +5,7 @@ var constErrorTypes = {'ErrUplX000': '', 'ErrUplX000':''};
 
 exports.uploadImage = function(type) {
   return function(req, res) {  		
+console.log(req);
   		if(!req.files){
   			res.send(util.formatResponse('No se adjuntó ninguna imágen', null, false, 'ErrUplX000', constErrorTypes, null));   
   			return;

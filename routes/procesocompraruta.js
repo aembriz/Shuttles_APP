@@ -119,14 +119,16 @@ exports.listSuggestions = function() {
             }
           } // for puntos
 
-          // construye sugerencia
-          delete ruta.rutaPuntos; // no incluye todos los puntos de la ruta en la sugerencia
-          var suggest = {lejania: (pCercanoIni.distancia + pCercanoFin.distancia), ruta: ruta, 
-            ascensoSugerido: pCercanoIni, descensoSugerido: pCercanoFin};
+          if(pCercanoIni.rutaPunto!=null && pCercanoFin.rutaPunto!=null){ // sólo si se pudo determinar paradas sugeridas
+            // construye sugerencia
+            delete ruta.rutaPuntos; // no incluye todos los puntos de la ruta en la sugerencia
+            var suggest = {lejania: (pCercanoIni.distancia + pCercanoFin.distancia), ruta: ruta, 
+              ascensoSugerido: pCercanoIni, descensoSugerido: pCercanoFin};
 
-          // Sólo inclye las rutas en que la ruta sugerida vaya en el mismo sentido que el expresado por el usuario
-          if(suggest.ascensoSugerido.rutaPunto.indice < suggest.descensoSugerido.rutaPunto.indice){
-            suggests.push(suggest);
+            // Sólo inclye las rutas en que la ruta sugerida vaya en el mismo sentido que el expresado por el usuario
+            if(suggest.ascensoSugerido.rutaPunto.indice < suggest.descensoSugerido.rutaPunto.indice){
+              suggests.push(suggest);
+            }
           }
 
         } // for rutas

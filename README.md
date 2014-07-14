@@ -806,8 +806,10 @@ Servicios de "Reporte"
 -------------------------
 Servicios para generación de reportes del sistema
 
-* GET /reporte/general = (Genera el reporte general en formato CSV)
+* GET /reporte/general = (Genera el reporte general en formato CSV) Recibe filtros opcionales por periodo para: **fechareservacion** Ejemplo: ?fechareservacionini=2014-06-01&fechareservacionfin=2014-06-30, **fechacreacion** Ejemplo: ?fechacreacionini=2014-06-01&fechacreacionfin=2014-06-30
 * GET /reporte/edocta = (Genera el reporte de estado de cuenta en formato CSV. Recibe filtros: empresaid=[id empresa] ó usuarioid=[id usuario] con lo que genera el edo cta para la empresa o el usuario especificado respectivamente)
+
+
 
 ------------
 
