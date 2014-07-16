@@ -116,6 +116,7 @@ Comandos RESTFul:
 * GET /rutapunto/{id} = (Consulta los puntos de la ruta con el id especificado)
 * GET /rutapunto/xoferta/{ofertaid} = ( regresa la lista de puntos incluyendo los horarios estimados por parada, se puede incluir ?paradas=true para filtrar solo paradas, no esquinas)
 * GET /rutapunto/xcorrida/{corridaid} = ( regresa la lista de puntos incluyendo los horarios estimados por parada, se puede incluir ?paradas=true para filtrar solo paradas, no esquinas)
+* GET /rutapunto/distancia/{rutaid} = (regresa dos propiedades "distancia" y "puntos" en donde distancia represnta la distancia total de la ruta en mts)
 * POST /rutapunto = (Creación de registro nuevo)  
 * POST /rutapunto?type=bulk = (Creación de todos los registros especificados en una sola operación. PREFERIDA por performance)  
 * PUT /rutapunto/{id} = (Update al registro con el id especificado)  

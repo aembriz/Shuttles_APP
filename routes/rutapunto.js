@@ -2,6 +2,8 @@ var db = require('../models');
 var util = require('./utilities');
 var constErrorTypes = {'ErrRupX000': '', 'ErrRupX000':''};
 
+var geo = require('../node_modules/geolib/geolib');
+
 exports.list = function() { 
   return function(req, res){
     if(req.query.type == 'bulk'){
@@ -29,7 +31,8 @@ exports.list = function() {
 exports.listOne = function() {
   return function(req, res) {
     var idToFind = req.params.id;
-    db.RutaPunto.findAll( {where: {RutaId: idToFind}, order: 'indice' } ).success(function(rutapunto) {      
+    db.RutaPunto.findAll( {where: {RutaId: idToFind}, order: 'indice' } ).success(function(rutapunto) {
+
       //res.send(rutapunto);    
       res.send(util.formatResponse('', null, true, 'ErrRupX005', constErrorTypes, rutapunto));
     }).error(function(err){
@@ -237,3 +240,38 @@ exports.puntosXCorridaServ = function() {
   }
 }
 
+/*
+ * GET ONE  by ID ruta
+ */
+exports.distanciaPuntos = function() {
+  return function(req, res) {
+    var idToFind = req.params.rutaid;
+    db.RutaPunto.findAll( {where: {RutaId: idToFind}, order: 'indice' } ).success(function(rutapunto) {
+
+      var distance = computeDistance(rutapunto);
+      var result = {distancia: distance, puntos: rutapunto}
+      res.send(util.formatResponse('', null, true, 'ErrRupX005', constErrorTypes, result));
+    }).error(function(err){
+      res.send(util.formatResponse('Ocurrieron errores al acceder a los puntos geográficos', err, false, 'ErrRupX006', constErrorTypes, null));
+    });
+  }
+};
+
+
+var computeDistance = function(puntos){
+  var totalDistance=0;
+  if(puntos!=null){
+    var ptPrev = null;
+    for (var i = 0; i < puntos.length; i++) {
+      var pt = puntos[i];
+      if(ptPrev!=null){
+        var distance = geo.getDistance({latitude: ptPrev.latitud, longitude: ptPrev.longitud}, 
+          {latitude: pt.latitud, longitude: pt.longitud}, 100);
+        pt.values.distanceto = distance;
+        totalDistance += distance;
+      }
+      ptPrev = pt;
+    };
+  }
+  return totalDistance;
+}

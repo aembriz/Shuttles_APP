@@ -212,7 +212,7 @@ exports.notifyRecoverPassword = function(user) {
     console.log('Notifiying forgotten password');
 
     emails.send('recuperapassword.jade', { to: user.email, 
-        subject: 'Recuperación de contrasela' }, 
+        subject: 'Recuperación de contraseña' }, 
         { usuario: user } 
     );
 }

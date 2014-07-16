@@ -5,7 +5,6 @@ var constErrorTypes = {'ErrUplX000': '', 'ErrUplX000':''};
 
 exports.uploadImage = function(type) {
   return function(req, res) {  		
-console.log(req);
   		if(!req.files){
   			res.send(util.formatResponse('No se adjuntó ninguna imágen', null, false, 'ErrUplX000', constErrorTypes, null));   
   			return;
@@ -14,7 +13,7 @@ console.log(req);
   			res.send(util.formatResponse('No se adjuntó ninguna imágen', null, false, 'ErrUplX001', constErrorTypes, null));   
   			return;
   		}
-
+console.log("Tamaño img-->" + req.files.image.size);
 		if(req.files.image.size > 200000){
 			res.send(util.formatResponse('La imágen debe ser menor a 200K [' + req.files.image.size + ']', null, false, 'ErrUplX002', constErrorTypes, null));
 			return;  			

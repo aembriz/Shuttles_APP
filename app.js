@@ -169,6 +169,8 @@ app.delete('/rutapunto/:id', usuario.authenticate, usuario.needsRole(['ADMIN', '
 
 app.get('/rutapunto/xoferta/:ofertaid', usuario.authenticate, rutapunto.puntosXOfertaServ());
 app.get('/rutapunto/xcorrida/:corridaid', usuario.authenticate, rutapunto.puntosXCorridaServ());
+app.get('/rutapunto/distancia/:rutaid', usuario.authenticate, rutapunto.distanciaPuntos());
+
 
 // --------------- RutaCorrida ----------------  TODO: Incluir seguridad por rutas compartidas
 var rutacorrida = require('./routes/rutacorrida');
@@ -291,6 +293,9 @@ app.get('/reporte/general', function(req, res) {
 */
 app.get('/reporte/general', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvGeneral());
 app.get('/reporte/edocta', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvEdoCta());
+app.get('/reporte/empresas', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvEmpresas());
+app.get('/reporte/usuarios', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvUsuarios());
+app.get('/reporte/rutas', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvRutas());
 
 // --------------- Servicios públicos ----------------
 var publicos = require('./routes/publicos');
