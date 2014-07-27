@@ -2,6 +2,7 @@ var db = require('../models');
 var constant = require('../config/constant.js');
 var util = require('./utilities');
 var constErrorTypes = {'ErrRutX000': '', 'ErrRutX000':''};
+var ProcesoCompra = require('./procesocompraruta');
 
 exports.list_bak = function() { 
   return function(req, res){
@@ -51,6 +52,8 @@ exports.list = function() {
 
     if(req.user.role != 'ADMIN') { if(!params.where) params.where = {}; params.where.CompanyownerID = req.user.EmpresaId; } // SEC: solo puede ver rutas de su empresa TODO: incluir rutas compartidas
 
+    if(!params.where) params.where = {};
+    params.where.EstatusId = {lt: constant.estatus.Ruta.deleted};
 
 
     params.include = [
@@ -187,7 +190,7 @@ exports.update = function() {
 /*
  * DELETE one
  */
-exports.delete = function() {
+exports.delete_bak = function() {
   return function(req, res) {
     var idToDelete = req.params.id;
     db.Ruta.find(idToDelete).success(function(ruta) {
@@ -213,6 +216,52 @@ exports.delete = function() {
   }
 };
 
+exports.delete = function() {
+  return function(req, res) {
+    var idToDelete = req.params.id;
+    db.Ruta.find( { where: {id: idToDelete}, include: [
+        {model: db.RutaCorrida, as: 'Corridas'}
+        ] }).complete(function(err, ruta) {
+
+          if(err!=null || ruta==null){
+            res.send(util.formatResponse('Ocurrieron errores al eliminar la ruta', err, false, 'ErrRutX011', constErrorTypes, null));
+            return;
+          }
+
+          for (var i = 0; i < ruta.corridas.length; i++) {
+            var corrida = ruta.corridas[i];
+            if(corrida.fechaActivacion!=null){
+              res.send(util.formatResponse('No se puede eliminar la ruta, existen corridas activas', null, false, 'ErrRutX012', constErrorTypes, null));
+              return;
+            }
+          }
+
+          if(req.user.role != 'ADMIN' && ruta.CompanyownerID != req.user.EmpresaId) {
+            res.send(util.formatResponse('No tiene permisos sobre la ruta', null, false, 'ErrRutX013', constErrorTypes, ruta));
+            return;            
+          }
+
+          var estatusPrev = ruta.Estatus;
+          ruta.updateAttributes({EstatusId: constant.estatus.Ruta.deleted}).complete(function(err, ruta){
+            if(err!=null){
+              res.send(util.formatResponse('Ocurrieron errores al eliminar la ruta', err, false, 'ErrRutX014', constErrorTypes, null));
+              return;
+            }
+            db.RutaCorrida.update({capacidadReservada:  0, capacidadOfertada: 0, 
+            capacidadTotal: 0, estatus: constant.estatus.RutaCorrida.deleted}, {RutaId: ruta.id}).complete(
+              function(err, affectedRows){
+                if(err!=null){
+                  res.send(util.formatResponse('Ocurrieron errores al eliminar las corridas de la ruta', err, false, 'ErrRutX015', constErrorTypes, null));
+                  ruta.updateAttributes({Estatus: estatusPrev}); // rollback del cambio de estatus
+                  return;
+                }
+                res.send(util.formatResponse('Se eliminó correctamente la ruta', null, true, 'ErrRutX016', constErrorTypes, null));
+              });
+          });
+          
+        });
+  }
+};
 
 // *****************************************************
 
@@ -253,3 +302,96 @@ exports.reject = function() {
     });
   }
 };
+
+
+/* Desactivar la ruta: Desactivar corridas, cancelar reservaciones, elimina las ofertas*/
+exports.desactivarRuta = function(){
+  return function(req, res) {
+
+    var rutaid = req.params.id;
+    var hoy = new Date();
+
+    db.RutaCorrida.update( { capacidadReservada:  0, capacidadOfertada: 0, 
+      capacidadTotal: 0, fechaActivacion: null }, {RutaId: rutaid}).complete(function(err, corridasDesactivadas){
+      if(err!=null){
+        res.send(util.formatResponse('Ocurrieron problemas al desactivar las corridas', err, false, 'ErrOfeX021', constErrorTypes, null));
+        return;
+      }
+      console.log("Se desactivaron corridas::" + corridasDesactivadas);
+      db.Reservacion.findAll( {where: {RutaId: rutaid, estatus: {lt: 3} } } ).complete(function(err, reservaciones){
+        var cancelaciones = 0;
+        for (var i = 0; i < reservaciones.length; i++) {
+            var reserv = reservaciones[i];            
+            if(reserv!=null){
+              var reservacionid = reserv.id;
+              ProcesoCompra.reservationCancelXDesactivarRuta(reservacionid, function(resultObj){
+                if(resultObj.success){
+                  cancelaciones++;
+                }
+                console.log(resultObj.msg);
+              });
+            }
+          };  
+          console.log("Se cancelaron reservaciones::" + cancelaciones);
+          db.Oferta.destroy(
+            {RutaId: rutaid, fechaOferta: {gte: hoy}} /* where criteria */
+          ).success(function(ofertasEliminadas) {
+            console.log("Se eliminaron ofertas::" + ofertasEliminadas);
+            res.send(util.formatResponse('Se desactivaron ' + corridasDesactivadas + ', se cancelaron ' + 
+              cancelaciones + ' reservaciones y se eliminaron ' + ofertasEliminadas + 
+              ' ofertas', null, true, 'ErrOfeX022', constErrorTypes, null));
+          }).error(function(err){
+            res.send(util.formatResponse('Se desactivaron ' + corridasDesactivadas + ', se cancelaron ' + 
+              cancelaciones + ' reservaciones pero ocurrieron errores al eliminar las ofertas.', err, true, 'ErrOfeX023', constErrorTypes, null));
+          });          
+      });
+      
+    });
+  }
+}
+
+/* Desactivar la rutacorrida: Desactivar corridas, cancelar reservaciones, elimina las ofertas*/
+exports.desactivarCorrida = function(){
+  return function(req, res) {
+
+    var corridaid = req.params.id;
+    var hoy = new Date();
+
+    db.RutaCorrida.update( { capacidadReservada:  0, capacidadOfertada: 0, 
+      capacidadTotal: 0, fechaActivacion: null }, {id: corridaid}).complete(function(err, corridasDesactivadas){
+      if(err!=null){
+        res.send(util.formatResponse('Ocurrieron problemas al desactivar las corridas', err, false, 'ErrOfeX021', constErrorTypes, null));
+        return;
+      }
+      console.log("Se desactivaron corridas::" + corridasDesactivadas);
+      db.Reservacion.findAll( {where: {RutaCorridaId: corridaid, estatus: {lt: 3} } } ).complete(function(err, reservaciones){
+        var cancelaciones = 0;
+        for (var i = 0; i < reservaciones.length; i++) {
+            var reserv = reservaciones[i];            
+            if(reserv!=null){
+              var reservacionid = reserv.id;
+              ProcesoCompra.reservationCancelXDesactivarRuta(reservacionid, function(resultObj){
+                if(resultObj.success){
+                  cancelaciones++;
+                }
+                console.log(resultObj.msg);
+              });
+            }
+          };  
+          console.log("Se cancelaron reservaciones::" + cancelaciones);
+          db.Oferta.destroy(
+            {RutaCorridaId: corridaid, fechaOferta: {gte: hoy}} /* where criteria */
+          ).success(function(ofertasEliminadas) {
+            console.log("Se eliminaron ofertas::" + ofertasEliminadas);
+            res.send(util.formatResponse('Se desactivaron ' + corridasDesactivadas + ', se cancelaron ' + 
+              cancelaciones + ' reservaciones y se eliminaron ' + ofertasEliminadas + 
+              ' ofertas', null, true, 'ErrOfeX022', constErrorTypes, null));
+          }).error(function(err){
+            res.send(util.formatResponse('Se desactivaron ' + corridasDesactivadas + ', se cancelaron ' + 
+              cancelaciones + ' reservaciones pero ocurrieron errores al eliminar las ofertas.', err, true, 'ErrOfeX023', constErrorTypes, null));
+          });          
+      });
+      
+    });
+  }
+}

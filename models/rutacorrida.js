@@ -1,6 +1,7 @@
 // horas {almacenadas en minutos 0 = 00:00, 1440 = 24:00}
 // se puede asignar valor entero directamente a la propiedad horaLlegada u horaSalida, o valor con formato a las correspondientes horaSalidaFmt
 // las reservaciones recurrentes deben de tomarse de capacidad reservada por lo tanto se valida que no sea mayor a este.
+// fecha ctivación indica a partir de cuando se genera oferta para la corrida, si está en null la corrida está desactivada
 module.exports = function(sequelize, DataTypes) {
   var RutaCorrida = sequelize.define('RutaCorrida', {
     horaSalida: {type: DataTypes.INTEGER, allowNull: false, validate: { min: 0, max: 1440 }}, 
@@ -19,7 +20,9 @@ module.exports = function(sequelize, DataTypes) {
     dia6: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     dia7: {type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     reservacionesRecurrentes: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
-    caducaCapacidadReservada: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 60}
+    caducaCapacidadReservada: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 60},
+    fechaActivacion: {type: DataTypes.DATE, allowNull: true, isDate: true, defaultValue: null},
+    estatus: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 }
   }, {
     timestamps: false,
     associate: function(models) {

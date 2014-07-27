@@ -10,10 +10,18 @@ module.exports = function(app, passport) {
 		function(username, password, done) {
 			db.Usuario.find({ where: { email: username }, include: [{model: db.Empresa, as: 'Empresa'}] }).success(function(user) {
 				if (!user) {
-					return done(null, false, { message: 'Incorrect username.' });
+					return done(null, false, { message: 'Incorrect username.', errType: 1 });
 				}
 				if (!user.validPassword(password)) {
-					return done(null, false, { message: 'Incorrect password.' });
+					return done(null, false, { message: 'Incorrect password.', errType: 1 });
+				}
+				if(user.role && user.role != 'ADMIN'){				
+					if (user.EstatusId != 3) {
+						return done(null, false, { message: 'Su usuario no está activo.', errType: 2 });
+					}												
+					if (user.empresa.EstatusId == 99) {
+						return done(null, false, { message: 'Su empresa ya no está dentro del sistema.', errType: 2 });
+					}				
 				}
 				//var usr = user.dataValues; // because of the format sent back by sequelizee
 				var usr = user;

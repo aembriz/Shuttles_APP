@@ -62,6 +62,7 @@ Comandos RESTFul:
 * PUT /ruta/authorize/{id} = (Marca la ruta designada por el id como autorizada)
 * PUT /ruta/reject/{id} = (Marca la ruta designada por el id como rechazada)
 * DELETE /ruta/{id} = (Elimina registro marcado con el id)  
+* POST /ruta/deactivate/{id} = (Desactiva la ruta-->desactiva sus corridas, cancela las reservaciones vigentes y elimina las ofertas futuras)
 
 Ejemplo de post de creación:
 
@@ -162,6 +163,7 @@ Comandos RESTFul:
 * POST /rutacorrida = (Creación de registro nuevo)
 * PUT /rutacorrida/{id} = (Update al registro con el id especificado)  
 * DELETE /rutacorrida/{id} = (Elimina registro marcado con el id) 
+* POST /rutacorrida/deactivate/{id} = (Desactiva la ruta-->desactiva la corrida, cancela las reservaciones vigentes y elimina las ofertas futuras)
 
 Ejemplo creación de objeto ruta. Las horas se deben asignar directamente con valor entero (horaSalida : 460) o por medio de cadena con formato en la propiedad correspondiente (horaSalidaFmt: 07:40).
 

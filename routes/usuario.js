@@ -31,7 +31,12 @@ exports.login = function(req, res, next){
           return next(err) 
         }
   			if (!user) {
-  				return res.json(401, { error: 'User or password are incorrect' });
+          if(info.errType){
+            if(info.errType == 2){
+              return res.json(401, { error: info.message });
+            }
+          }
+  				return res.json(401, { error: 'Usuario o contraseña incorrectos' });
   			}
 
   			//user has authenticated correctly thus we create a JWT token			
@@ -268,7 +273,7 @@ exports.update = function() {
 /*
  * DELETE one
  */
-exports.delete = function() {
+exports.delete_bak = function() {
   return function(req, res) {
     var idToDelete = req.params.id;
     db.Usuario.find(idToDelete).success(function(usuario) {
@@ -289,6 +294,27 @@ exports.delete = function() {
     }).error(function(err){
       res.send(util.formatResponse('Ocurrieron errores al eliminar al usuario', err, false, 'ErrUsrX019', constErrorTypes, null));
     });
+  }
+};
+
+exports.delete = function() {
+  return function(req, res) {
+    var idToDelete = req.params.id;
+
+    db.Usuario.find(idToDelete).complete(function(err, usuario){
+      if(err!=null || usuario==null){
+        res.send(util.formatResponse('No se pudo acceder al usuario', err, false, 'ErrUsrX017', constErrorTypes, null));
+        return;
+      }
+      usuario.updateAttributes({EstatusId: constant.estatus.Usuario.deleted }).complete(function(err, usuario){
+        if(err!=null){
+          res.send(util.formatResponse('Ocurrieron errores al eliminar el usuario', err, false, 'ErrUsrX017', constErrorTypes, null));
+          return;
+        }
+        res.send(util.formatResponse('Se eliminó correctamente al usuario', null, true, 'ErrUsrX016', constErrorTypes, null));
+      });
+    });
+
   }
 };
 

@@ -222,7 +222,8 @@ var generaOfertaRuta = function(ruta, hoy){
       if(ruta.corridas != null){
         for (var j = 0; j < ruta.corridas.length; j++) {
           var corrida = ruta.corridas[j];
-          if( corrida != null && corrida[constDiaSem[fechaoper.getDay()]] == true){ // si la corrida aplica en el día de la semana
+          if( corrida != null && ( corrida.fechaActivacion!=null && corrida.fechaActivacion < fechaoper ) 
+          && corrida[constDiaSem[fechaoper.getDay()]] == true){ // si la corrida aplica en el día de la semana
             var oferta = {fechaOferta: utcCerosToDB(fechaoper), oferta: corrida.capacidadTotal, 
               reserva: (corrida.capacidadReservada - corrida.reservacionesRecurrentes) , RutaId: ruta.id, RutaCorridaId: corrida.id };            
             var ofertadb = db.Oferta.build(oferta);
@@ -264,3 +265,9 @@ function utcCerosToDB(date) {
 
     return new Date(date.getTime() + (offset*60000));
 }
+
+/*
+* **********************************************************************
+*  
+*/
+

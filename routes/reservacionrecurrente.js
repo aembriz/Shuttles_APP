@@ -266,17 +266,14 @@ exports.listCorridas = function() {
     var rutaid = req.params.rutaid;
     var usrid = req.user.id
 
-    db.RutaCorrida.findAll({ where: {RutaId: rutaid} }).success(function(rutacorrida) {
+    db.RutaCorrida.findAll({ where: {RutaId: rutaid, estatus: {lt: constant.estatus.RutaCorrida.deleted} } }).success(function(rutacorrida) {
       if(rutacorrida!=null){
 
       	db.ReservacionRecurrente.findAll({ where: {RutaId: rutaid, UsuarioId: usrid } }).complete(function (err, rsvrecs){  		
       		if(err==null && rsvrecs!=null){      			
 				for (var i = 0; i < rutacorrida.length; i++) {
-console.log(rutacorrida[i].values);
 					for (var j = 0; j < rsvrecs.length; j++) {
-console.log(rsvrecs[j].values);
 						if(rsvrecs[j].RutaCorridaId == rutacorrida[i].id){
-console.log("UUUUUUUUUUUUU")							
 							rutacorrida[i].dataValues.recurrente = rsvrecs[j].values;
 						}
 					};					

@@ -28,6 +28,7 @@ exports.list = function() {
     }
     else{
       db.Empresa.findAll({
+        where: {EstatusId: constant.estatus.Empresa.authorized},
         include: [{
           model: db.Estatus, as: 'Estatus', attributes: ['id', 'stsNombre']
         }]
@@ -191,7 +192,7 @@ exports.update = function() {
 /*
  * DELETE one
  */
-exports.delete = function() {
+exports.delete_bak = function() {
   return function(req, res) {
     var idToDelete = req.params.id;
     db.Empresa.find(idToDelete).success(function(empresa) {
@@ -209,6 +210,118 @@ exports.delete = function() {
       else{
         res.send(util.formatResponse('Ocurrieron errores al eliminar la empresa', null, false, 'ErrEmpX028', constErrorTypes));
       }
+    });
+  }
+};
+
+exports.delete = function() {
+  return function(req, res) {
+    var idToDelete = req.params.id;
+
+    db.Empresa.find(idToDelete).complete(function(err, empresa){
+      if(err!=null || empresa==null){
+        res.send(util.formatResponse('No se pudo acceder a la empresa', err, false, 'ErrEmpX014', constErrorTypes));
+        return;
+      }
+
+      db.Ruta.findAll({ where: {CompanyownerID: idToDelete }, include: [{model: db.RutaCorrida, as: 'Corridas'}] }).complete(
+        function(err, rutas){
+          if(err!=null || rutas==null){
+            res.send(util.formatResponse('No se pudo acceder a las rutas de la empresa', err, false, 'ErrEmpX014', constErrorTypes));
+            return;
+          }
+          var rutasIds = [];
+          var corridasIds = [];
+          var puedeEliminar = true;
+          for (var j = 0; j < rutas.length; j++) {
+            var ruta = rutas[j];
+            if(ruta!=null){
+              rutasIds.push(ruta.id);
+              for (var i = 0; i < ruta.corridas.length; i++) {
+                var corrida = ruta.corridas[i];
+                if(corrida!=null){
+                  corridasIds.push(corrida.id);
+                  if(corrida.fechaActivacion!=null){
+                    puedeEliminar = false;
+                  }
+                }
+              }
+            }
+          }
+
+          if(puedeEliminar!=true){
+            res.send(util.formatResponse('No se puede eliminar la empresa, existen corridas activas. ' + 
+              'Desactive todas las rutas e intente de nuevo.', null, false, 'ErrRutX012', constErrorTypes, null));
+            return;
+          }
+          
+          var estatusPrevEmpresa = empresa.EstatusId;      
+          empresa.updateAttributes({EstatusId: constant.estatus.Empresa.deleted} ).complete(function(err, empresa){
+            if(err!=null){
+              res.send(util.formatResponse('Ocurrieron errores al eliminar la empresa', err, false, 'ErrEmpX014', constErrorTypes));
+              return;
+            }
+
+            // elimina corridas
+            db.RutaCorrida.update({capacidadReservada:  0, capacidadOfertada: 0, 
+            capacidadTotal: 0, estatus: constant.estatus.RutaCorrida.deleted}, {RutaId: rutasIds} ).complete(
+              function(err, affectedRows){
+                if(err!=null){
+                  // rollback empresa
+                  empresa.updateAttributes({EstatusId: estatusPrevEmpresa} ).complete(function(err, empresa){
+                    if(err!=null){
+                      console.log("Rollback::Empresa ERROR -->" + empresa.id);
+                      console.log(err);
+                    }
+                    else{
+                      console.log("Rollback::Empresa SUCCESS -->" + empresa.id);
+                    }
+                  });
+                  res.send(util.formatResponse('Ocurrieron errores al eliminar las corridas', err, false, 'ErrRutX012', constErrorTypes, null));
+                  return;                  
+                }
+
+                // elimina rutas
+                db.Ruta.update({EstatusId: constant.estatus.Ruta.deleted}, {CompanyownerID: idToDelete} ).complete(
+                  function(err, affectedRows){
+                    if(err!=null){
+                      // rollbak empresa
+                      empresa.updateAttributes({EstatusId: estatusPrevEmpresa} ).complete(function(err, empresa){
+                        if(err!=null){
+                          console.log("Rollback::Empresa ERROR -->" + empresa.id);
+                          console.log(err);
+                        }
+                        else{
+                          console.log("Rollback::Empresa SUCCESS -->" + empresa.id);
+                        }
+                      });
+                      // rollback corridas
+                      db.RutaCorrida.update({capacidadReservada:  0, capacidadOfertada: 0, 
+                      capacidadTotal: 0, estatus: constant.estatus.RutaCorrida.new}, {id: corridasIds } ).complete(
+                        function(err, empresa){
+                          if(err!=null){
+                            console.log("Rollback::RutaCorrida ERROR -->" + corridasIds);
+                            console.log(err);
+                          }
+                          else{
+                            console.log("Rollback::RutaCorrida SUCCESS -->" + corridasIds);
+                          }
+                      });                  
+
+                      res.send(util.formatResponse('Ocurrieron errores al eliminar las rutas', err, false, 'ErrRutX012', constErrorTypes, null));
+                      return;
+                    }
+
+                    res.send(util.formatResponse('Se eliminó la empresa correctamente', null, true, 'ErrEmpX015', constErrorTypes));
+
+                }); // termin elimina rutas
+
+            }); // termina elimina corridas
+            
+          }); // termina elimina empresa
+
+      });
+
     });
   }
 };

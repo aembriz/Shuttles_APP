@@ -184,7 +184,7 @@ LEFT OUTER JOIN Empresas m ON m.id = u.EmpresaId"
 exports.csvEmpresas = function(){
 	return function(req, res){
 
-		var query = "SELECT id, nombre, razonsocial, rfc, direccion, sede, EstatusId FROM Empresas e;"
+		var query = "SELECT id, nombre, razonsocial, rfc, direccion, sede, EstatusId FROM Empresas e WHERE EstatusId !=" + constant.estatus.Empresa.deleted + ";"
 
 		db.sequelize.query(query).complete(function(err, rsvs){
 			if(err!=null || rsvs==null){
@@ -231,7 +231,7 @@ exports.csvUsuarios = function(){
 
 		var query = "SELECT u.id, u.nombre, u.email, u.role, u.area, u.telefono, u.createdAt, \
 		u.EstatusId, e.nombre as 'Empresa' FROM Usuarioes u \
-		LEFT OUTER JOIN Empresas e ON e.id = u.EmpresaId;"
+		LEFT OUTER JOIN Empresas e ON e.id = u.EmpresaId WHERE u.EstatusId !=" + constant.estatus.Usuario.deleted + ";"
 
 		db.sequelize.query(query).complete(function(err, rsvs){
 			if(err!=null || rsvs==null){
@@ -306,20 +306,22 @@ exports.csvRutas = function(){
 				"Corrida_Domingo", "Parada_Descripcion", "Parada_HoraEstimada", "Parada_id"]);
 			for (var i = 0; i < rsvs.length; i++) {
 				rsv = rsvs[i];	
-				rsv.Corrida_HoraSalida = fmtMinToHour(rsv.Corrida_HoraSalida);
-				rsv.Corrida_HoraLlegada = fmtMinToHour(rsv.Corrida_HoraLlegada);
-				switch (rsv.EstatusId) {
-				    case constant.estatus.Usuario.new:
-				        rsv.EstatusId = "Nueva";
-				        break;
-				    case constant.estatus.Usuario.authorized:
-				        rsv.EstatusId = "Autorizada";
-				        break;
-				    case constant.estatus.Usuario.rejected:
-				        rsv.EstatusId = "Rechazada";
-				        break;
+				if(rsv.EstatusId != constant.estatus.Ruta.deleted){
+					rsv.Corrida_HoraSalida = fmtMinToHour(rsv.Corrida_HoraSalida);
+					rsv.Corrida_HoraLlegada = fmtMinToHour(rsv.Corrida_HoraLlegada);
+					switch (rsv.EstatusId) {
+					    case constant.estatus.Ruta.new:
+					        rsv.EstatusId = "Nueva";
+					        break;
+					    case constant.estatus.Ruta.authorized:
+					        rsv.EstatusId = "Autorizada";
+					        break;
+					    case constant.estatus.Ruta.rejected:
+					        rsv.EstatusId = "Rechazada";
+					        break;
+					}				
+					result.push(rsv);
 				}
-				result.push(rsv);
 			};
 			result = convertToCsv(result);
 			createRptFile(result, function(err, partialUrl){

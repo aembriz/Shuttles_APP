@@ -1,14 +1,18 @@
 var db = require('../models')
 var util = require('./utilities');
 var constErrorTypes = {'ErrRucY000': '', 'ErrRucY000':''};
-
+var constant = require('../config/constant.js');
 
 exports.list = function() { 
   return function(req, res){
     var queryParams = {};
     if('rutaid' in req.query) {
-      queryParams.where = {RutaId: req.query.rutaid};
+      queryParams.where = {RutaId: req.query.rutaid, estatus: {lt: constant.estatus.RutaCorrida.deleted} };
     }
+    else{
+      queryParams.where = {estatus: {lt: constant.estatus.RutaCorrida.deleted} };
+    }
+
     db.RutaCorrida.findAll(queryParams).success(function(rutacorrida) {
       //res.send(rutacorrida);
       if(rutacorrida!=null){
@@ -144,7 +148,7 @@ exports.update = function() {
 /*
  * DELETE one
  */
-exports.delete = function() {
+exports.delete_bak = function() {
   return function(req, res) {
     var idToDelete = req.params.id;
     db.RutaCorrida.find(idToDelete).success(function(rutacorrida) {
@@ -159,6 +163,30 @@ exports.delete = function() {
       });
     }).error(function(err){
       res.send(util.formatResponse('Ocurrieron errores al eliminar la corrida', err, false, 'ErrRucY013', constErrorTypes, null));
+    });
+  }
+};
+
+exports.delete = function() {
+  return function(req, res) {
+    var idToDelete = req.params.id;
+    db.RutaCorrida.find(idToDelete).complete(function(err, rutacorrida) {
+      if(err!=null || rutacorrida == null){
+        res.send(util.formatResponse('Ocurrieron errores al eliminar la corrida', err, false, 'ErrRucY012', constErrorTypes, null));
+        return;
+      }
+      if(rutacorrida.fechaActivacion!=null){
+        res.send(util.formatResponse('Debe desactivar la corrida antes de poder eliminarla', null, false, 'ErrRucY012', constErrorTypes, null));
+        return;
+      }
+      rutacorrida.updateAttributes({estatus: constant.estatus.RutaCorrida.deleted}).complete(function(err, rutacorrida){
+        if(err!=null){
+          res.send(util.formatResponse('Ocurrieron errores al eliminar la corrida', err, false, 'ErrRucY012', constErrorTypes, null));          
+        }
+        else{
+          res.send(util.formatResponse('Se eliminó correctamente la corrida', null, true, 'ErrRucY011', constErrorTypes, null));
+        }
+      });
     });
   }
 };

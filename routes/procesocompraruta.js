@@ -87,6 +87,7 @@ exports.listSuggestions = function() {
       params.where = {};
       params.where.EstatusId = constant.estatus.Ruta.authorized;
       params.where.CompanyownerID = usr.EmpresaId; // TODO: por el momento solo se muestran las rutas de la compañía a la que pertenece
+      params.where.EstatusId = {lt: constant.estatus.Ruta.deleted}
 
       db.Ruta.findAll( 
         {
@@ -507,7 +508,11 @@ exports.reservationList = function() {
         hoy.setUTCHours(0,0,0,0);        
         paramsWhere.fechaReservacion = {gte: hoy};
       }      
-    }    
+    }
+    paramsOrder = null;
+    if('order' in req.query){
+      paramsOrder = req.query.order
+    }
 
     includes = [
         {model: db.Ruta},
@@ -515,7 +520,7 @@ exports.reservationList = function() {
     ];    
 
     // TODO: tomar en cuenta estatus de las reservaciones a mostrar
-    db.Reservacion.findAll({ where: paramsWhere, include: includes }).success(function(reservacion){
+    db.Reservacion.findAll({ where: paramsWhere, include: includes, order: paramsOrder }).success(function(reservacion){
       //res.send(reservacion);
       res.send(util.formatResponse('', null, true, 'ErrPcrX033', constErrorTypes, reservacion));
     }).error(function(err){
@@ -705,3 +710,30 @@ var policyCanCancel = function(reservation, callback){
   });
 
 }
+
+
+/*
+* Se usa desde oferta para el proceso de desactivación de una ruta
+*/
+exports.reservationCancelXDesactivarRuta = function(reservacionid, callback) {
+console.log("Cancelando reservacion::" + reservacionid)  
+    db.Reservacion.find(reservacionid).success(function(reservacion){
+      if(reservacion != null){        
+          // cancela la reservación
+          reservacion.updateAttributes({estatus: constant.estatus.Reservacion.canceled}).success(function(reservacion) {          
+            //res.send({msg: 'Reservación ha sido cancelada exitosamente.', reservacion: reservacion})
+            mail.notifyReservationChange(reservacion);
+            callback(util.formatResponse('Se canceló correctamente la reservación', null, true, 'ErrPcrX050', constErrorTypes, reservacion));
+          }).error(function(err){            
+            callback(util.formatResponse('Ocurrieron errores al cancelar la reservación', err, false, 'ErrPcrX051', constErrorTypes, null));
+            console.log(err);
+          });        
+      }
+      else{
+        callback(util.formatResponse('Ocurrieron errores al cancelar la reservación', null, false, 'ErrPcrX052', constErrorTypes, null));
+      }
+    }).error(function(err){
+      callback(util.formatResponse('Ocurrieron errores al cancelar la reservación', err, false, 'ErrPcrX053', constErrorTypes, null));
+    });
+};
+

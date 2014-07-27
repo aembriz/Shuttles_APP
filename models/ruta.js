@@ -6,7 +6,7 @@ module.exports = function(sequelize, DataTypes) {
     tiempoaprox: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 0},
   	origentxt: {type: DataTypes.STRING, allowNull: false},
   	destinotxt: {type: DataTypes.STRING, allowNull: false},
-    diasofertafuturo: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 7}
+    diasofertafuturo: {type: DataTypes.INTEGER, allowNull: false, defaultValue: 7}    
   }, {
 	timestamps: false,
     associate: function(models) {

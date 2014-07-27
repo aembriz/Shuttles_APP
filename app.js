@@ -159,6 +159,9 @@ app.put('/ruta/authorize/:id', usuario.authenticate, usuario.needsRole(['ADMIN']
 app.put('/ruta/reject/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), ruta.reject());
 app.delete('/ruta/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), ruta.delete());
 
+app.post('/ruta/deactivate/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), ruta.desactivarRuta()); // desactivar la ruta
+app.post('/rutacorrida/deactivate/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), ruta.desactivarCorrida()); // desactivar la ruta
+
 // --------------- RutaPunto ---------------- // TODO: Incluir seguridad por rutas compartidas
 var rutapunto = require('./routes/rutapunto');
 app.get('/rutapunto', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA']), rutapunto.list());
