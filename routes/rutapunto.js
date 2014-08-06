@@ -72,12 +72,24 @@ addOne = function(req, res) {
 
 addBulk = function(req, res) {
   console.log(req.body.puntos);
-    db.RutaPunto.bulkCreate(req.body.puntos).success(function(created) {
-      //res.send({ msg: created.length  + ' created'})
-      res.send(util.formatResponse('Se crearon correctamente ' + created.length + ' puntos geográficos', null, true, 'ErrRupX009', constErrorTypes, created));
-    }).error(function(err){
-      res.send(util.formatResponse('Ocurrieron errores al crear los puntos geográficos', err, false, 'ErrRupX010', constErrorTypes, null));
-    });    
+
+    if(req.body.puntos){
+      db.RutaPunto.destroy({RutaId: req.body.puntos[0].RutaId}).complete(function(err, affectedRows){
+
+        if(err!=null) {
+          res.send(util.formatResponse('Ocurrieron errores al eliminar los puntos previos', err, false, 'ErrRupX010', constErrorTypes, null));          
+          return;
+        }
+
+        db.RutaPunto.bulkCreate(req.body.puntos).success(function(created) {
+          //res.send({ msg: created.length  + ' created'})
+          res.send(util.formatResponse('Se crearon correctamente ' + created.length + ' puntos geográficos', null, true, 'ErrRupX009', constErrorTypes, created));
+        }).error(function(err){
+          res.send(util.formatResponse('Ocurrieron errores al crear los puntos geográficos', err, false, 'ErrRupX010', constErrorTypes, null));
+        });    
+      });
+    }
+
 };
 
 /*

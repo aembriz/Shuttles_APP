@@ -788,6 +788,21 @@ Ejemplo de creación de sugerencia:
 
 **Nota:** Tanto RutaId como RutaCorridaId son opcionales
 
+
+---------
+
+Servicio "Lista de Asistencia"
+-------------------------
+[URL...]/asistencia
+
+Comandos RESTFul:   
+* GET /asistencia = (Consulta todos)  
+  * Los filtros de son (obligatorios):
+    * ?empresaid={}&fecha={}
+    * ?rutaid={}&fecha={}
+    * ?corridaid={}&fecha={}
+* POST /asistencia/{idReservacion}?asistio=[true|false] = (asigna estatus de asistencia a la reservación)  
+
 ------------
 
 Servicio "Configuración" 
@@ -811,6 +826,7 @@ Servicios para generación de reportes del sistema
 
 * GET /reporte/general = (Genera el reporte general en formato CSV) Recibe filtros opcionales por periodo para: **fechareservacion** Ejemplo: ?fechareservacionini=2014-06-01&fechareservacionfin=2014-06-30, **fechacreacion** Ejemplo: ?fechacreacionini=2014-06-01&fechacreacionfin=2014-06-30
 * GET /reporte/edocta = (Genera el reporte de estado de cuenta en formato CSV. Recibe filtros: empresaid=[id empresa] ó usuarioid=[id usuario] con lo que genera el edo cta para la empresa o el usuario especificado respectivamente)
+* GET /reporte/asistencia = (Genera el reporte de asistencia conforme los parámetros mismos que se usan en la lista de asistencia)
 
 
 

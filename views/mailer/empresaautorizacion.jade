@@ -5,14 +5,16 @@ block content
 	h3 Estimado #{usuario.nombre},
 
 	p 
-	| Nos da gusto notificarle que la solicitud de registro para la empresa 
+	| ¡Gracias por registrar a 
 	b #{empresa.nombre}
-	|, ha sido aceptado.
+	| al servicio de rutas empresariales!
 
-	p Podrá acceder al sistema usando sus datos de administrador:
+	p 
+	| Te invitamos a administrar el perfil de tu empresa 
+	a(href='#{config.homeurl}') aquí
+	| con los siguientes datos de usuario. 
 
 	ul
 		li: p Usuario: #{usuario.email}
-		li: p Password: #{usuario.password}
+		li: p Contraseña: #{usuario.password}
 
-	a(href='#{config.homeurl}') #{config.homeurl}

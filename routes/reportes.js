@@ -4,6 +4,8 @@ var constErrorTypes = {'ErrRepX000': '', 'ErrRepX000':''};
 var constant = require('../config/constant.js');
 var sysconfig = require('../config/systemconfig.js');
 
+var Asistencia = require('./listaasistencia');
+
 exports.csvGeneral_bal = function(){
 	return function(req, res){
 		db.Reservacion.findAll({ 
@@ -337,6 +339,67 @@ exports.csvRutas = function(){
 
 	}
 };
+
+/*
+* Reporte exportar listado de asistencia
+*/
+exports.csvAsistencia = function(){
+	return function(req, res){
+
+		Asistencia.getReservationList(req, function(resultado){
+			if(!resultado.success){
+				res.send(resultado);
+				return;
+			}
+			var result = [];
+			var rsvs = resultado.resultObject;		
+			result.push(["Folio Reservación", "Estatus", "EmpresaID", "Empresa", "RutaID", "Ruta", "CorridaID", "Corrida", "UsuarioID", "Usuario", "Usuario email"]);
+			for (var i = 0; i < rsvs.length; i++) {
+				rsv = rsvs[i];
+
+				var r = {};
+				r.id = rsv.id;
+				switch (rsv.estatus) {
+				    case constant.estatus.Reservacion.new:
+				        r.estatus = "Nueva";
+				        break;
+				    case constant.estatus.Reservacion.confirmed:
+				        r.estatus = "Confirmada";
+				        break;
+				    case constant.estatus.Reservacion.canceled:
+				        r.estatus = "Cancelada";
+				        break;
+				    case constant.estatus.Reservacion.assisted:
+				        r.estatus = "Asistió";
+				        break;				        
+				}				
+				r.EmpresaId = rsv.EmpresaId;
+				r.EmpresaNombre = rsv.EmpresaNombre;
+				r.RutaId = rsv.RutaId;
+				r.RutaNombre = rsv.RutaNombre;
+				r.RutaCorridaId = rsv.RutaCorridaId;
+				r.Corrida = rsv.horaSalidaFmt + " - " + rsv.horaLlegadaFmt;
+				r.UsuarioId = rsv.UsuarioId;
+				r.UsuarioNombre = rsv.UsuarioNombre;
+				r.UsuarioEmail = rsv.UsuarioEmail;
+
+				result.push(r);
+			};
+			result = convertToCsv(result);
+			createRptFile(result, function(err, partialUrl){
+				if(err!=null){
+					console.log(err);
+					res.send(util.formatResponse('Hubieron errores al generar el reporte', err, false, 'ErrRepX014', constErrorTypes, null));
+				}
+				else{
+					res.send(util.formatResponse('Reporte generado correctamente', null, true, 'ErrRepX015', constErrorTypes, {url: partialUrl}));
+				}
+			});
+		});		
+
+	}
+};
+
 
 var formatoFecha = function(fec){	
 	var fmt = ("0" + fec.getDate()).slice(-2);

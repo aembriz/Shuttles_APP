@@ -43,8 +43,13 @@ exports.list = function() {
     if('estatus' in req.query){
       sts = constant.estatus.Ruta[req.query.estatus];
       if(!params.where) params.where = {};
-      params.where.EstatusId = sts;      
+      params.where.EstatusId = sts;
     }
+    else{    
+      if(!params.where) params.where = {};
+      params.where.EstatusId = {lt: constant.estatus.Ruta.deleted};
+    }
+
     if('empresa' in req.query){
       if(!params.where) params.where = {};
       params.where.CompanyownerID = req.query.empresa;
@@ -52,8 +57,6 @@ exports.list = function() {
 
     if(req.user.role != 'ADMIN') { if(!params.where) params.where = {}; params.where.CompanyownerID = req.user.EmpresaId; } // SEC: solo puede ver rutas de su empresa TODO: incluir rutas compartidas
 
-    if(!params.where) params.where = {};
-    params.where.EstatusId = {lt: constant.estatus.Ruta.deleted};
 
 
     params.include = [
@@ -143,6 +146,16 @@ exports.listOne = function() {
 exports.add = function() {
   return function(req, res) {
     if(req.user.role != 'ADMIN') { req.body.CompanyownerID = req.user.EmpresaId; } // SEC: solo puede crear rutas en su empresa
+
+    if(!req.body.CompanyownerID){
+      res.send(util.formatResponse('Se debe especificar la empresa a la que pertenece la ruta.', null, false, 'ErrRutX025', constErrorTypes, null));
+      return;
+    }
+    var companyowner = "" + req.body.CompanyownerID;
+    if(companyowner.trim().length==0){
+      res.send(util.formatResponse('Se debe especificar la empresa a la que pertenece la ruta.', null, false, 'ErrRutX026', constErrorTypes, null));
+      return;
+    }
 
     req.body.EstatusId = 1; // inicia con estatus nueva y despues se autoriza
     var ruta = db.Ruta.build(req.body);

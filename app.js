@@ -283,22 +283,21 @@ app.put('/configuracion/:id', usuario.authenticate, usuario.needsRole(['ADMIN'])
 app.delete('/configuracion/:id', usuario.authenticate, usuario.needsRole(['ADMIN']), configuracion.delete());
 
 
+// --------------- Lista de asistencia ---------------- 
+var listaasistencia = require('./routes/listaasistencia');
+app.get('/asistencia', usuario.authenticate, usuario.needsRole(['USUARIO', 'EMPRESA', 'ADMIN']), listaasistencia.reservationList());
+app.put('/asistencia/:id', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA', 'USUARIO']), listaasistencia.updateAsistencia());
+
+// /asistencia?empresaid=&fecha=
 
 // --------------- Reportes ---------------- 
 var reportes = require('./routes/reportes');
-/*
-app.get('/reporte/general', function(req, res) {
-  res.csv([
-    ["a", "b", "c"]
-  , ["d", "e", "f"]
-  ]);
-});
-*/
 app.get('/reporte/general', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvGeneral());
 app.get('/reporte/edocta', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvEdoCta());
 app.get('/reporte/empresas', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvEmpresas());
 app.get('/reporte/usuarios', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvUsuarios());
 app.get('/reporte/rutas', usuario.authenticate, usuario.needsRole(['ADMIN']), reportes.csvRutas());
+app.get('/reporte/asistencia', usuario.authenticate, usuario.needsRole(['ADMIN', 'EMPRESA', 'USUARIO']), reportes.csvAsistencia());
 
 // --------------- Servicios públicos ----------------
 var publicos = require('./routes/publicos');

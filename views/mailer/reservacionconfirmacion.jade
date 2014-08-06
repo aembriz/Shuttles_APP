@@ -4,7 +4,9 @@ block content
 
 	h3 Estimado #{usuario.nombre},
 
-	p Se ha confirmado la reservación con los datos siguientes:
+	p ¡Gracias por reservar tu asiento en Rutas Empresariales!
+
+	p Confirmamos tu reservación con las siguientes características:
 
 	ul
 		li: p 
@@ -19,5 +21,9 @@ block content
 		li: p 
 			| Hora: 
 			b #{reservacion.rutaCorrida.horaSalidaFmt}
+
+	p 
+	| Te recordamos que puedes ver o modificar tu reservación 
+	a(href='#{config.homeurl}') aquí.
 
 	

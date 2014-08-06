@@ -14,13 +14,14 @@ module.exports = function(sequelize, DataTypes) {
     },
     validate: {
       validateFecha: function(){
-        var hoy = new Date();
-        //hoy.setHours(0,0,0,0);
+        /*
+        var hoy = new Date();        
         hoy.setUTCHours(0,0,0,0); // TODO: corregir problemas con las fechas y horarios UTC
         console.log(hoy);
         if( (this.fechaReservacion ) < hoy ){
           throw new Error('La reservación no puede ser en fechas pasadas.');
         }
+        */
       }
     }
   })
