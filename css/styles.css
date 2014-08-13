@@ -128,6 +128,7 @@ h1 {
 }
 .navbar-nav {
   margin: 1px 1px; 
+  margin-left: -10px; /* para centrar */
 }  
   
 /* customize nav style */
@@ -143,9 +144,10 @@ h1 {
   color: #3c3c3f;
 }
 .navbar-custom  .navbar-nav li>a:hover, .navbar-nav li .open, .navbar-custom .navbar-nav .active a  {
-	/*background-color: #000;*/
-  background-color: #ffd100;  
+	background-color: #ffffff;
+  color: #E75F1A;
 }
+
 .navbar-custom .dropdown-menu{
 	right:0;
 }
@@ -188,7 +190,7 @@ h1 {
    bottom:0;
    right:6%;
    z-index:100;
-   background: #ffcc33;
+   background: #E75F1A;
    font-size:24px;
    border-top-left-radius:3px;
    border-top-right-radius:3px;
@@ -241,21 +243,21 @@ section {
 /* NUbeet Customization */
 .box-margin{
   border-style: dashed;
-  border-color: #ffd100;
+  border-color: #E75F1A;
   border-radius: 25px;
 }
 
 .text-special{
-  color: #ffd100;
+  color: #E75F1A;
   font-family: 'Satisfy', cursive;
 }
 
 .text-yellow{
-  color: #ffd100;
+  color: #E75F1A;
 }
 
 .box-yellow{
-  background-color: #ffd100;
+  background-color: #E75F1A;
   color: #000000;
 }
 
@@ -266,7 +268,7 @@ section {
 
 .box-white{
   background-color: #ffffff;
-  color: #ffd100;
+  color: #E75F1A;
   height: 140px;
   width: 140px;
   padding: 5px;
@@ -286,7 +288,7 @@ section {
 }
 
 .section-bounded{
-  border-color: #ffd100;
+  border-color: #E75F1A;
   border-style: dashed;
   border-left: 0px;
   border-right: 0px;
@@ -295,7 +297,7 @@ section {
 
 .box-yellow .panel-heading {
   color: #ffffff;  
-  background-color: #ffd100;
+  background-color: #E75F1A;
   border-color: #ffffff;
   border-width: 2px;
 }
@@ -308,7 +310,7 @@ section {
 
 .box-yellow .panel-default > .panel-collapse > .panel-body {  
   color: #000000; 
-  background-color: #ffd100;
+  background-color: #E75F1A;
   border-top: 2px solid #ffffff;
 }
 
@@ -322,25 +324,25 @@ section {
 
 .container-alt > hr{
   border-style: dashed;
-  border-color: #ffd100;
+  border-color: #E75F1A;
   border-width: 1px;  
   width: 90%;
 }
 
 .container-alt .btn-default{
-  background-color: #ffd100;
+  background-color: #E75F1A;
   color: #000000;
   border-radius: 22px;
 }
 
 .container .btn-default{
-  background-color: #ffd100;
+  background-color: #E75F1A;
   color: #000000;
   border-radius: 22px;
 }
 
 .form-control{
-  border: 1px solid #ffd100;  
+  border: 1px solid #E75F1A;  
   margin-bottom: 8px;
 }
 
@@ -395,11 +397,11 @@ section {
   background-image: -webkit-linear-gradient(left,rgba(0,0,0,.0001) 0,rgba(0,0,0,.5) 100%);
   background-image: -o-linear-gradient(left,rgba(0,0,0,.0001) 0,rgba(0,0,0,.5) 100%);
   background-image: -webkit-gradient(linear,left top,right top,from(rgba(0,0,0,.0001)),to(rgba(0,0,0,.5)));
-  background-image: linear-gradient(to right,#ffd100 0,#ffd100 100%);
+  background-image: linear-gradient(to right,#E75F1A 0,#E75F1A 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#80000000', GradientType=1);
   */
   background-repeat: repeat-x;
-  color: #ffd100;
+  color: #E75F1A;
 }
 .carousel-control.left {
   left: 0;
@@ -409,19 +411,19 @@ section {
   background-image: -webkit-linear-gradient(left,rgba(0,0,0,.0001) 0,rgba(0,0,0,.5) 100%);
   background-image: -o-linear-gradient(left,rgba(0,0,0,.0001) 0,rgba(0,0,0,.5) 100%);
   background-image: -webkit-gradient(linear,left top,right top,from(rgba(0,0,0,.0001)),to(rgba(0,0,0,.5)));
-  background-image: linear-gradient(to right,#ffd100 0,#ffd100 100%);
+  background-image: linear-gradient(to right,#E75F1A 0,#E75F1A 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#80000000', GradientType=1);
   */
   background-repeat: repeat-x;
-  color: #ffd100;
+  color: #E75F1A;
 }
 
 
 /*************** Validation (Override default border) **********************/
 .has-error .form-control {
-  border-color: #ffd100;
+  border-color: #E75F1A;
 }
 
 .has-success .form-control {
-  border-color: #ffd100;
+  border-color: #E75F1A;
 }
