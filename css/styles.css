@@ -1,6 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Kreon:400,700);
 @import url(http://fonts.googleapis.com/css?family=Satisfy);
 @import url(http://fonts.googleapis.com/css?family=Questrial);
+@import url(http://fonts.googleapis.com/css?family=Open Sans);
 
 html,
 body {
@@ -68,7 +69,7 @@ body {
 }
 
 h1,h2,h3,h4 {
-  font-family: 'Questrial', serif;
+  font-family: 'Open Sans', serif;
   vertical-align:middle;
 }
 
@@ -85,11 +86,11 @@ header h1,header h2,header h3 a,header a,header a:hover {
 }
 
 header h3 {
-  font-family: 'Questrial', serif;
+  font-family: 'Open Sans', serif;
   background: #ffcc33;
   padding:10px;
   border-radius:3px;
-  font-size:34px;
+  font-size:24px;
   padding:12px 10px 6px 10px;
 }
 
@@ -98,9 +99,18 @@ header .dropdown-menu {
   background: #ffcc33;
   border-width:0;
 }
-
 h1 {
-  font-size:30px;  
+  font-size:30px;
+  border-color: #FC6D08;
+  border-style: solid;
+  margin-left: 132px;
+  margin-right: 132px; 
+  border-top:0px solid #EEE; 
+  border-left:0px solid #EEE; 
+  border-right:0px solid #EEE; 
+}
+h3 {
+  font-size:14px;
 }
 
 .container-alt h1{
@@ -265,7 +275,7 @@ text-special{
 
 .text-special{
   color: #E75F1A;
-  font-family: 'Satisfy', cursive;
+  font-family: 'Open Sans', cursive;
 }
 
 .text-yellow{
@@ -278,7 +288,7 @@ text-special{
 }
 
 .box-yellow > .text-special{
-  font-family: 'Satisfy', cursive;
+  font-family: 'Open Sans', cursive;
   color: #ffffff;
 }
 
@@ -304,8 +314,8 @@ text-special{
 }
 
 .section-bounded{
-  border-color: #E75F1A;
-  border-style: dashed;
+  border-color: #FC6D08;
+  border-style: solid;
   border-left: 0px;
   border-right: 0px;
   padding: 30px;
@@ -327,7 +337,7 @@ text-special{
 }
 
 .box-yellow .panel-heading > .panel-title {
-  font-family: 'Satisfy', cursive;
+  font-family: 'Open Sans', cursive;
   color: #ffffff; 
   font-size: 18pt;
 }
