@@ -585,5 +585,16 @@ background-color: #ffffff;
   border-right: 12px solid transparent;
   
   border-top: 12px solid white;
+}
 
+.new_html_code {
+  width:150px;
+  height:100px;
+  min-width:150px;
+  min-height:100px;
+  max-width:200px;
+  max-height:100px;
+  overflow:hidden;
+  display:block;
+  border:1px solid red;
 }
