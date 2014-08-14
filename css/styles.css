@@ -530,4 +530,31 @@ text-special{
   position: absolute;
   z-index: 20;
   right: 0;
+
+/***************************** SECTION 2 *******************************/
+.apex-dn {
+  width:0px;
+  height:0px;
+  border-left:12px solid transparent;
+  border-right:12px solid transparent;
+  border-top:12px solid #fff;
+  background: black;
+  margin-left: 9%;
+}
+.descripcion {
+  background: #525253;
+  margin-left: -50%;
+  padding-left: 50%;
+  margin-right: -50%;
+  padding-right: 50%;
+}
+
+.arrow-down {
+  width: 0; 
+  height: 0; 
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  
+  border-top: 12px solid white;
+
 }
