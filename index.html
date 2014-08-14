@@ -12,6 +12,10 @@
 		<![endif]-->
 		<link href="css/styles.css" rel="stylesheet">
     <!--<link href='http://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>-->
+
+    <!-- Custom styles for this template -->
+    <link href="css/carousel.css" rel="stylesheet">
+
 	</head>
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />  
 <link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -40,11 +44,21 @@
       </div>
     </div>
     </div>
-    <div align="center" style="padding-top:10em;">
+    <div align="center" style="padding-top:7em;">
       <img src="./imgs/logo.png"/>
+    </div>
+
+    <div style="padding-top:8.5em;">
+      <div align="center">          
+        <img src="./imgs/flecha-principal.png" style="margin-left:20px;" width="100px;" />
+      </div>
+      <div align="center">          
+        <img src="./imgs/linea-punteada.png" />
+      </div>    
     </div>
 </header>
   
+
   
 <!-- Fixed navbar -->
 <div class="navbar navbar-custom navbar-inverse navbar-static-top" id="nav">
@@ -57,10 +71,6 @@
         </button>
       </div>
       <div class="collapse navbar-collapse">
-        <div align="center">          
-          <img src="./imgs/flecha-principal.png" style="margin-left:20px;" width="100px;" />
-          <img src="./imgs/linea-punteada.png" />
-        </div>
         <ul class="nav navbar-nav nav-justified">          
           <li class="active"><a href="#section_0">ACERCA DE</span></a></li>
           <li><a href="#section_1">PROYECTOS</a></li>
@@ -295,9 +305,59 @@
 <div class="container">
     <div class="col-sm-10 col-sm-offset-1 text-center">      
       <h1 class="text-special">EXPERIENCIA Y PROYECTOS REALIZADOS</h1>
+      <div id="popup-proyectos"> <!--POPUP Proyecto-->
+        <a href="#!" onclick="hideProyecto();" class="cerrar"><img href="#!" src="./imgs/proyectos/cerrar.png"></a>
+
+        <!-- Carousel
+          ================================================== -->
+          <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+              <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+              <li data-target="#myCarousel" data-slide-to="1"></li>
+              <li data-target="#myCarousel" data-slide-to="2"></li>
+            </ol>
+            <div class="carousel-inner">
+              <div class="item active">
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
+                <div class="container">
+                  <div class="carousel-caption">
+                    <h1>Example headline.</h1>
+                    <p>Note: If you're viewing this page via a <code>file://</code> URL, the "next" and "previous" Glyphicon buttons on the left and right might not load/display properly due to web browser security rules.</p>
+                    <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAGZmZgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Second slide">
+                <div class="container">
+                  <div class="carousel-caption">
+                    <h1>Another example headline.</h1>
+                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                    <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+                  </div>
+                </div>
+              </div>
+              <div class="item">
+                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAFVVVQAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
+                <div class="container">
+                  <div class="carousel-caption">
+                    <h1>One more for good measure.</h1>
+                    <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
+                    <p><a class="btn btn-lg btn-primary" href="#" role="button">Browse gallery</a></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+          </div><!-- /.carousel -->        
+         
+      </div> <!--Ends POPUP Proyecto-->
+
       <div class="container-fluid">
         <div class="row">
-          <div class="col-sm-12">              
+          <div class="col-md-10 col-md-offset-1">              
             <p style="text-align:center">
               La experiencia de los socios y del equipo del TUMX se ha centrado en el desarrollo de proyectos urbanos y de infraestructura, tanto en M&eacute;xico como en el extranjero. Tenemos m&aacute;s de una d&eacute;cada dedic&aacute;ndonos al sector de la contrucci&oacute;n, en proyectos a distintas escalas y para clientes tanto privados como p&uacute;blicos, de gobiernos federales, estatales y municipales. Hemos trabajado en diversos proyectos de mejoramiento del entorno urbano, buscando crear espacios p&uacute;blicos de calidad para contribuir a una ciudad m&aacute;s organizada y planeada.
             </p> 
@@ -306,6 +366,91 @@
             <br/>
           </div>
         </div>
+
+        <div class="row">
+          <div class="verticalLine"></div>
+          <div class="col-md-7">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div><img src="./imgs/proyectos/imagen-under.png" class="img-with-over"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="container-fluid">
+              <div class="row"> <!-- ROW-->
+                <div class="col-md-12">
+                  <h2 class="text-center" style="margin-top:0px; padding-left:3em;">PROYECTOS</h2>
+                </div>
+              </div> <!-- Ends ROW-->
+              <div class="row"> <!-- ROW-->
+                <div class="col-md-6">
+                  <!-- Col A-->
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-md-12 proyectos">
+                        <a href="#!" onclick="showProyecto(1);">
+                          <img src="./imgs/proyectos/thumbnail1.png">                          
+                          <img class="mas" src="./imgs/proyectos/mas.png">
+                        </a>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 proyectos">
+                        <a href="#!" onclick="showProyecto(2);">
+                          <img src="./imgs/proyectos/thumbnail2.png">
+                          <img class="mas" src="./imgs/proyectos/mas.png">
+                        </a>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 proyectos">
+                        <a href="#!" onclick="showProyecto(3);">
+                          <img src="./imgs/proyectos/thumbnail3.png">
+                          <img class="mas" src="./imgs/proyectos/mas.png">
+                        </a>
+                      </div>
+                    </div>                                        
+                  </div> 
+                  <!-- End Col A-->
+                </div>              
+                <div class="col-md-6">
+                  <!-- Col B-->
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col-md-12 proyectos">
+                        <a href="#!" onclick="showProyecto(4);">
+                          <img src="./imgs/proyectos/thumbnail4.png">
+                          <img class="mas" src="./imgs/proyectos/mas.png">
+                        </a>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 proyectos">
+                        <a href="#!"  onclick="showProyecto(5);">
+                          <img src="./imgs/proyectos/thumbnail5.png">
+                          <img class="mas" src="./imgs/proyectos/mas.png">
+                        </a>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 proyectos">
+                        <a href="#!" onclick="showProyecto(6);">
+                          <img src="./imgs/proyectos/thumbnail6.png">
+                          <img class="mas" src="./imgs/proyectos/mas.png">
+                        </a>
+                      </div>
+                    </div>                                        
+                  </div> 
+                  <!-- End Col B-->                
+                </div>                  
+              </div>  <!-- Ends ROW-->
+            </div>          
+          </div>
+        </div>
+
       </div>
       <br/>
       <br/>
@@ -694,7 +839,7 @@
 
 <div id="footer">
   <div class="container">
-    <p class="text-muted">Elaborado por <a href="http://www.nubeet.com">Nubeet.com</a> para <a href="http://www.embarqmexico.org">EmbarQ México &copy;<a></p>
+    <p class="text-muted">elaboramosado por <a href="http://www.nubeet.com">Nubeet.com</a> para <a href="http://www.embarqmexico.org">EmbarQ México &copy;<a></p>
   </div>
 </div>
 

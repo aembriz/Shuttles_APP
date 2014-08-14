@@ -113,6 +113,19 @@ h3 {
   font-size:14px;
 }
 
+.container h1{
+  border-color: #E75F1A;
+  border-style: solid;
+  border-left: 0px;
+  border-right: 0px;
+  border-top: 0px;
+  padding-bottom: 10px;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
 .container-alt h1{
   border-color: #ffffff;
   border-style: solid;
@@ -124,6 +137,10 @@ h3 {
   margin-right: 15%;
   margin-top: 10px;
   margin-bottom: 30px;
+}
+
+.container h2{
+  color: #E75F1A;  
 }
 
 #nav {
@@ -478,6 +495,42 @@ text-special{
 
 }
 
+/***************************** SECTION 3 *******************************/
+.proyectos{
+  padding-top: 4px;
+  padding-bottom: 4px;
+  
+}
+
+.proyectos img.mas{
+  position:absolute; top: 35%; left: 75%; z-index: 3;
+}
+
+.proyectos a > img.mas{  
+  display: none;
+}
+
+.proyectos a:hover > img.mas{  
+  display: block;
+}
+
+
+#popup-proyectos{
+  height: 80%;
+  width: 100%;
+  position: absolute;
+  background-color: #ffffff;
+  opacity: 0.85;
+  top: 13%;
+  z-index: 10;
+  display: none;
+}
+
+#popup-proyectos .cerrar{
+  position: absolute;
+  z-index: 20;
+  right: 0;
+
 /***************************** SECTION 2 *******************************/
 .apex-dn {
   width:0px;
@@ -503,7 +556,6 @@ text-special{
   border-right: 12px solid transparent;
   
   border-top: 12px solid white;
-}
 
 .new_html_code {
   width:150px;
@@ -515,4 +567,3 @@ text-special{
   overflow:hidden;
   display:block;
   border:1px solid red;
-}
