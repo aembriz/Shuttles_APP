@@ -335,3 +335,12 @@ var enviarContacto = function(){
   })  
 
 };
+
+/* Despliega el pop-up del detalle del proyecto*/
+var showProyecto = function(idxProyecto){
+  $("#popup-proyectos").show();
+};
+
+var hideProyecto = function(){
+  $("#popup-proyectos").hide();
+};
