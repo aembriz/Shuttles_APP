@@ -530,7 +530,7 @@ text-special{
   position: absolute;
   z-index: 20;
   right: 0;
-
+}
 /***************************** SECTION 2 *******************************/
 .apex-dn {
   width:0px;
@@ -556,6 +556,7 @@ text-special{
   border-right: 12px solid transparent;
   
   border-top: 12px solid white;
+}
 
 .new_html_code {
   width:150px;
@@ -567,3 +568,4 @@ text-special{
   overflow:hidden;
   display:block;
   border:1px solid red;
+}
