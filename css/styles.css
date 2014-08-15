@@ -605,9 +605,48 @@ background-color: #ffffff;
   margin-bottom: 20px;
   font-size: 12px;
   line-height: 1.4;
+  text-shadow: 0 0px 0px rgba(0,0,0,0);
+  color: black;
 }
-
+#myCarouselEquipo .carousel-caption h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  line-height: 1.4;
+  text-shadow: 0 0px 0px rgba(0,0,0,0);
+  font-color: #FC6D08;
+}
+#myCarouselEquipo .carousel-caption {
+  z-index: 0;
+  left: 20px;
+  right: 20px;
+  top: 20px;
+  bottom: 20px;
+}
+#myCarouselEquipo.carousel {
+  height: 300px;
+  margin-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
 #myCarouselEquipo.carousel .item {
-  height: 200px;
-  background-color: #FFFFFF;
+  height: 250px;
+  background-color: #ffffff;
+}
+#myCarouselEquipo .carousel-indicators li {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 1px;
+  text-indent: -999px;
+  cursor: pointer;
+  background-color: #000 \9;
+  background-color: #999999;
+  border: 1px solid #fff;
+  border-radius: 10px;
+}
+#myCarouselEquipo .carousel-indicators .active {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  background-color: #FC6D08;
 }
