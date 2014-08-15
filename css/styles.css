@@ -569,3 +569,16 @@ text-special{
   display:block;
   border:1px solid red;
 }
+
+/***************************** SECTION 4 *******************************/
+/* carousel para seccion 4 equipo */
+#myCarouselEquipo .carousel-caption p {
+  margin-bottom: 20px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+#myCarouselEquipo.carousel .item {
+  height: 200px;
+  background-color: #FFFFFF;
+}
