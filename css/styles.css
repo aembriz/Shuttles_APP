@@ -531,6 +531,35 @@ text-special{
   z-index: 20;
   right: 0;
 }
+
+#popup-proyectos.carousel-caption {
+  right: 0px;
+  left: 0px;
+  padding-bottom: 100px;
+}
+
+#popup-proyectos .carousel-caption h5 {
+  text-align: left;
+  font-size: 13px;
+  font-weight: bold;
+  color: #E75F1A;
+  text-shadow: none;
+}
+
+#popup-proyectos .carousel-caption p {
+  margin-bottom: 20px;
+  font-size: 11px;
+  line-height: 1.4;
+  text-align: left;
+  color: #000000;
+  text-shadow: none;
+}
+
+#popup-proyectos .carousel .item {
+height: 500px;
+background-color: #ffffff;
+}
+
 /***************************** SECTION 2 *******************************/
 .apex-dn {
   width:0px;
