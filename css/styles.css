@@ -24,7 +24,7 @@ body {
   /* Negative indent footer by its height */
   margin: 0 auto -60px;
   /* Pad bottom by footer height */
-  padding: 0 0 60px;
+  padding: 0 0 0px;
 }
 
 /* Set the fixed height of the footer here */
@@ -53,6 +53,37 @@ body {
   padding-top: 5px;
 }
 
+.container-full {
+  background-color: #333333;
+}
+.container-gray{
+  /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
+  
+  color: #ffffff;
+  background-color: #515152;
+  padding-bottom: 20px;
+  padding-top: 5px;
+}
+.container-orange{
+  /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
+  
+  color: #FFC993;
+  background-color: #FF8302;
+  padding-bottom: 20px;
+  padding-top: 5px;
+}
+#text-contacto h1 {
+  border-color: #ffffff;
+  border-style: solid;
+  border-left: 0px;
+  border-right: 0px;
+  border-top: 0px;
+  padding-bottom: 10px;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
 #wrap > .container {
   padding: 60px 15px 0;
 }
@@ -137,6 +168,23 @@ h3 {
   margin-right: 15%;
   margin-top: 10px;
   margin-bottom: 30px;
+}
+
+.container-gray h1{
+  border-color: #ffffff;
+  border-style: solid;
+  border-left: 0px;
+  border-right: 0px;
+  border-top: 0px;
+  padding-bottom: 10px;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.container-gray input {
+
 }
 
 .container h2{
@@ -286,15 +334,14 @@ section {
   border-radius: 25px;
 }
 
-text-special{
-
-}
-
 .text-special{
   color: #E75F1A;
   font-family: 'Open Sans', cursive;
 }
-
+.text-contacto{
+  color: #ffffff;
+  font-family: 'Open Sans', cursive;
+}
 .text-yellow{
   color: #E75F1A;
 }
@@ -392,9 +439,11 @@ text-special{
   border-radius: 22px;
 }
 
-.form-control{
-  border: 1px solid #E75F1A;  
+.form-control {
+  border: 1px solid #ffffff;
+  background-color: #515152;
   margin-bottom: 8px;
+  color: #ffffff;
 }
 
 .container-alt .form-control{

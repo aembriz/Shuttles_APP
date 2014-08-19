@@ -73,11 +73,11 @@
       <div class="collapse navbar-collapse">
         <ul class="nav navbar-nav nav-justified">          
           <li class="active"><a href="#section_0">ACERCA DE</span></a></li>
-          <li><a href="#section_1">PROYECTOS</a></li>
+          <li><a href="#section_3">PROYECTOS</a></li>
           <li><a href="#section_2">SERVICIOS</a></li>
           <li><a href="#section_2"><img src="./imgs/simbolo-tumx.png" width="100px"> </a></li>
-          <li><a href="#section_3">EQUIPO</a></li>
-          <li><a href="#section_4">BLOG</a></li>          
+          <li><a href="#section_4">EQUIPO</a></li>
+          <li><a href="">BLOG</a></li>          
           <li><a href="#section_5">CONTACTO</a></li>
           <!--
           <li class="dropdown">
@@ -298,6 +298,10 @@
 
 </div><!--/container-->
 
+<!-- SECTION 3 -->
+<div class="divider" id="section_3"></div>
+<br/>
+
 <div class="container">
     <div class="col-sm-10 col-sm-offset-1 text-center">      
       <h1 class="text-special">EXPERIENCIA Y PROYECTOS REALIZADOS</h1>
@@ -469,6 +473,10 @@
 
 </div><!--/container-->
 
+<!-- SECTION 4 -->
+<div class="divider" id="section_4"></div>
+<br/>
+
 <div class="container">
     <div class="col-sm-10 col-sm-offset-1 text-center">      
       <h1 class="text-special">CONOCE NUESTRO EQUIPO</h1>
@@ -569,49 +577,73 @@
 
 
 
-
+<!-- SECTION 5 -->
 <div class="divider" id="section_5"></div>
+<br/>
 
-<div class="container container-alt">
+<div class="container container-gray">
   <form id="form_contacto" action="" method="post">
   <div class="text-center">    
-    <h1 class="text-special">Contáctanos</h1>
-    <p>¡Déjanos tu mensaje y nos comunicaremos contigo lo más pronto posible!</p>
+    <h1 class="text-contacto">FORMAS DE CONTACTO</h1>
+    <p><font color="#ffffff">Escríbenos</font></p>
   </div>
   <br/>
   <div class="row">
     <div class="col-md-6">
-      <input type="text" class="form-control" id="contactoNombre" placeholder="Tu nombre" data-validation="length" data-validation-length="min3"/>  
-      <input type="text" class="form-control" id="contactoCorreo" placeholder="Tu correo" data-validation="email"/>  
+      <input type="text" class="form-control" id="contactoNombre" placeholder="NOMBRE" data-validation="length" data-validation-length="min3"/>  
+      <input type="text" class="form-control" id="contactoCorreo" placeholder="E-MAIL" data-validation="email"/>  
     </div>
     <div class="col-md-6">
-      <textarea type="text" class="form-control" id="contactoMensaje" placeholder="Mensaje" rows="3" data-validation-length="min20"></textarea>  
+      <textarea type="text" class="form-control" id="contactoMensaje" placeholder="MENSAJE" rows="3" data-validation-length="min20"></textarea>  
     </div>    
   </div>
   <div class="text-center">
-    <button type="submit" class="btn btn-default">&nbsp;&nbsp;&nbsp;Enviar&nbsp;&nbsp;&nbsp;</button>
+    <a href="javascript:document.myform.submit()"><img src="imgs/CONTACTO/btn_enviar.png"/></a>
   </div>
   </form>
   <br/><br/>
-</div>
+</div><!--/container-->
 
-<div class="container">
-  	<div class="col-sm-8 col-sm-offset-2 text-center">
-      <h3>Fabiola Olivares</h3>
-      <hr>
-      <h4>
-        Relaciones corporativas
-      </h4>
-      <p><a href="mailto:folivares@embarqmexico.org">folivares@embarqmexico.org</a></p>
-      <p>+52 (55) 3096 5742 ext. 408</p>
-      <hr>
-      <ul class="list-inline center-block">
-        <li><a href="http://facebook.com/embarq-rutas"><img src="imgs/social/facebook.png" width="50px"></a></li>
-        <li><a href="http://twitter.com/embarq-rutas"><img src="imgs/social/twitter.png" width="50px"></a></li>
-        <li><a href="http://linkedin.com/+embarq-rutas"><img src="imgs/social/linkedin.png" width="50px"></a></li>
-      </ul>
-      
-  	</div><!--/col-->
+<div class="container container-orange">
+  <div class="col-sm-3"> 
+    <div align="center">
+      <a href="#"><img src="./imgs/CONTACTO/icono_telefono.png"/></a>
+    </div>    
+    <p style="text-align:center"><br/>
+      +5255 5658 9109<br/>
+      +5255 3480 4577<br/>
+      <br/>
+      atención@tumx.com.mx<br/>
+      <br/> 
+      <br/> 
+    </p>
+  </div>          
+  <div class="col-sm-3"> 
+    <div align="center">
+      <a href="#"><img src="./imgs/CONTACTO/icono_ubicacion.png"/></a>
+    </div>    
+    <p style="text-align:center"><br/>
+      Manuel M. Ponce #69 int 202<br/>
+      Guadalupe Inn, Álvaro Obregón<br/>
+      México D.F., 012020
+    </p>
+  </div>
+  <div class="col-sm-3"> 
+    <div align="center">
+      <a href="#"><img src="./imgs/CONTACTO/icono_facebook.png"/></a>
+    </div>    
+    <p style="text-align:center"><br/>
+      TU/MX
+    </p>
+  </div>
+  <div class="col-sm-3"> 
+    <div align="center">
+      <a href="#"><img src="./imgs/CONTACTO/icono_twitter.png"/></a>
+    </div>    
+    <p style="text-align:center"><br/>
+      @TU/MX
+    </p>
+  </div>
 </div><!--/container-->
   
 </div><!--/wrap-->
