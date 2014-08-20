@@ -50,7 +50,7 @@ body {
   color: #ffffff;
   background: url(../imgs/fondo_naranja1.png);
   padding-bottom: 20px;
-  padding-top: 5px;
+  padding-top: 115px;
 }
 
 .container-full {
@@ -64,6 +64,25 @@ body {
   padding-bottom: 20px;
   padding-top: 5px;
 }
+.container-white{
+  /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
+  
+  color: #333333;
+  background-color: #ffffff;
+  padding-bottom: 20px;
+  padding-top: 5px;
+}
+.container-menu{
+  /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
+  
+  color: #333333;
+  background-color: #ffffff;
+  padding-bottom: 20px;
+  padding-top: 5px;
+  box-shadow: 0px 4px 5px #FA8B3E;
+}
+
+
 .container-orange{
   /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
   
@@ -621,10 +640,10 @@ background-color: #ffffff;
 }
 .descripcion {
   background: #525253;
-  margin-left: -50%;
-  padding-left: 50%;
-  margin-right: -50%;
-  padding-right: 50%;
+  margin-left: -100%;
+  padding-left: 100%;
+  margin-right: -100%;
+  padding-right: 100%;
 }
 
 .arrow-down {
