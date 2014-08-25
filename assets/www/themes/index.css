@@ -1,0 +1,157 @@
+@import url(http://fonts.googleapis.com/css?family=Satisfy);
+@font-face {
+  font-family: 'Satisfy';
+}
+
+.controlgroup-textinput{
+    padding-top:.22em;
+    padding-bottom:.22em;
+}
+
+.ui-icon-origen:after {
+    background-image: url("../img/Origen.png");
+    /* Make your icon fit */
+    background-size: 18px 18px;
+}
+
+.ui-icon-destino:after {
+    background-image: url("../img/Destino.png");
+    /* Make your icon fit */
+    background-size: 18px 18px;
+}
+
+
+      #origen destino {
+        background-color: #fff;
+        padding: 0 11px 0 13px;
+        /*width: 600px;*/
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+      }
+
+      #origen:focus destino:focus {
+        border-color: #4d90fe;
+        margin-left: -1px;
+        padding-left: 14px;  /* Regular padding-left + 1. */
+        /*width: 401px;*/
+      }
+      
+      .controls {
+        margin-top: 16px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+      }
+
+
+/********************************/
+
+.ajustaL{
+white-space:pre-line !important;
+}
+
+.readonly-li-a {
+    border: 0 solid #ddd !important;
+    border-top-width: 1px !important;
+    padding: .7em 1em !important;
+    background: #fff!important;
+    margin: 0 1px!important;
+    -webkit-box-shadow: 0 1px 3px /*{global-box-shadow-size}*/ 		rgba(0,0,0,.15) /*{global-box-shadow-color}*/;
+    -moz-box-shadow: 0 1px 3px /*{global-box-shadow-size}*/ 		rgba(0,0,0,.15) /*{global-box-shadow-color}*/;
+    box-shadow: 0 1px 3px /*{global-box-shadow-size}*/ 				rgba(0,0,0,.15) /*{global-box-shadow-color}*/;
+}
+
+#foto {
+    border-style: solid;
+    border-color: #FED207;
+   	border-top-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+h1 {
+	font-family: 'Satisfy';
+	color: #FED207;
+}
+
+#logoEmp{
+	/*background-color: yellow;*/
+	padding: 5px 5px;
+	margin-left: 20px;
+}
+
+#titRecurrente{
+	background-color: #d9edf7;
+	/*border-style: solid;
+    border-width: 5px;*/
+    color: #2a6496;
+    padding-left: 15%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-top-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+.bordeRedodndo {
+	 border-top-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+
+.movie-list thead th,
+.movie-list tbody tr:last-child {
+    border-bottom: 1px solid #d6d6d6; /* non-RGBA fallback */
+    border-bottom: 1px solid rgba(0,0,0,.1);
+}
+.movie-list tbody th,
+.movie-list tbody td {
+    border-bottom: 1px solid #e6e6e6; /* non-RGBA fallback  */
+    border-bottom: 1px solid rgba(0,0,0,.05);
+}
+.movie-list tbody tr:last-child th,
+.movie-list tbody tr:last-child td {
+    border-bottom: 0;
+}
+.movie-list tbody tr:nth-child(odd) td,
+.movie-list tbody tr:nth-child(odd) th {
+    background-color: #eeeeee; /* non-RGBA fallback  */
+    background-color: rgba(0,0,0,.04);
+}
+
+/****************************************************/
+
+.split-button-custom {
+    float: right;
+    margin-right: 10px;
+    margin-top: -32px;
+    border-bottom-left-radius: 1em 1em;
+    border-bottom-right-radius: 1em 1em;
+    border-top-left-radius: 1em 1em;
+    border-top-right-radius: 1em 1em;   
+}
+
+.split-button-custom span.ui-btn-inner {
+    border-bottom-left-radius: 1em 1em;
+    border-bottom-right-radius: 1em 1em;
+    border-top-left-radius: 1em 1em;
+    border-top-right-radius: 1em 1em;
+    padding-right: 0px;
+}
+
+.split-button-custom span.ui-icon {
+    margin-top: 0px;
+    right: 0px;
+    top: 0px;
+    position: relative;
+}
+
+
+.gridLetra { float: left; font-size: 14px }
+
+@media all and (min-width: 20em) {
+	.my-breakpoint.ui-grid-a .ui-block-a { width: 59.95%; float: left; font-size: 12px }
+	.my-breakpoint.ui-grid-a .ui-block-b { width: 34.925%; float: left; font-size: 12px}
+	}

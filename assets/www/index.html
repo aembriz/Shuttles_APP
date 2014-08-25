@@ -1,0 +1,336 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+     <meta http-equiv="Content-type" content="text/html; charset=utf-8"> -->
+    <title>Minimal AppLaud App</title>
+    <link rel="stylesheet" href="themes/Shuttle_1.min.css" />
+	<link rel="stylesheet" href="themes/jquery.mobile.icons.min.css">
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.2/jquery.mobile.structure-1.4.2.min.css" />
+	<script type="text/javascript" charset="utf-8" src="apis/geolocation.js"></script>
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.4.2/jquery.mobile-1.4.2.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/fastclick.js"></script>
+	<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+	<script type="text/javascript" charset="utf-8" src="index.js"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+	<script type="text/javascript" charset="utf-8" src="js/map.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/rutasServ.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/puntosServ.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/obtieneDir.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/corridas.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/favoritas.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/cancelar.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/listaEspera.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/comentarios.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/addEventListener.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/reserRecurentes.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/datosUsuario.js"></script>
+	<script type="text/javascript" charset="utf-8">
+        
+		app.initialize();
+		
+		var styleArray = [
+		                  {
+		                    featureType: "poi",
+		                    elementType: "labels",
+		                    stylers: [
+		                      { visibility: "off" }
+		                    ]
+		                  }
+		                ];    
+		
+	</script>
+ 	<link rel="stylesheet" href="themes/index.css"> 
+  </head>
+  <body id="stage" class="theme" style="width: 100%">
+     	<!-- ****** LOGIN ***** -->
+    	<div id="home" data-role="page" data-theme="c" class="login">
+			<div data-role="header" data-position="inline">
+				<h1>Optimo - Rutas</h1>
+			</div>
+			<div  data_role="main" class="ui-content" align="center">
+				<br><img align="center" src="img/logo.png" width="100%"><br><br><br>
+				<ul class="bordeRedodndo" data-role="listview" data-inset="true">
+					<li class="ui-body ui-body-c">
+						<fieldset class="ui-grid-a" data-theme="c">
+			            <label for="name" >Usuario:</label>
+			            <input type="text" onblur="validarUsuario(this.value)" name="user" id="user" value="" data-clear-btn="true" data-mini="true">
+			            <label for="password">Password:</label>
+			            <input type="password" name="password" id="password" value="" data-clear-btn="true" autocomplete="off" data-mini="true">
+			            <div class="ui-grid-a" data-role="navbar">
+			                <div class="ui-block-a"><a onclick="salir();">Cancel</a></div>
+			                <div class="ui-block-b"><a onclick="login();" id ="login">Login</a></div>
+			            </div>
+			            </fieldset>
+		            </li>
+	            </ul>
+			</div>
+	</div> 
+	<!-- ****** LOGIN ***** -->
+	
+	<!-- ***** Menu Principal ***** -->
+	<div id="menuPrincipal" data-role="page" data-theme="c" data-url="panel-responsive-page1">
+		<header data-role="header" align="left" data-theme="d" data-position="fixed">
+			<img src="img/barra_Shuttle.png" style="width:130px">
+			<img id="logoEmp" style="max-width:120px; max-height:42px">
+			<a href="#menuOpcional" data-rel="popup" data-transition="pop" data-icon="bullets" class="ui-btn-right ui-btn-b">Men&uacute;</a>
+				<div data-role="popup" id="menuOpcional" data-theme="c">
+		        	<ul data-role="listview" data-inset="true" style="min-width:210px;">
+			            <li data-role="list-divider">Men&uacute</li>
+		            	<!-- <li><a onclick="cargaListaEspera();">Lista Espera</a></li>  -->
+		            	<li><a href="#sugerencia">Comentarios</a></li>
+		            	<li><a href="#credencial">Credencial</a></li>
+				        <!-- <li><a onclick="logaout();">LogOut</a></li>  -->
+				        <li><a onclick="salir();">Cerrar</a></li>
+				        <li><a href="#acerca">Acerca de</a></li>
+		        	</ul>
+				</div>
+			<div data-role="navbar">
+			<ul>
+				<li><a onclick="buscaFav(2, false);" data-transition="slidefade" class="ui-btn-active">Rutas</a></li>
+	    		<li><a onclick="cargaCancelar();" data-transition="slidefade">Mis reservaciones</a></li>
+				<li><a onclick="cargaListaEspera();" data-transition="slidefade">En espera</a></li>
+				<!-- <li><a href="#SugerenciaRuta" data-transition="pop">Sugiereme Ruta</a></li>  -->
+			</ul>
+		</div>
+		</header>
+	    <div class="content" data-role="content">
+	    <!-- <h1 id="tit"></h1>  -->
+	    		<fieldset class="ui-grid-a">
+	    			<div class="ui-block-a">
+						<button id="corazon" onclick="listaFavoritas();" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-star ui-mini">Ver favoritos</button>
+				    	<button id="shop" style="display:none" onclick="buscaFav(2, false);" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-shop ui-mini">Todas las rutas</button>
+				    </div>
+				    <div class="ui-block-b">
+				    	<a href="#SugerenciaRuta" id="sugRuta" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-left ui-icon-search ui-mini">Sugerencia rutas</a>
+				    </div>
+		    	</fieldset>
+			<ul data-wrapper-class="ui-btn" data-divider-theme="a" data-role="listview" data-filter="true" data-inset="true" data-filter-placeholder="Search ..." id="listmenu">
+			</ul>
+		</div>
+	</div>
+	<!-- ***** Menu Principal ***** -->
+
+	<!-- ***** Mapa ***** -->
+	<div id="mapaPag" data-role="page" data-theme="c">
+		<header data-role="header" align="left" data-theme="d" data-position="fixed">
+			<img src="img/barra_Shuttle.png" style="width:130px">
+			<img id="logoEmp2" align="right" style="max-width:120px; max-height:42px">
+				<div data-role="popup" id="menuOpcionalMap" data-theme="c">
+		        	<ul data-role="listview" data-inset="true" style="min-width:210px;">
+			            <li data-role="list-divider">Men&uacute</li>
+		            	<li><a onclick="cargaListaEspera();">Lista Espera</a></li>
+		            	<li><a href="#sugerencia">Comentarios</a></li>
+		            	<li><a href="#credencial">Credencial</a></li>
+				        <!-- <li><a onclick="logaout();">LogOut</a></li>  -->
+				        <li><a onclick="salir();">Cerrar</a></li>
+				        <li><a href="#acerca">Acerca de</a></li>
+		        	</ul>
+				</div>
+		<div data-role="navbar" data-iconpos="left">
+			<ul>
+				<li><a href="#menuPrincipal" data-icon="back">Regresar</a></li>
+	    		<li><a href="#menuOpcionalMap" id="popMenuPri" data-rel="popup" data-transition="pop" data-icon="bullets">Men&uacute;</a></li>
+			</ul>
+		</div>
+		</header>
+	    <div class="content" data-role="content">
+			<h1>Origen - Destino</h1>
+				<div class="ui-bar-c ui-corner-all ui-shadow" >
+    				<div id="map" style="height: 400px"></div>
+    			</div>
+    	</div>
+	</div>
+	<!-- ***** Mapa ***** -->
+	
+	<!-- ***** Sugerencia de Ruta ***** -->
+	<div id="SugerenciaRuta" data-role="page" data-theme="c" ">
+		<header data-role="header" align="left" data-theme="d" data-position="fixed">
+			<img src="img/barra_Shuttle.png" style="width:130px">
+			<img id="logoEmp3" align="right" style="max-width:120px; max-height:42px">
+				<div data-role="popup" id="menuOpcionalSugRut" data-theme="c">
+		        	<ul data-role="listview" data-inset="true" style="min-width:210px;">
+			            <li data-role="list-divider">Men&uacute</li>
+		            	<li><a onclick="cargaListaEspera();">Lista Espera</a></li>
+		            	<li><a href="#sugerencia">Comentarios</a></li>
+		            	<li><a href="#credencial">Credencial</a></li>
+				        <!-- <li><a onclick="logaout();">LogOut</a></li>  -->
+				        <li><a onclick="salir();">Cerrar</a></li>
+				        <li><a href="#acerca">Acerca de</a></li>
+		        	</ul>
+				</div>
+		<div data-role="navbar" data-iconpos="left">
+			<ul>
+				<li><a href="#menuPrincipal" data-icon="back">Regresar</a></li>
+	    		<li><a href="#menuOpcionalSugRut" id="popMenuPri" data-rel="popup" data-transition="pop" data-icon="bullets">Men&uacute;</a></li>
+			</ul>
+		</div>
+		</header>
+		<div class="content" data-role="content">
+    			<table id="tablacampos" style='width:100%'>
+    				<tr>
+					    <td>
+					        <input type="text" id="origen" class = "controls" data-theme="c" data-clear-btn="true">
+					        <input type="text" id="destino" class = "controls" data-theme="c" data-clear-btn="true">
+					    </td>
+					    <td style="width:3em; padding:0;">
+					    	<img align="center" src="img/1.png">
+					    	<img align="center" src="img/2.png">
+				</table>
+				<div class="ui-bar-c ui-corner-all ui-shadow" >
+    			<div id="map_canvas">
+    			</div>
+    			</div>
+    			<a onclick="enviarPuntosDeMapa();" class="ui-btn ui-shadow ui-corner-all">Solicitar Sugerencia</a>
+    	</div>
+	</div>
+	<!-- ***** Sugerencia de Ruta ***** -->
+	
+	<!-- ***** Corridas ***** -->
+		<div id="corridas" data-role="page" data-theme="c">
+		<header data-role="header" align="left" data-theme="d" data-position="fixed">
+			<img src="img/barra_Shuttle.png" style="width:130px">
+			<img id="logoEmp4" align="right" style="max-width:120px; max-height:42px">
+				<div data-role="popup" id="menuOpcionalCorrida" data-theme="c">
+		        	<ul data-role="listview" data-inset="true" style="min-width:210px;">
+			            <li data-role="list-divider">Men&uacute</li>
+		            	<li><a onclick="cargaListaEspera();">Lista Espera</a></li>
+		            	<li><a href="#sugerencia">Comentarios</a></li>
+		            	<li><a href="#credencial">Credencial</a></li>
+				        <!-- <li><a onclick="logaout();">LogOut</a></li>  -->
+				        <li><a onclick="salir();">Cerrar</a></li>
+				        <li><a href="#acerca">Acerca de</a></li>
+		        	</ul>
+				</div>
+		<div data-role="navbar" data-iconpos="left">
+			<ul>
+				<li><a href="#menuPrincipal" data-icon="back">Regresar</a></li>
+	    		<li><a href="#menuOpcionalCorrida" id="popMenuPri" data-rel="popup" data-transition="pop" data-icon="bullets">Men&uacute;</a></li>
+			</ul>
+		</div>
+		</header>
+		<div  data_role="main" class="ui-content" >
+			<h1 id="ColorTitulo">Disponibilidad</h1>
+			<div class="ui-grid-a my-breakpoint" id="listCorrida">
+			</div>
+		</div>
+		<div data-role="popup" id="popupCloseRight" class="ui-content" data-overlay-theme="c" data-theme="c" style="max-width:600px">
+			<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-a ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+			<div id="diaspop"></div>
+			<div id="datospop"></div>
+			<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list ui-responsive">
+			  <thead>
+			    <tr>
+			      <th data-priority="1"></th>
+			      <th data-priority="2">Descripci&oacuten</th>
+			      <th data-priority="3">Hora Llegada</th>
+			    </tr>
+			  </thead>
+			  <tbody id="infoReserRec">
+			  </tbody>
+			</table>
+		</div>
+	</div>
+	<!-- ***** Corridas ***** -->
+	
+	<!-- ***** Lista de Espera ***** -->
+	<div id="LEspera" data-role="page" data-theme="c">
+		<header data-role="header" align="left" data-theme="d" data-position="fixed">
+			<img src="img/barra_Shuttle.png" style="width:130px">
+			<img id="logoEmp5" align="right" style="max-width:120px; max-height:42px">
+				<div data-role="popup" id="menuOpcionalListEspera" data-theme="c">
+		        	<ul data-role="listview" data-inset="true" style="min-width:210px;">
+			            <li data-role="list-divider">Men&uacute</li>
+		            	<li><a onclick="cargaListaEspera();">Lista Espera</a></li>
+		            	<li><a href="#sugerencia">Comentarios</a></li>
+		            	<li><a href="#credencial">Credencial</a></li>
+				        <!-- <li><a onclick="logaout();">LogOut</a></li>  -->
+				        <li><a onclick="salir();">Cerrar</a></li>
+				        <li><a href="#acerca">Acerca de</a></li>
+		        	</ul>
+				</div>
+		<div data-role="navbar" data-iconpos="left">
+			<ul>
+				<li><a href="#menuPrincipal" data-icon="back">Regresar</a></li>
+	    		<li><a href="#menuOpcionalListEspera" id="popMenuPri" data-rel="popup" data-transition="pop" data-icon="bullets">Men&uacute;</a></li>
+			</ul>
+		</div>
+		</header>
+		<div  data_role="main" class="ui-content">
+			<h1>Lista de Espera</h1>
+			<ul data-role="listview" data-inset="true" id="listEspera">
+			</ul>
+		</div>
+	</div>
+	<!-- ***** Lista de Espera ***** -->
+	
+	<!-- ***** Sugerencia/Queja ***** -->
+		<div id="sugerencia" data-role="page" data-theme="c">
+		<header data-role="header" align="left" data-theme="d" data-position="fixed">
+			<img src="img/barra_Shuttle.png" style="width:130px">
+			<img id="logoEmp6" align="right" style="max-width:120px; max-height:42px">
+			<div data-role="popup" id="menuOpcionalComenta" data-theme="c">
+	       		<ul data-role="listview" data-inset="true" style="min-width:210px;">
+		            <li data-role="list-divider">Men&uacute</li>
+		           	<li><a onclick="cargaListaEspera();">Lista Espera</a></li>
+		           	<li><a href="#sugerencia">Comentarios</a></li>
+		           	<li><a href="#credencial">Credencial</a></li>
+			        <!-- <li><a onclick="logaout();">LogOut</a></li>  -->
+			        <li><a onclick="salir();">Cerrar</a></li>
+			        <li><a href="#acerca">Acerca de</a></li>
+       			</ul>
+			</div>
+		<div data-role="navbar" data-iconpos="left">
+			<ul>
+				<li><a href="#menuPrincipal" data-icon="back">Regresar</a></li>
+	    		<li><a href="#menuOpcionalComenta" id="popMenuPri" data-rel="popup" data-transition="pop" data-icon="bullets">Men&uacute;</a></li>
+			</ul>
+		</div>
+		</header>
+		<div  data_role="main" class="ui-content" align="center">
+			<ul data-role="listview" data-inset="true">
+				<li class="ui-body ui-body-c">
+					<fieldset class="ui-grid-a" data-theme="c">
+	            		<label for="name" >Escribe tu comentario:</label>
+	            		<textarea cols="40" rows="8" name="comentario" id="comentario"></textarea>
+	            		<br>
+	            		<a onclick="altaComentario();" class="ui-btn ui-shadow ui-corner-all" id="reserva">Enviar</a>
+	            	</fieldset>
+	            </li>
+	       </ul>
+		</div>
+	</div>
+	<!-- ***** Sugerencia/Queja ***** -->
+	
+	<!-- ***** Acerca De ***** -->
+	<div id="acerca" data-role="page" data-theme="c">
+		<a href="#menuPrincipal" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all">No text</a>
+		<div  data_role="main" class="ui-content" align="center">
+			<img align="center" src="img/logo.png" width="350">
+			<br><br><br>
+			<h1 data-theme="c">Version 0.5 Beta</h1>
+			<br><br><br>
+			<h4 id="copyright">Creado por NuBeet S. de R.L. de C.V. <a id="nubeet">www.nubeet.com</a></h4>
+			</ul>
+		</div>
+	</div>
+	<!-- ***** Acerca De ***** -->
+	
+	<!-- ***** Credencial ***** -->
+	<div id="credencial" data-role="page" data-theme="c">
+		<a href="#menuPrincipal" class="ui-btn ui-icon-delete ui-btn-icon-notext ui-corner-all">No text</a>
+		<div  data_role="main" class="ui-content" align="center">
+			<img id="foto" align="center" width="250">
+			<br><br><br>
+			<h2 id="nombreUsuario"></h1>
+			<h3 align="left" id="emailUsuario"></h3>
+			<h3 align="left" id="empresaUsuario"></h3>
+			<img id="fotoEmp" align="center" width="90" height = "100">
+		</div>
+	</div>
+	<!-- ***** Credencial ***** -->
+  </body>
+</html>
