@@ -593,7 +593,7 @@
 
 <div class="container-full">
   <div class="container container-gray"> </br>
-    <form id="form_contacto" action="" method="post">
+    <form id="form_contacto" action="" method="post" onSubmit="ObtDatosPag(this);" name="helado">
     <div class="text-center">    
       <h1 class="text-contacto">FORMAS DE CONTACTO</h1>
       <p><font color="#ffffff">Escríbenos</font></p>
@@ -601,15 +601,15 @@
     <br/>
     <div class="row">
       <div class="col-xs-6">
-        <input type="text" class="form-control" id="contactoNombre" placeholder="NOMBRE" data-validation="length" data-validation-length="min3"/>  
-        <input type="text" class="form-control" id="contactoCorreo" placeholder="E-MAIL" data-validation="email"/>  
+        <input type="text" class="form-control" id="contactoNombre" placeholder="NOMBRE" data-validation="length" data-validation-length="min3" />  
+        <input type="text" class="form-control" id="contactoCorreo" placeholder="E-MAIL" data-validation="email" />  
       </div>
       <div class="col-xs-6">
-        <textarea type="text" class="form-control" id="contactoMensaje" placeholder="MENSAJE" rows="3" data-validation-length="min20"></textarea>  
+        <textarea type="text" class="form-control" id="contactoMensaje" placeholder="MENSAJE" rows="3" data-validation-length="min20" ></textarea>  
       </div>    
     </div>
     <div class="text-center">
-      <a href="javascript:document.myform.submit()"><img src="imgs/CONTACTO/btn_enviar.png"/></a>
+      <a href="javascript:document.myform.submit()" id ="enviar"><img src="imgs/CONTACTO/btn_enviar.png"/></a>
     </div>
     </form>
     <br/><br/>

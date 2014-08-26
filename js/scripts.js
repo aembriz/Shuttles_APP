@@ -351,3 +351,40 @@ var showProyecto = function(idxProyecto){
 var hideProyecto = function(){
   $("#popup-proyectos").hide();
 };
+
+$('#enviar').click(function() {
+
+   var nombre =  $('#contactoNombre').val();
+   var email = $('#contactoCorreo').val();
+   var mensaje = $('#contactoMensaje').val();
+
+   if(nombre == ""){
+    alert ("Favor de proporcionar nombre");
+   }else if(email == ""){
+    alert ("Favor de proporcionar email");
+   }else if(mensaje == ""){
+    alert ("Favor de proporcionar menaje");
+  }else {
+
+    if(validarEmail(email)){
+
+    $.ajax({
+        url: "php/correo.php",
+       type: "post",
+       data: "nombre="+nombre+"&email="+email+"&asunto="+mensaje,
+       success: function(data){
+           alert(data);
+       }
+    });
+    }
+  }
+});
+
+function validarEmail( email ) {
+    expr = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+    if ( !expr.test(email) ){
+        alert("Error: La dirección de correo " + email + " es incorrecta.");
+      return false;
+      }
+      return true;
+}
