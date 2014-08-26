@@ -9,6 +9,7 @@ body {
   /* The html and body elements cannot have any padding or margin. */
   -webkit-font-smoothing: antialiased;
   font: normal 14px arial,sans-serif;
+  min-width: 1200px;
 }
 
 .row {
@@ -24,7 +25,7 @@ body {
   /* Negative indent footer by its height */
   margin: 0 auto -60px;
   /* Pad bottom by footer height */
-  padding: 0 0 60px;
+  padding: 0 0 0px;
 }
 
 /* Set the fixed height of the footer here */
@@ -38,6 +39,10 @@ body {
 
 /* Custom page CSS
 -------------------------------------------------- */
+.container {
+  width: 1200px;
+  max-width: none !important;
+}
 
 .container-def{
   background-color: #ffffff;
@@ -50,9 +55,59 @@ body {
   color: #ffffff;
   background: url(../imgs/fondo_naranja1.png);
   padding-bottom: 20px;
-  padding-top: 5px;
+  padding-top: 115px;
 }
 
+.container-full {
+  background-color: #333333;
+}
+.container-gray{
+  /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
+  
+  color: #ffffff;
+  background-color: #515152;
+  padding-bottom: 20px;
+  padding-top: 5px;
+}
+.container-white{
+  /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
+  
+  color: #333333;
+  background-color: #ffffff;
+  padding-bottom: 20px;
+  padding-top: 5px;
+}
+.container-menu{
+  /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
+  
+  color: #333333;
+  background-color: #ffffff;
+  padding-bottom: 20px;
+  padding-top: 5px;
+  box-shadow: 0px 4px 5px #FA8B3E;
+}
+
+
+.container-orange{
+  /*background-color: rgb(231,95,26,0.6); #E75F1A;*/
+  
+  color: #FFC993;
+  background-color: #FF8302;
+  padding-bottom: 20px;
+  padding-top: 5px;
+}
+#text-contacto h1 {
+  border-color: #ffffff;
+  border-style: solid;
+  border-left: 0px;
+  border-right: 0px;
+  border-top: 0px;
+  padding-bottom: 10px;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
 #wrap > .container {
   padding: 60px 15px 0;
 }
@@ -139,6 +194,23 @@ h3 {
   margin-bottom: 30px;
 }
 
+.container-gray h1{
+  border-color: #ffffff;
+  border-style: solid;
+  border-left: 0px;
+  border-right: 0px;
+  border-top: 0px;
+  padding-bottom: 10px;
+  margin-left: 15%;
+  margin-right: 15%;
+  margin-top: 10px;
+  margin-bottom: 30px;
+}
+
+.container-gray input {
+
+}
+
 .container h2{
   color: #E75F1A;  
 }
@@ -210,13 +282,13 @@ h3 {
 .panel {
 	border-width:0;
 }
-
+/*
 @media (max-width: 768px) {
 	header {
 		height: 95px;
 	}
 }
-
+*/
 #map-canvas {
   	width: 100%; 
   	height: 300px;
@@ -286,15 +358,14 @@ section {
   border-radius: 25px;
 }
 
-text-special{
-
-}
-
 .text-special{
   color: #E75F1A;
   font-family: 'Open Sans', cursive;
 }
-
+.text-contacto{
+  color: #ffffff;
+  font-family: 'Open Sans', cursive;
+}
 .text-yellow{
   color: #E75F1A;
 }
@@ -392,9 +463,11 @@ text-special{
   border-radius: 22px;
 }
 
-.form-control{
-  border: 1px solid #E75F1A;  
+.form-control {
+  border: 1px solid #ffffff;
+  background-color: #515152;
   margin-bottom: 8px;
+  color: #ffffff;
 }
 
 .container-alt .form-control{
@@ -572,10 +645,10 @@ background-color: #ffffff;
 }
 .descripcion {
   background: #525253;
-  margin-left: -50%;
-  padding-left: 50%;
-  margin-right: -50%;
-  padding-right: 50%;
+  margin-left: -100%;
+  padding-left: 100%;
+  margin-right: -100%;
+  padding-right: 100%;
 }
 
 .arrow-down {
@@ -605,9 +678,48 @@ background-color: #ffffff;
   margin-bottom: 20px;
   font-size: 12px;
   line-height: 1.4;
+  text-shadow: 0 0px 0px rgba(0,0,0,0);
+  color: black;
 }
-
+#myCarouselEquipo .carousel-caption h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  line-height: 1.4;
+  text-shadow: 0 0px 0px rgba(0,0,0,0);
+  font-color: #FC6D08;
+}
+#myCarouselEquipo .carousel-caption {
+  z-index: 0;
+  left: 20px;
+  right: 20px;
+  top: 20px;
+  bottom: 20px;
+}
+#myCarouselEquipo.carousel {
+  height: 300px;
+  margin-bottom: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
 #myCarouselEquipo.carousel .item {
-  height: 400px;
-  background-color: #FFFFFF;
+  height: 250px;
+  background-color: #ffffff;
+}
+#myCarouselEquipo .carousel-indicators li {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin: 1px;
+  text-indent: -999px;
+  cursor: pointer;
+  background-color: #000 \9;
+  background-color: #999999;
+  border: 1px solid #fff;
+  border-radius: 10px;
+}
+#myCarouselEquipo .carousel-indicators .active {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  background-color: #FC6D08;
 }

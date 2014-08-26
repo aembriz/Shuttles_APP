@@ -31,7 +31,14 @@ $('a.move2sec').click(function(){
 
 var currentSection = "#section_0";
 var moveToSection = function(section){
-  var posi = $(section).offset().top+20;
+  //if ($('body,html').scrollTop <
+  var menuPos = $('#menu').position().top;
+  if (menuPos < 10) {
+    var posi = $(section).offset().top-0;
+  } else {
+    var posi = $(section).offset().top-119;
+  }
+  
   $('body,html').animate({scrollTop:posi},700);
   currentSection = section;
 }
