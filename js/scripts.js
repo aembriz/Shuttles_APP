@@ -376,6 +376,10 @@ $('#enviar').click(function() {
            alert(data);
        }
     });
+
+      $('#contactoNombre').val("");
+      $('#contactoCorreo').val("");
+      $('#contactoMensaje').val("");
     }
   }
 });
