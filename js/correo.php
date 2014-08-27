@@ -2,7 +2,7 @@
 
  if(!empty($_POST['nombre']) AND !empty($_POST['email']) AND !empty($_POST['asunto'])){
 
-$to ="adolfo.embriz@gmail.com";
+$to ="tumx@tu-mx.com";
 $headers = "Content-Type: text/html; charset=iso-8859-1\n"; 
 $headers .= "From:".$_POST['email']."\r\n";			
 $tema="Contacto desde el Sitio Web TU/MX";
