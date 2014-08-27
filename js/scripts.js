@@ -369,7 +369,7 @@ $('#enviar').click(function() {
     if(validarEmail(email)){
 
     $.ajax({
-        url: "php/correo.php",
+        url: "js/correo.php",
        type: "post",
        data: "nombre="+nombre+"&email="+email+"&asunto="+mensaje,
        success: function(data){
