@@ -336,8 +336,6 @@ section {
 }
 
 .container .btn-default{
-  background: url('../imgs/Botón-empiezaausarelservicio.png') no-repeat center;
-  background-size: 176px 50px;
   background-color: #ffd100;
   color: #000000;
   border-radius: 22px;
