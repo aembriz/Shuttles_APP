@@ -29,6 +29,135 @@ $('a.move2sec').click(function(){
   moveToSection(link);
 });
 
+$("#flechaBAB1").click(function(){
+  $("#flechaBAR1").css("display", "block");
+  $("#flechaBAR2").css("display", "none");
+  $("#flechaBAR3").css("display", "none");
+  $("#flechaBAR4").css("display", "none");
+  $("#flechaBAR5").css("display", "none");
+  $("#flechaBAB1").css("display", "none");
+  $("#flechaBAB2").css("display", "block");
+  $("#flechaBAB3").css("display", "block");
+  $("#flechaBAB4").css("display", "block");
+  $("#flechaBAB5").css("display", "block");
+});
+
+$("#flechaBAR1").click(function(){
+  $("#flechaBAB1").css("display", "block");
+  $("#flechaBAB2").css("display", "none");
+  $("#flechaBAB3").css("display", "none");
+  $("#flechaBAB4").css("display", "none");
+  $("#flechaBAB5").css("display", "none");
+  $("#flechaBAR1").css("display", "none");
+  $("#flechaBAR2").css("display", "block");
+  $("#flechaBAR3").css("display", "block");
+  $("#flechaBAR4").css("display", "block");
+  $("#flechaBAR5").css("display", "block");
+});
+
+$("#flechaBAB2").click(function(){
+  $("#flechaBAR1").css("display", "none");
+  $("#flechaBAR2").css("display", "block");
+  $("#flechaBAR3").css("display", "none");
+  $("#flechaBAR4").css("display", "none");
+  $("#flechaBAR5").css("display", "none");
+  $("#flechaBAB1").css("display", "block");
+  $("#flechaBAB2").css("display", "none");
+  $("#flechaBAB3").css("display", "block");
+  $("#flechaBAB4").css("display", "block");
+  $("#flechaBAB5").css("display", "block");
+});
+
+$("#flechaBAR2").click(function(){
+  $("#flechaBAB1").css("display", "none");
+  $("#flechaBAB2").css("display", "block");
+  $("#flechaBAB3").css("display", "none");
+  $("#flechaBAB4").css("display", "none");
+  $("#flechaBAB5").css("display", "none");
+  $("#flechaBAR1").css("display", "block");
+  $("#flechaBAR2").css("display", "none");
+  $("#flechaBAR3").css("display", "block");
+  $("#flechaBAR4").css("display", "block");
+  $("#flechaBAR5").css("display", "block");
+});
+
+$("#flechaBAB3").click(function(){
+  $("#flechaBAR1").css("display", "none");
+  $("#flechaBAR2").css("display", "none");
+  $("#flechaBAR3").css("display", "block");
+  $("#flechaBAR4").css("display", "none");
+  $("#flechaBAR5").css("display", "none");
+  $("#flechaBAB1").css("display", "block");
+  $("#flechaBAB2").css("display", "block");
+  $("#flechaBAB3").css("display", "none");
+  $("#flechaBAB4").css("display", "block");
+  $("#flechaBAB5").css("display", "block");
+});
+
+$("#flechaBAR3").click(function(){
+  $("#flechaBAB1").css("display", "none");
+  $("#flechaBAB2").css("display", "none");
+  $("#flechaBAB3").css("display", "block");
+  $("#flechaBAB4").css("display", "none");
+  $("#flechaBAB5").css("display", "none");
+  $("#flechaBAR1").css("display", "block");
+  $("#flechaBAR2").css("display", "block");
+  $("#flechaBAR3").css("display", "none");
+  $("#flechaBAR4").css("display", "block");
+  $("#flechaBAR5").css("display", "block");
+});
+
+$("#flechaBAB4").click(function(){
+  $("#flechaBAR1").css("display", "none");
+  $("#flechaBAR2").css("display", "none");
+  $("#flechaBAR3").css("display", "none");
+  $("#flechaBAR4").css("display", "block");
+  $("#flechaBAR5").css("display", "none");
+  $("#flechaBAB1").css("display", "block");
+  $("#flechaBAB2").css("display", "block");
+  $("#flechaBAB3").css("display", "block");
+  $("#flechaBAB4").css("display", "none");
+  $("#flechaBAB5").css("display", "block");
+});
+
+$("#flechaBAR4").click(function(){
+  $("#flechaBAB1").css("display", "none");
+  $("#flechaBAB2").css("display", "none");
+  $("#flechaBAB3").css("display", "none");
+  $("#flechaBAB4").css("display", "none");
+  $("#flechaBAB5").css("display", "block");
+  $("#flechaBAR1").css("display", "block");
+  $("#flechaBAR2").css("display", "block");
+  $("#flechaBAR3").css("display", "block");
+  $("#flechaBAR4").css("display", "block");
+  $("#flechaBAR5").css("display", "none");
+});
+
+$("#flechaBAB5").click(function(){
+  $("#flechaBAR1").css("display", "none");
+  $("#flechaBAR2").css("display", "none");
+  $("#flechaBAR3").css("display", "none");
+  $("#flechaBAR4").css("display", "none");
+  $("#flechaBAR5").css("display", "block");
+  $("#flechaBAB1").css("display", "block");
+  $("#flechaBAB2").css("display", "block");
+  $("#flechaBAB3").css("display", "block");
+  $("#flechaBAB4").css("display", "block");
+  $("#flechaBAB5").css("display", "none");
+});
+
+$("#flechaBAR5").click(function(){
+  $("#flechaBAB1").css("display", "block");
+  $("#flechaBAB2").css("display", "block");
+  $("#flechaBAB3").css("display", "block");
+  $("#flechaBAB4").css("display", "block");
+  $("#flechaBAB5").css("display", "block");
+  $("#flechaBAR1").css("display", "none");
+  $("#flechaBAR2").css("display", "none");
+  $("#flechaBAR3").css("display", "none");
+  $("#flechaBAR4").css("display", "none");
+  $("#flechaBAR5").css("display", "none");
+});
 var currentSection = "#section_0";
 var moveToSection = function(section){
   var posi = $(section).offset().top+20;

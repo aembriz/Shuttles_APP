@@ -143,8 +143,9 @@ h1 {
   color: #3c3c3f;
 }
 .navbar-custom  .navbar-nav li>a:hover, .navbar-nav li .open, .navbar-custom .navbar-nav .active a  {
-	/*background-color: #000;*/
-  background-color: #ffd100;  
+	/*background-color: #000;
+  background-color: #ffd100; */ 
+  background: url('../imgs/menu/Botón_menúamarillo.png') no-repeat center;
 }
 .navbar-custom .dropdown-menu{
 	right:0;
@@ -424,4 +425,10 @@ section {
 
 .has-success .form-control {
   border-color: #ffd100;
+}
+
+img.desplazada {
+  position: relative;
+  top: 8em;
+  right: 12em;
 }
